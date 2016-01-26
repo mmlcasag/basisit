@@ -1,0 +1,148 @@
+<?php
+    $v_params  = $this->getParams();
+    
+    $registros = array();
+    if (array_key_exists('registros', $v_params)) {
+        $registros = $v_params['registros'];
+    }
+    
+    $naoClassificados = 0;
+    if (array_key_exists('naoClassificados', $v_params)) {
+        $naoClassificados = $v_params['naoClassificados'];
+    }
+    
+    $meusRegistros = array();
+    if (array_key_exists('meusRegistros', $v_params)) {
+        $meusRegistros = $v_params['meusRegistros'];
+    }
+    
+    $resumoGeral = array();
+    if (array_key_exists('resumoGeral', $v_params)) {
+        $resumoGeral = $v_params['resumoGeral'];
+    }
+?>
+
+<?php include 'pageopen.php' ?>
+
+<div class="container">
+    
+    <div class="page-header">
+        <h3>Funcionalidades<small> / Tela de Listagem</small></h3>
+    </div>
+    
+    <p><br /></p>
+    
+    <?php if ($_SESSION['perfilCliente'] == 0) { ?>
+        <table class="table table-striped">
+
+            <thead>
+                <tr>
+                    <th class="col-sm-2">Não Classificados</th>
+                    <th class="col-sm-1">Atividades</th>
+                    <th class="col-sm-1">Chamados</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr>
+                    <td><br /></td>
+                    <td><?php echo '<a href="javascript:;" onclick="listarAtividades(9999,9999);">0</a>'; ?></td>
+                    <td><?php echo '<a href="javascript:;" onclick="listarChamadosNaoClassificados();">' . $naoClassificados . '</a>'; ?></td>
+                </tr>
+            </tbody>
+
+        </table>
+
+        <br />
+
+        <table class="table table-striped">
+
+            <thead>
+                <tr>
+                    <th class="col-sm-2">Meus Registros</th>
+                    <th class="col-sm-1">Atividades</th>
+                    <th class="col-sm-1">Chamados</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <?php foreach($meusRegistros AS $meuRegistro) { ?>
+                <tr>
+                    <td><?php echo $meuRegistro['situacaoDescricao']; ?></td>
+                    <td><?php echo '<a href="javascript:;" onclick="listarAtividades(' . $_SESSION['usuarioCodigo'] . ',' . $meuRegistro['situacaoCodigo'] . ');">' . $meuRegistro['situacaoQuantidadeAtividades'] . '</a>'; ?></td>
+                    <td><?php echo '<a href="javascript:;" onclick="listarChamados(' . $_SESSION['usuarioCodigo'] . ',' . $meuRegistro['situacaoCodigo'] . ');">' . $meuRegistro['situacaoQuantidadeChamados'] . '</a>'; ?></td>
+                </tr>
+                <?php } ?>
+            </tbody>
+
+        </table>
+
+        <br />
+
+        <table class="table table-striped">
+
+            <thead>
+                <tr>
+                    <th class="col-sm-2">Resumo Geral</th>
+                    <th class="col-sm-1">Atividades</th>
+                    <th class="col-sm-1">Chamados</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <?php foreach($resumoGeral AS $resumo) { ?>
+                <tr>
+                    <td><?php echo $resumo['usuarioNome']; ?></td>
+                    <td><?php echo '<a href="javascript:;" onclick="listarAtividades(' . $resumo['usuarioCodigo'] . ',' . $_SESSION['situacaoEmAndamento'] . ');">' . $resumo['usuarioQuantidadeAtividades'] . '</a>'; ?></td>
+                    <td><?php echo '<a href="javascript:;" onclick="listarChamados(' . $resumo['usuarioCodigo'] . ',' . $_SESSION['situacaoEmAndamento'] . ');">' . $resumo['usuarioQuantidadeChamados'] . '</a>'; ?></td>
+                </tr>
+                <?php } ?>
+            </tbody>
+
+        </table>
+
+        <br />
+    <?php } else { ?>
+        <table class="table table-striped">
+
+            <thead>
+                <tr>
+                    <th class="col-sm-3">Descrição</th>
+                    <th class="col-sm-1">Ações</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <?php foreach($registros AS $tipoSistema) { ?>
+                <tr>
+                    <td><?php echo $tipoSistema->getDescricao()?></td>
+                    <td>
+                        <button type="button" class="btn btn-default btn-xs" onclick="post('<?php echo $tipoSistema->getNomeMenu();?>','<?php echo $tipoSistema->getEnderecoListar();?>');">
+                            <span class="glyphicon glyphicon-share-alt"></span>&nbsp;Acessar
+                        </button>
+                    </td>
+                </tr>
+                <?php } ?>
+            </tbody>
+
+        </table>
+    <?php } ?>
+    
+</div>
+
+<script type="text/javascript">
+    function post(controle, acao) {
+        postViaJS('', {controle: controle, acao: acao});
+    }
+    function listarChamados(usuarioCodigo, situacaoCodigo) {
+        postViaJS('', {controle: 'Chamados', acao: 'listar', atendente: usuarioCodigo, situacao: situacaoCodigo}, "post", "_blank");
+    }
+    function listarAtividades(usuarioCodigo, situacaoCodigo) {
+        postViaJS('', {controle: 'Atividades', acao: 'listar', usuario: usuarioCodigo, situacao: situacaoCodigo}, "post", "_blank");
+    }
+    function listarChamadosNaoClassificados() {
+        postViaJS('', {controle: 'Chamados', acao: 'listarNaoClassificados'}, "post", "_blank");
+    }
+</script>
+
+<?php include 'pageclose.php';

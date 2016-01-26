@@ -1,0 +1,327 @@
+<?php
+    $v_params = $this->getParams();
+    
+    $mensagem = "";
+    if (array_key_exists('mensagem', $v_params)) {
+        $mensagem = $v_params['mensagem'];
+    }
+    
+    $periodoInicial = "";
+    if (array_key_exists('periodoInicial', $v_params)) {
+        $periodoInicial = $v_params['periodoInicial'];
+    }
+    
+    $periodoFinal = "";
+    if (array_key_exists('periodoFinal', $v_params)) {
+        $periodoFinal = $v_params['periodoFinal'];
+    }
+    
+    $usuario = new UsuariosVo();
+    if (array_key_exists('usuario', $v_params)) {
+        $usuario = $v_params['usuario'];
+    }
+    
+    $empresa = new EmpresasVo();
+    if (array_key_exists('empresa', $v_params)) {
+        $empresa = $v_params['empresa'];
+    }
+    
+    $usuarios = array();
+    if (array_key_exists('usuarios', $v_params)) {
+        $usuarios = $v_params['usuarios'];
+    }
+    
+    $empresas = array();
+    if (array_key_exists('empresas', $v_params)) {
+        $empresas = $v_params['empresas'];
+    }
+    
+    $apontamentoAvaliacao = "";
+    if (array_key_exists('apontamentoAvaliacao', $v_params)) {
+        $apontamentoAvaliacao = $v_params['apontamentoAvaliacao'];
+    }
+    
+    $apontamentoTipo = "";
+    if (array_key_exists('apontamentoTipo', $v_params)) {
+        $apontamentoTipo = $v_params['apontamentoTipo'];
+    }
+    
+    $registros = array();
+    if (array_key_exists('registros', $v_params)) {
+        $registros = $v_params['registros'];
+    }
+?>
+
+<?php include 'pageopen.php' ?>
+
+<link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        $(".datepicker").datepicker({dateFormat: 'dd/mm/yy'});
+    });
+    function atualizarSessao() {
+        var ajax;
+        if (window.XMLHttpRequest)
+            ajax = new XMLHttpRequest();
+        else
+            ajax = new ActiveXObject("Microsoft.XMLHTTP");
+        
+        ajax.open("GET", "?controle=Apontamentos&acao=ajaxAtualizarSessao", true);
+        ajax.send();
+    }
+    function verificaHorasFaturar(row) {
+        row = row - 1;
+        if (document.resultados.elements['apontamentoAvaliacao[]'][row].value == "9" ) {
+            document.resultados.elements['apontamentoFaturado[]'][row].value = "00:00:00";
+      	}
+      	if (document.resultados.elements['apontamentoAvaliacao[]'][row].value == "3") {
+            document.resultados.elements['apontamentoFaturado[]'][row].value = "00:00:00";
+      	}
+      	if (document.resultados.elements['apontamentoAvaliacao[]'][row].value == "1") {
+            document.resultados.elements['apontamentoFaturado[]'][row].value = document.resultados.elements['apontamentoDuracao[]'][row].value;
+      	}
+      	if (document.resultados.elements['apontamentoAvaliacao[]'][row].value == "2") {
+            document.resultados.elements['apontamentoFaturado[]'][row].value = document.resultados.elements['apontamentoDuracao[]'][row].value;
+      	}
+        document.resultados.elements['apontamentoFaturado[]'][row].focus();
+        atualizarSessao();
+    }
+</script>
+
+<div class="container">
+    
+    <div class="page-header">
+        <h3>Apontamentos para Avaliação<small> / Relatório</small></h3>
+    </div>
+    
+    <?php
+    if (!empty($mensagem)) {
+        if (substr($mensagem,0,1) == "N") {
+            echo '<div class="alert alert-danger"><strong>ERRO!</strong>&nbsp;&nbsp;&nbsp;' . substr($mensagem,1,999) . '</div>';
+        }
+        if (substr($mensagem,0,1) == "S") {
+            echo '<div class="alert alert-success"><strong>SUCESSO!</strong>&nbsp;&nbsp;&nbsp;' . substr($mensagem,1,999) . '</div>';
+        }
+    }
+    ?>
+    
+    <p><br /></p>
+    
+    <form class="form-horizontal" role="form" method="post">
+        
+        <input type='hidden' name='controle' value='Apontamentos'>
+        <input type='hidden' name='acao' value='listarApontamentosParaAvaliacao'>
+        
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="periodoInicial">Período Inicial:</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control datepicker" id="periodoInicial" name="periodoInicial" value="<?php echo $periodoInicial;?>" />
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="periodoFinal">Período Final:</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control datepicker" id="periodoFinal" name="periodoFinal" value="<?php echo $periodoFinal;?>" />
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="usuarioCodigo">Analista:</label>
+            <div class="col-sm-10">    
+                <select class="form-control" id="usuarioCodigo" name="usuarioCodigo">
+                    <option value="">Selecione</option>
+                    <?php
+                    foreach($usuarios as $row) {
+                        if ($usuario->getId() != "" && $row->getId() == $usuario->getId()) {
+                            echo '<option value="' . $row->getId() . '" selected>' . $row->getNome() . '</option>';
+                        } else {
+                            echo '<option value="' . $row->getId() . '">' . $row->getNome() . '</option>';
+                        }
+                    }
+                    ?>
+                </select>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="empresaCodigo">Empresa:</label>
+            <div class="col-sm-10">
+                <select class="form-control" id="empresaCodigo" name="empresaCodigo">
+                    <option value="">Selecione</option>
+                    <?php
+                    foreach($empresas as $row) {
+                        if ($empresa->getId() != "" && $row->getId() == $empresa->getId()) {
+                            echo '<option value="' . $row->getId() . '" selected>' . $row->getDescricao() . '</option>';
+                        } else {
+                            echo '<option value="' . $row->getId() . '">' . $row->getDescricao() . '</option>';
+                        }
+                    }
+                    ?>
+                </select>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="apontamentoAvaliacao">Tipo de Avaliação:</label>
+            <div class="col-sm-10">
+                <select class="form-control" id="apontamentoAvaliacao" name="apontamentoAvaliacao">
+                    <option value=""  <?php echo $apontamentoAvaliacao == ""  ? "selected" : "" ?>>Selecione</option>
+                    <option value="9" <?php echo $apontamentoAvaliacao == "9" ? "selected" : "" ?>>Não Avaliado</option>
+                    <option value="1" <?php echo $apontamentoAvaliacao == "1" ? "selected" : "" ?>>Faturado Integral</option>
+                    <option value="2" <?php echo $apontamentoAvaliacao == "2" ? "selected" : "" ?>>Faturado Parcial</option>
+                    <option value="3" <?php echo $apontamentoAvaliacao == "3" ? "selected" : "" ?>>Não Faturado</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="apontamentoTipo">Tipo de Apontamento:</label>
+            <div class="col-sm-10">
+                <select class="form-control" id="apontamentoTipo" name="apontamentoTipo">
+                    <option value="" <?php echo $apontamentoTipo == ""  ? "selected" : "" ?>>Selecione</option>
+                    <option value="Atividade" <?php echo $apontamentoTipo == "Atividade" ? "selected" : "" ?>>Apenas Atividades</option>
+                    <option value="Chamado" <?php echo $apontamentoTipo == "Chamado" ? "selected" : "" ?>>Apenas Chamados</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="submit"><br /></label>
+            <div class="col-sm-10">
+                <button type="submit" class="btn btn-default">
+                    <span class="glyphicon glyphicon-search"></span>&nbsp;&nbsp;Consultar
+                </button>
+            </div>
+        </div>
+        
+    </form>
+    
+    <p><br /></p>
+    
+    <form class="form-horizontal" role="form" method="post" name="resultados">
+        
+        <input type='hidden' name='controle' value='Apontamentos'>
+        <input type='hidden' name='acao' value='salvarApontamentoParaAvaliacao'>
+        <input type='hidden' name='periodoInicial' value='<?php echo $periodoInicial;?>'>
+        <input type='hidden' name='periodoFinal' value='<?php echo $periodoFinal;?>'>
+        <input type='hidden' name='usuarioCodigo' value='<?php echo $usuario->getId();?>'>
+        <input type='hidden' name='empresaCodigo' value='<?php echo $empresa->getId();?>'>
+        <input type='hidden' name='apontamentoAvaliacao' value='<?php echo $apontamentoAvaliacao;?>'>
+        <input type='hidden' name='apontamentoTipo' value='<?php echo $apontamentoTipo;?>'>
+        
+        <table class="table table-striped">
+            
+            <thead>
+                <th>Código</th>
+                <th>Tipo Atividade</th>
+                <th>Empresa</th>
+                <th>Situação</th>
+                <th>Analista</th>
+                <th width="275px">Observação</th>
+                <th width="85px">Valor Apontado</th>
+                <th width="185px">Tipo de Avaliação</th>
+                <th width="100px">Valor Faturado</th>
+            </thead>
+            
+            <tbody>
+                <?php
+                
+                $contador = 0;
+                $atividadeCodigo = 0;
+                $apontamentosSubtotal = '00:00:00';
+                $apontamentosTotal    = '00:00:00';
+                $faturadosSubtotal    = '00:00:00';
+                $faturadosTotal       = '00:00:00';
+                
+                foreach ($registros AS $registro) {
+                    $contador = $contador + 1;
+                    
+                    echo "<input type='hidden' name='apontamentoCodigo[]'  value='" . $registro['apontamentoCodigo']  . "'>";
+                    echo "<input type='hidden' name='apontamentoDuracao[]' value='" . $registro['apontamentoDuracao'] . "'>";
+                    
+                    if ($atividadeCodigo != $registro['atividadeCodigo']) {
+                        $atividadeCodigo  = $registro['atividadeCodigo'];
+                        
+                        if ($contador > 1) {
+                            echo '<tr>';
+                            echo '<th colspan="6"><br /></th>';
+                            echo '<th colspan="1">' . $apontamentosSubtotal . '</th>';
+                            echo '<th colspan="1"><br /></th>';
+                            echo '<th colspan="1">' . $faturadosSubtotal . ' </th>';
+                            echo '</tr>';
+                            
+                            $apontamentosSubtotal = '00:00:00';
+                            $faturadosSubtotal    = '00:00:00';
+                        }
+                    }
+                    
+                    $apontamentosSubtotal = Functions::sumTimes($apontamentosSubtotal, Functions::toTime($registro['apontamentoDuracao']));
+                    $apontamentosTotal    = Functions::sumTimes($apontamentosTotal   , Functions::toTime($registro['apontamentoDuracao']));
+                    $faturadosSubtotal    = Functions::sumTimes($faturadosSubtotal   , Functions::toTime($registro['apontamentoFaturado']));
+                    $faturadosTotal       = Functions::sumTimes($faturadosTotal      , Functions::toTime($registro['apontamentoFaturado']));
+                    ?>
+                    
+                    <tr>
+                        <?php if ($registro['apontamentoTipo'] == "Atividade") { ?>
+                            <td><a href="javascript:detalharAtividade(<?php echo $registro['atividadeCodigo']; ?>);"><?php echo $registro['apontamentoTipo'] . " " . $registro['atividadeCodigo'] ?></a></td>
+                        <?php } else { ?>
+                            <td><a href="javascript:detalharChamado(<?php echo $registro['atividadeCodigo']; ?>);"><?php echo $registro['apontamentoTipo'] . " " . $registro['atividadeCodigo'] ?></a></td>
+                        <?php } ?>
+                        <td><?php echo $registro['tipoAtividadeDescricao']; ?></td>
+                        <td><?php echo $registro['empresaDescricao']; ?></td>
+                        <td><?php echo $registro['situacaoDescricao']; ?></td>
+                        <td><?php echo $registro['usuarioNome']; ?></td>
+                        <td><?php echo $registro['apontamentoObservacao']; ?></td>
+                        <td><?php echo $registro['apontamentoDuracao'];?></td>
+                        <td>
+                            <select class="form-control" id="apontamentoAvaliacao[]" name="apontamentoAvaliacao[]" onchange="verificaHorasFaturar(<?php echo $contador;?>)" style="width:175px">
+                                <option value="9" <?php echo $registro['apontamentoAvaliacao'] == "9" ? "selected" : "" ?>>Não Avaliado</option>
+                                <option value="1" <?php echo $registro['apontamentoAvaliacao'] == "1" ? "selected" : "" ?>>Faturado Integral</option>
+                                <option value="2" <?php echo $registro['apontamentoAvaliacao'] == "2" ? "selected" : "" ?>>Faturado Parcial</option>
+                                <option value="3" <?php echo $registro['apontamentoAvaliacao'] == "3" ? "selected" : "" ?>>Não Faturado</option>
+                            </select>
+                        </td>
+                        <td><input type="text" size="8" class="form-control" id="apontamentoFaturado[]" name="apontamentoFaturado[]" value="<?php echo Functions::toTime($registro['apontamentoFaturado']);?>" style="width:90px" onchange="atualizarSessao()" /></td>
+                    </tr>
+                <?php } ?>
+                
+                <tr>
+                    <th colspan="6"><br /></th>
+                    <th colspan="1"><?php echo $apontamentosSubtotal;?></th>
+                    <th colspan="1"><br /></th>
+                    <th colspan="1"><?php echo $faturadosSubtotal;?></th>
+                </tr>
+                
+                <tr>
+                    <th colspan="6">Total:</th>
+                    <th colspan="1"><?php echo $apontamentosTotal;?></th>
+                    <th colspan="1"><br /></th>
+                    <th colspan="1"><?php echo $faturadosTotal;?></th>
+                </tr>
+                
+            </tbody>
+            
+        </table>
+        
+        <button type="submit" class="btn btn-default">
+            <span class="glyphicon glyphicon-floppy-disk"></span>&nbsp;&nbsp;Salvar
+        </button>
+        
+    </form>
+    
+</div>
+
+<script type="text/javascript">
+    function detalharChamado(chamadoCodigo) {
+        postViaJS('', {controle: 'Chamados', acao: 'cadastrar', id: chamadoCodigo}, "post", "_blank");
+    }
+    function detalharAtividade(atividadeCodigo) {
+        postViaJS('', {controle: 'Atividades', acao: 'cadastrar', id: atividadeCodigo}, "post", "_blank");
+    }
+</script>
+
+<?php include 'pageclose.php';

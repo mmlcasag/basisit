@@ -1,0 +1,103 @@
+<?php
+    $v_params = $this->getParams();
+    
+    $mensagem = "";
+    if (array_key_exists('mensagem', $v_params)) {
+        $mensagem = $v_params['mensagem'];
+    }
+    
+    $tipoSistema = new TiposSistemasVo();
+    if (array_key_exists('tipoSistema', $v_params)) {
+        $tipoSistema = $v_params['tipoSistema'];
+    }
+?>
+
+<?php include 'pageopen.php' ?>
+
+<div class="container">
+    
+    <div class="page-header">
+        <h3>Tipos de Sistemas<small> / Tela de Cadastro</small></h3>
+    </div>
+    
+    <?php
+    if (!empty($mensagem)) {
+        if (substr($mensagem,0,1) == "N") {
+            echo '<div class="alert alert-danger"><strong>ERRO!</strong>&nbsp;&nbsp;&nbsp;' . substr($mensagem,1,999) . '</div>';
+        }
+        if (substr($mensagem,0,1) == "S") {
+            echo '<div class="alert alert-success"><strong>SUCESSO!</strong>&nbsp;&nbsp;&nbsp;' . substr($mensagem,1,999) . '</div>';
+        }
+    }
+    ?>
+    
+    <form class="form-horizontal" role="form" method="post">
+        
+        <button type="button" class="btn btn-default" onclick="javascript:voltar();">
+            <span class="glyphicon glyphicon-arrow-left"></span>&nbsp;&nbsp;Voltar
+        </button>
+        
+        <button type="submit" class="btn btn-default">
+            <span class="glyphicon glyphicon-floppy-disk"></span>&nbsp;&nbsp;Salvar 
+        </button>
+        
+        <p><br /></p>
+        
+        <input type='hidden' name='controle' value='TiposSistemas'>
+        <input type='hidden' name='acao' value='salvar'>
+        
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="id">Código:</label>
+            <div class="col-sm-10">
+                <input type="hidden" id="id" name="id" value="<?php echo $tipoSistema->getId() ?>">
+                <input type="text" class="form-control" id="id" name="id" placeholder="Será gerado automaticamente pelo sistema" value="<?php echo $tipoSistema->getId()?>" disabled="disabled">
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="descricao">Descrição:</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" id="descricao" name="descricao" placeholder="Informe a descrição" value="<?php echo $tipoSistema->getDescricao()?>">
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="nomeMenu">Nome do Menu:</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" id="nomeMenu" name="nomeMenu" placeholder="Valor a ser passado no parâmetro controle do redirect" value="<?php echo $tipoSistema->getNomeMenu()?>">
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="enderecoListar">Ação de Listagem:</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" id="enderecoListar" name="enderecoListar" placeholder="Valor a ser passado no parâmetro acao do redirect para telas de listagem" value="<?php echo $tipoSistema->getEnderecoListar()?>">
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="enderecoManter">Ação de Manutenção:</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" id="enderecoManter" name="enderecoManter" placeholder="Valor a ser passado no parâmetro acao do redirect para telas de manutenção" value="<?php echo $tipoSistema->getEnderecoManter()?>">
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="situacao">Situação:</label>
+            <div class="col-sm-10">
+                <label class="radio-inline"><input type="radio" name="situacao" value="0" <?php echo ( $tipoSistema->getSituacao() == 0 ) ? 'checked="checked"' : '' ?> ><?php echo $tipoSistema->getSituacaoExtensoParam(0)?></label>
+                <label class="radio-inline"><input type="radio" name="situacao" value="1" <?php echo ( $tipoSistema->getSituacao() == 1 ) ? 'checked="checked"' : '' ?> ><?php echo $tipoSistema->getSituacaoExtensoParam(1)?></label>
+            </div>
+        </div>
+        
+    </form>
+    
+</div>
+
+<script type="text/javascript">
+    function voltar() {
+        postViaJS('', {controle: 'TiposSistemas', acao: 'listar'});
+    }
+</script>
+
+<?php include 'pageclose.php';

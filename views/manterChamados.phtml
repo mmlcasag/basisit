@@ -1,0 +1,1011 @@
+<?php
+    $v_params = $this->getParams();
+    
+    $mensagem = "";
+    if (array_key_exists('mensagem', $v_params)) {
+        $mensagem = $v_params['mensagem'];
+    }
+    
+    $chamado = new ChamadosVo();
+    if (array_key_exists('chamado', $v_params)) {
+        $chamado = $v_params['chamado'];
+    }
+    
+    $situacoes = array();
+    if (array_key_exists('situacoes', $v_params)) {
+        $situacoes = $v_params['situacoes'];
+    }
+    
+    $usuarios = array();
+    if (array_key_exists('usuarios', $v_params)) {
+        $usuarios = $v_params['usuarios'];
+    }
+    
+    $atendentes = array();
+    if (array_key_exists('atendentes', $v_params)) {
+        $atendentes = $v_params['atendentes'];
+    }
+    
+    $empresas = array();
+    if (array_key_exists('empresas', $v_params)) {
+        $empresas = $v_params['empresas'];
+    }
+    
+    $categorias = array();
+    if (array_key_exists('categorias', $v_params)) {
+        $categorias = $v_params['categorias'];
+    }
+    
+    $tiposAmbientes = array();
+    if (array_key_exists('tiposAmbientes', $v_params)) {
+        $tiposAmbientes = $v_params['tiposAmbientes'];
+    }
+    
+    $tiposProdutos = array();
+    if (array_key_exists('tiposProdutos', $v_params)) {
+        $tiposProdutos = $v_params['tiposProdutos'];
+    }
+    
+    $modulos = array();
+    if (array_key_exists('modulos', $v_params)) {
+        $modulos = $v_params['modulos'];
+    }
+    
+    $prioridades = array();
+    if (array_key_exists('prioridades', $v_params)) {
+        $prioridades = $v_params['prioridades'];
+    }
+    
+    $historicos = array();
+    if (array_key_exists('historicos', $v_params)) {
+        $historicos = $v_params['historicos'];
+    }
+    
+    $apontamentos = array();
+    if (array_key_exists('apontamentos', $v_params)) {
+        $apontamentos = $v_params['apontamentos'];
+    }
+    
+    $outroChamado = "";
+    if (isset($v_params['outroChamado'])) {
+        $outroChamado = $v_params['outroChamado'];
+    }
+    
+    $caller = "";
+    if (isset($v_params['caller'])) {
+	$caller = $v_params['caller'];
+    }
+    
+    $usuarioCodigo = $_SESSION['usuarioCodigo'];
+    $usuarioNome = $_SESSION['usuarioNome'];
+    
+    if (Functions::isEmpty($chamado->getId())) {
+        $inclusao = true;
+        $chamadoData = date("d/m/Y");
+        $situacaoCodigo = $_SESSION['situacaoPendente'];
+        $situacaoDescricao = "Pendente";
+        
+        if ($_SESSION['perfilCliente'] == 1) {
+            $exibeRequisitante = false;
+            $exibeRequisitanteAtivado = false;
+            $exibeAtendente = false;
+            $exibeAtendenteAtivado = false;
+            $exibeModulo = false;
+            $exibeModuloAtivado = false;
+        } else {
+            $exibeRequisitante = true;
+            $exibeRequisitanteAtivado = true;
+            $exibeAtendente = true;
+            $exibeAtendenteAtivado = true;
+            $exibeModulo = true;
+            $exibeModuloAtivado = true;
+        }
+    } else {
+        $inclusao = false;
+        $chamadoData = "";
+        $situacaoCodigo = "";
+        $situacaoDescricao = "";
+        
+        if ($_SESSION['perfilCliente'] == 1) {
+            $exibeRequisitante = true;
+            $exibeRequisitanteAtivado = false;
+            $exibeAtendente = true;
+            $exibeAtendenteAtivado = false;
+            $exibeModulo = true;
+            $exibeModuloAtivado = false;
+        } else {
+            $exibeRequisitante = true;
+            $exibeRequisitanteAtivado = true;
+            $exibeAtendente = true;
+            $exibeAtendenteAtivado = true;
+            $exibeModulo = true;
+            $exibeModuloAtivado = true;
+        }
+    }
+    
+    if ($_SESSION['perfilAdministrador'] == 1) {
+        $exibeAcoesApontamentos = true;
+    } else {
+        $exibeAcoesApontamentos = false;
+    }
+    
+    if ($_SESSION['perfilCliente'] == 1) {
+        $exibePrevisaoTermino = false;
+        $exibeApontamentos = false;
+    } else {
+        $exibePrevisaoTermino = true;
+        $exibeApontamentos = true;
+    }
+    
+    if (($_SESSION['perfilAdministrador'] == 0) && (!$inclusao) && (($chamado->getSituacao()->getId() == $_SESSION['situacaoFinalizada']) || ($chamado->getSituacao()->getId() == $_SESSION['situacaoCancelada']))) {
+        $exibeControlesAbertos = false;
+        $exibeEmpresaAberta = false;
+        $empresaCodigo = $chamado->getEmpresa()->getId();
+        $empresaDescricao = $chamado->getEmpresa()->getDescricao();
+    } else {
+        $exibeControlesAbertos = true;
+        if (Functions::isEmpty($_SESSION['empresaCodigo'])) {
+            $exibeEmpresaAberta = true;
+            $empresaCodigo = "";
+            $empresaDescricao = "";
+        } else {
+            $exibeEmpresaAberta = false;
+            $empresaCodigo = $_SESSION['empresaCodigo'];
+            $empresaDescricao = $_SESSION['empresaDescricao'];
+        }
+    }
+?>
+
+<?php include 'pageopen.php' ?>
+
+<link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        $(".datepicker").datepicker({dateFormat: 'dd/mm/yy'});
+    });
+    function atualizaEmpresa() {
+        var ajax;
+        if (window.XMLHttpRequest)
+            ajax = new XMLHttpRequest();
+        else
+            ajax = new ActiveXObject("Microsoft.XMLHTTP");
+        
+        ajax.onreadystatechange = function() {
+            if (ajax.readyState == 4 && ajax.status == 200) {
+                document.getElementById("empresa").value = ajax.responseText;
+            }
+        }
+        ajax.open("POST", "?controle=Chamados&acao=ajaxBuscaEmpresaDoRequisitante", true);
+        ajax.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+        ajax.send("requisitante=" + document.getElementById("requisitante").value);
+    }
+    function defineImpacto(impacto, exibeAberto, usuariosAfetados, areasAfetadas) {
+        var ajax;
+        if (window.XMLHttpRequest)
+            ajax = new XMLHttpRequest();
+        else
+            ajax = new ActiveXObject("Microsoft.XMLHTTP");
+        
+        ajax.onreadystatechange = function() {
+            if (ajax.readyState == 4 && ajax.status == 200) {
+                document.getElementById("divImpacto").innerHTML = ajax.responseText;
+            }
+        }
+        ajax.open("POST", "?controle=Prioridades&acao=ajaxExibeImpacto", true);
+        ajax.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+        ajax.send("prioridade=" + document.getElementById("prioridade").value + 
+                  "&impacto=" + impacto +
+                  "&exibeAberto=" + exibeAberto + 
+                  "&usuariosAfetados=" + usuariosAfetados + 
+                  "&areasAfetadas=" + areasAfetadas);
+    }
+    function definePrevisaoTermino(inclusao) {
+        var ajax;
+        if (window.XMLHttpRequest)
+            ajax = new XMLHttpRequest();
+        else
+            ajax = new ActiveXObject("Microsoft.XMLHTTP");
+        
+        ajax.onreadystatechange = function() {
+            if (ajax.readyState == 4 && ajax.status == 200) {
+                if (inclusao == 1) {
+                    document.getElementById("previsaoTermino").value = ajax.responseText;
+                    document.getElementById("previsaoTerminoLabel").value = ajax.responseText;
+                }
+            }
+        }
+        ajax.open("GET", "?controle=Prioridades&acao=ajaxExibePrevisaoTermino", true);
+        ajax.send();
+    }
+    function defineUsuariosAfetados(exibeAberto, usuariosAfetados) {
+        var impacto;
+        if (document.getElementById("impactoNao") === null) {
+            impacto = document.getElementById("impactoHidden").value;
+        } else {
+            if (document.getElementById("impactoNao").checked) {
+                impacto = 0;
+            }
+            if (document.getElementById("impactoSim").checked) {
+                impacto = 1;
+            }
+        }
+        
+        var ajax;
+        if (window.XMLHttpRequest)
+            ajax = new XMLHttpRequest();
+        else
+            ajax = new ActiveXObject("Microsoft.XMLHTTP");
+        
+        ajax.onreadystatechange = function() {
+            if (ajax.readyState == 4 && ajax.status == 200) {
+                document.getElementById("divUsuariosAfetados").innerHTML = ajax.responseText;
+            }
+        }
+        ajax.open("POST", "?controle=Chamados&acao=ajaxUsuariosAfetados", true);
+        ajax.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+        ajax.send("impacto=" + impacto +
+                  "&exibeAberto=" + exibeAberto +
+                  "&usuariosAfetados=" + usuariosAfetados);
+    }
+    function defineAreasAfetadas(exibeAberto, areasAfetadas) {
+        var impacto;
+        if (document.getElementById("impactoNao") === null) {
+            impacto = document.getElementById("impactoHidden").value;
+        } else {
+            if (document.getElementById("impactoNao").checked) {
+                impacto = 0;
+            }
+            if (document.getElementById("impactoSim").checked) {
+                impacto = 1;
+            }
+        }
+        
+        var ajax;
+        if (window.XMLHttpRequest)
+            ajax = new XMLHttpRequest();
+        else
+            ajax = new ActiveXObject("Microsoft.XMLHTTP");
+        
+        ajax.onreadystatechange = function() {
+            if (ajax.readyState == 4 && ajax.status == 200) {
+                document.getElementById("divAreasAfetadas").innerHTML = ajax.responseText;
+            }
+        }
+        ajax.open("POST", "?controle=Chamados&acao=ajaxAreasAfetadas", true);
+        ajax.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+        ajax.send("impacto=" + impacto +
+                  "&exibeAberto=" + exibeAberto +
+                  "&areasAfetadas=" + areasAfetadas);
+    }
+    function alteraPrioridade(impacto, exibeAberto, inclusao, usuariosAfetados, areasAfetadas) {
+        defineImpacto(impacto, exibeAberto, usuariosAfetados, areasAfetadas);
+        definePrevisaoTermino(inclusao);
+    }
+    function alteraImpacto(exibeAberto, usuariosAfetados, areasAfetadas) {
+        defineUsuariosAfetados(exibeAberto, usuariosAfetados);
+        defineAreasAfetadas(exibeAberto, areasAfetadas);
+    }
+</script>
+
+<div class="container">
+    
+    <div class="page-header">
+        <h3>Chamados<small> / Tela de Cadastro</small></h3>
+    </div>
+    
+    <?php
+    if (!empty($mensagem)) {
+        if (substr($mensagem,0,1) == "N") {
+            echo '<div class="alert alert-danger"><strong>ERRO!</strong>&nbsp;&nbsp;&nbsp;' . substr($mensagem,1,999) . '</div>';
+        }
+        if (substr($mensagem,0,1) == "S") {
+            echo '<div class="alert alert-success"><strong>SUCESSO!</strong>&nbsp;&nbsp;&nbsp;' . substr($mensagem,1,999) . '</div>';
+        }
+    }
+    ?>
+    
+    <form class="form-horizontal" enctype="multipart/form-data" method="post" name="form" role="form">
+        
+        <button type="button" class="btn btn-default" onclick="javascript:voltar();">
+            <span class="glyphicon glyphicon-arrow-left"></span>&nbsp;&nbsp;Voltar
+        </button>
+        
+        <?php if ($exibeControlesAbertos) { ?>
+            <button type="submit" class="btn btn-default">
+                <span class="glyphicon glyphicon-floppy-disk"></span>&nbsp;&nbsp;Salvar 
+            </button>
+
+            <?php if (!$inclusao) { ?>
+            <button type="button" class="btn btn-default" onclick="javascript:finalizar(<?php echo $chamado->getId() ?>);">
+                <span class="glyphicon glyphicon-ok-sign"></span>&nbsp;&nbsp;Finalizar
+            </button>
+
+            <button type="button" class="btn btn-default" onclick="javascript:cancelar(<?php echo $chamado->getId() ?>);">
+                <span class="glyphicon glyphicon-remove-sign"></span>&nbsp;&nbsp;Cancelar
+            </button>
+            <?php } ?>
+        <?php } ?>
+        
+        <p><br /></p>
+        
+        <input type='hidden' name='controle' value='chamados'>
+        <input type='hidden' name='acao' value='salvarCadastrar'>
+        
+        <input type="hidden" id="id" name="id" value="<?php echo $chamado->getId() ?>">
+        <input type='hidden' id='impactoHidden' name='impactoHidden' value='<?php echo $chamado->getImpacto() ?>'>
+        
+        <!-- Código --------------------------------------------------------------------------->
+        
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="id">Código:</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" id="id" name="id" placeholder="Será gerado automaticamente pelo sistema" value="<?php echo $chamado->getId()?>" disabled="disabled">
+            </div>
+        </div>
+        
+        <!-- Data de Abertura ----------------------------------------------------------------->
+        
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="data">Data Abertura:</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control datepicker" id="data" name="data" value="" disabled="disabled" />                
+            </div>
+        </div>
+        
+        <?php
+        if ($inclusao) {
+            $data = $chamadoData;
+        } else {
+            $data = $chamado->getData();
+        }
+        
+        echo '<script>document.form.data.value = "' . $data . '";</script>';
+        echo '<input type="hidden" name="data" value="' . $data . '" />';
+        ?>
+        
+        <!-- Usuário -------------------------------------------------------------------------->
+        
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="usuario">Usuário:</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" id="usuario" name="usuario" value="" disabled="disabled" />
+            </div>
+        </div>
+        
+        <?php
+        if ($inclusao) {
+            $usuarioCodigo = $usuarioCodigo;
+            $usuarioNome = $usuarioNome;
+        } else {
+            $usuarioCodigo = $chamado->getUsuario()->getId();
+            $usuarioNome = $chamado->getUsuario()->getNome();
+        }
+        
+        echo '<script>document.form.usuario.value = "' . $usuarioNome . '";</script>';
+        echo '<input type="hidden" name="usuario" value="' . $usuarioCodigo . '" />';
+        ?>
+        
+        <!-- Requisitante --------------------------------------------------------------------->
+        
+        <?php if ($exibeRequisitante) { ?>
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="requisitante">Requisitante:</label>
+            <div class="col-sm-10">
+                <select class="form-control" id="requisitante" name="requisitante" onchange="atualizaEmpresa();">
+                    <option value="">Selecione</option>
+                    <?php
+                    foreach($usuarios as $usuario) {
+                        echo '<option value="' . $usuario->getId() . '">' . $usuario->getNome() . '</option>';
+                    }
+                    ?>
+                </select>
+            </div>
+        </div>
+        <?php } ?>
+        
+        <?php
+        if ($chamado->getRequisitante() != "") {
+            $requisitante = $chamado->getRequisitante()->getId();
+        } else {
+            $requisitante = "";
+        }
+        
+        if ($exibeRequisitante) {
+            echo '<script>document.form.requisitante.value = "' . $requisitante . '";</script>';
+            
+            if (($exibeRequisitanteAtivado) && ($exibeControlesAbertos)) {
+                echo '';
+            } else {
+                echo '<script>document.form.requisitante.disabled = true;</script>';
+                echo '<input type="hidden" name="requisitante" value="' . $requisitante . '" />';
+            }
+        } else {
+            echo '<input type="hidden" name="requisitante" value="' . $requisitante . '" />';
+        }
+        ?>
+        
+        <!-- Atendente ------------------------------------------------------------------------>
+        
+        <?php if ($exibeAtendente) { ?>
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="atendente">Analista:</label>
+            <div class="col-sm-10">
+                <select class="form-control" id="atendente" name="atendente">
+                    <option value="">Selecione</option>
+                    <?php
+                    foreach($atendentes as $atendente) {
+                        echo '<option value="' . $atendente->getId() . '">' . $atendente->getNome() . '</option>';
+                    }
+                    ?>
+                </select>
+            </div>
+        </div>
+        <?php } ?>
+        
+        <?php
+        if ($chamado->getAtendente() != "") {
+            $atendente = $chamado->getAtendente()->getId();
+        } else {
+            $atendente = "";
+        }
+        
+        if ($exibeAtendente) {
+            echo '<script>document.form.atendente.value = "' . $atendente . '";</script>';
+            
+            if (($exibeAtendenteAtivado) && ($exibeControlesAbertos)) { 
+                echo '';
+            } else {
+                echo '<script>document.form.atendente.disabled = true;</script>';
+                echo '<input type="hidden" name="atendente" value="' . $atendente . '" />';
+            }
+        } else {
+            echo '<input type="hidden" name="atendente" value="' . $atendente . '" />';
+        }
+        ?>
+        
+        <!-- Situação ------------------------------------------------------------------------->
+        
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="situacao">Situação:</label>
+            <div class="col-sm-10">
+                <select class="form-control" id="situacao" name="situacao">
+                    <option value="">Selecione</option>
+                    <?php
+                    foreach($situacoes as $situacao) {
+                        echo '<option value="' . $situacao->getId() . '">' . $situacao->getDescricao() . '</option>';
+                    }
+                    ?>
+                </select>
+            </div>
+        </div>
+        
+        <?php
+        if ($inclusao) {
+            $situacao = $situacaoCodigo;
+        } else {
+            if ($chamado->getSituacao() != "") {
+                $situacao = $chamado->getSituacao()->getId();
+            } else {
+                $situacao = "";
+            }
+        }
+        
+        if ($_SESSION['perfilCliente'] == 1) {
+            $exibeSituacaoAtivado = false;
+        } else {
+            $exibeSituacaoAtivado = true;
+        }
+        
+        echo '<script>document.form.situacao.value = "' . $situacao . '";</script>';
+        
+        if (($exibeSituacaoAtivado) && ($exibeControlesAbertos)) {
+            echo '';
+        } else {
+            echo '<script>document.form.situacao.disabled = true;</script>';
+            echo '<input type="hidden" name="situacao" value="' . $situacao . '" />';
+        }
+        ?>
+        
+        <!-- Empresa -------------------------------------------------------------------------->
+        
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="empresa">Empresa:</label>
+            <div class="col-sm-10">
+                <select class="form-control" id="empresa" name="empresa">
+                    <option value="">Selecione</option>
+                    <?php
+                    foreach($empresas as $empresa) {
+                        echo '<option value="' . $empresa->getId() . '">' . $empresa->getDescricao() . '</option>';
+                    }
+                    ?>
+                </select>
+            </div>
+        </div>
+        
+        <?php
+        if ($chamado->getEmpresa() != "") {
+            $empresa = $chamado->getEmpresa()->getId();
+        } else {
+            $empresa = $_SESSION['empresaCodigo'];
+        }
+        
+        echo '<script>document.form.empresa.value = "' . $empresa . '";</script>';
+        
+        if (($exibeEmpresaAberta) && ($exibeControlesAbertos)) {
+            echo '';
+        } else {
+            echo '<script>document.form.empresa.disabled = true;</script>';
+            echo '<input type="hidden" name="empresa" value="' . $empresa . '" />';
+        }
+        ?>
+        
+        <!-- Categoria ------------------------------------------------------------------------>
+        
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="categoria">Categoria:</label>
+            <div class="col-sm-10">
+                <select class="form-control" id="categoria" name="categoria">
+                    <option value="">Selecione</option>
+                    <?php
+                    foreach($categorias as $categoria) {
+                        echo '<option value="' . $categoria->getId() . '">' . $categoria->getDescricao() . '</option>';
+                    }
+                    ?>
+                </select>
+            </div>
+        </div>
+        
+        <?php
+        if ($chamado->getCategoria() != "") {
+            $categoria = $chamado->getCategoria()->getId();
+        } else {
+            $categoria = "";
+        }
+        
+        echo '<script>document.form.categoria.value = "' . $categoria . '";</script>';
+        
+        if ($exibeControlesAbertos) {
+            echo '';
+        } else {
+            echo '<script>document.form.categoria.disabled = true;</script>';
+            echo '<input type="hidden" name="categoria" value="' . $categoria . '" />';
+        }
+        ?>
+        
+        <!-- Tipo de Ambiente ----------------------------------------------------------------->
+        
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="tipoAmbiente">Tipo de Ambiente:</label>
+            <div class="col-sm-10">
+                <select class="form-control" id="tipoAmbiente" name="tipoAmbiente">
+                    <option value="">Selecione</option>
+                    <?php
+                    foreach($tiposAmbientes as $tipoAmbiente) {
+                        echo '<option value="' . $tipoAmbiente->getId() . '">' . $tipoAmbiente->getDescricao() . '</option>';
+                    }
+                    ?>
+                </select>
+            </div>
+        </div>
+        
+        <?php
+        if ($chamado->getTipoAmbiente() != "") {
+            $tipoAmbiente = $chamado->getTipoAmbiente()->getId();
+        } else {
+            $tipoAmbiente = "";
+        }
+        
+        echo '<script>document.form.tipoAmbiente.value = "' . $tipoAmbiente . '";</script>';
+        
+        if ($exibeControlesAbertos) {
+            echo '';
+        } else {
+            echo '<script>document.form.tipoAmbiente.disabled = true;</script>';
+            echo '<input type="hidden" name="tipoAmbiente" value="' . $tipoAmbiente . '" />';
+        }
+        ?>
+        
+        <!-- Tipo de Produto ------------------------------------------------------------------>
+        
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="tipoProduto">Tipo de Produto:</label>
+            <div class="col-sm-10">
+                <select class="form-control" id="tipoProduto" name="tipoProduto">
+                    <option value="">Selecione</option>
+                    <?php
+                    foreach($tiposProdutos as $tipoProduto) {
+                        echo '<option value="' . $tipoProduto->getId() . '">' . $tipoProduto->getDescricao() . '</option>';
+                    }
+                    ?>
+                </select>
+            </div>
+        </div>
+        
+        <?php
+        if ($chamado->getTipoProduto() != "") {
+            $tipoProduto = $chamado->getTipoProduto()->getId();
+        } else {
+            $tipoProduto = "";
+        }
+        
+        echo '<script>document.form.tipoProduto.value = "' . $tipoProduto . '";</script>';
+        
+        if ($exibeControlesAbertos) {
+            echo '';
+        } else {
+            echo '<script>document.form.tipoProduto.disabled = true;</script>';
+            echo '<input type="hidden" name="tipoProduto" value="' . $tipoProduto . '" />';
+        }
+        ?>
+        
+        <!-- Módulo --------------------------------------------------------------------------->
+        
+        <?php if ($exibeModulo) { ?>
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="modulo">Módulo:</label>
+            <div class="col-sm-10">
+                <select class="form-control" id="modulo" name="modulo">
+                    <option value="">Selecione</option>
+                    <?php 
+                    foreach($modulos as $modulo) {
+                        echo '<option value="' . $modulo->getId() . '">' . $modulo->getDescricao() . '</option>';
+                    }
+                    ?>
+                </select>
+            </div>
+        </div>
+        <?php } ?>
+        
+        <?php
+        if ($chamado->getModulo() != "") {
+            $modulo = $chamado->getModulo()->getId();
+        } else {
+            $modulo = "";
+        }
+        
+        if ($exibeModulo) {
+            echo '<script>document.form.modulo.value = "' . $modulo . '";</script>';
+            
+            if (($exibeModuloAtivado) && ($exibeControlesAbertos)) {
+                echo '';
+            } else {
+                echo '<script>document.form.modulo.disabled = true;</script>';
+                echo '<input type="hidden" name="modulo" value="' . $modulo . '" />';
+            }
+        } else {
+            echo '<input type="hidden" name="modulo" value="' . $modulo . '" />';
+        }
+        ?>
+        
+        <!-- Prioridade ----------------------------------------------------------------------->
+        
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="prioridade">Prioridade:</label>
+            <div class="col-sm-10">
+                <?php echo '<select class="form-control" id="prioridade" name="prioridade" onchange="alteraPrioridade(' . ( Functions::isEmpty($chamado->getImpacto()) ? 0 : $chamado->getImpacto() ) . ',' . ( ($exibeControlesAbertos) ? '1' : '0' ) . ',' . ( ($inclusao) ? '1' : '0' ) . ',' . ( Functions::isEmpty($chamado->getUsuariosAfetados()) ? 0 : $chamado->getUsuariosAfetados() ) . ',' . ( Functions::isEmpty($chamado->getAreasAfetadas()) ? 0 : $chamado->getAreasAfetadas() ) . ');">'; ?>
+                    <option value="">Selecione</option>
+                    <?php
+                    foreach($prioridades as $prioridade) {
+                        echo '<option value="' . $prioridade->getId() . '">' . $prioridade->getDescricao() . '</option>';
+                    }
+                    ?>
+                </select>
+            </div>
+        </div>
+        
+        <?php
+        if ($chamado->getPrioridade() != "") {
+            $prioridade = $chamado->getPrioridade()->getId();
+        } else {
+            $prioridade = "";
+        }
+        
+        echo '<script>document.form.prioridade.value = "' . $prioridade . '";</script>';
+        
+        if ($exibeControlesAbertos) {
+            echo '';
+        } else {
+            echo '<script>document.form.prioridade.disabled = true;</script>';
+            echo '<input type="hidden" name="prioridade" value="' . $prioridade . '" />';
+        }
+        ?>
+        
+        <!-- Impacto -------------------------------------------------------------------------->
+        
+        <div id="divImpacto">
+            
+        </div>
+        
+        <!-- Usuários Afetados ---------------------------------------------------------------->
+        
+        <div id="divUsuariosAfetados">
+            
+        </div>
+        
+        <!-- Todas Áreas Afetadas? ------------------------------------------------------------>
+        
+        <div id="divAreasAfetadas">
+            
+        </div>
+        
+        <!-- Previsão Término ----------------------------------------------------------------->
+        
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="previsaoTermino">Previsão Término:</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control datepicker" id="previsaoTermino" name="previsaoTermino" value="" />
+            </div>
+        </div>
+        
+        <?php
+        if ($chamado->getPrevisaoTermino() != "") {
+            $previsaoTermino = $chamado->getPrevisaoTermino();
+        } else {
+            $previsaoTermino = "";
+        }
+        
+        echo '<script>document.form.previsaoTermino.value = "' . $previsaoTermino . '";</script>';
+        
+        if (($exibePrevisaoTermino) && ($exibeControlesAbertos)) {
+            echo '';
+        } else {
+            echo '<script>document.form.previsaoTermino.disabled = true;</script>';
+            echo '<input type="hidden" name="previsaoTermino" value="' . $previsaoTermino . '" />';
+        }
+        ?>
+        
+        <!-- Assunto -------------------------------------------------------------------------->
+        
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="assunto">Assunto:</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" id="assunto" name="assunto" value="" />
+            </div>
+        </div>
+        
+        <?php
+        if ($chamado->getAssunto() != "") {
+            $assunto = $chamado->getAssunto();
+        } else {
+            $assunto = "";
+        }
+        
+        echo '<script>document.form.assunto.value = "' . $assunto . '";</script>';
+        
+        if ($exibeControlesAbertos) {
+            echo '';
+        } else {
+            echo '<script>document.form.assunto.disabled = true;</script>';
+            echo '<input type="hidden" name="assunto" value="' . $assunto . '" />';
+        }
+        ?>
+        
+        <!-- Descrição ------------------------------------------------------------------------>
+        
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="observacao">Descrição:</label>
+            <div class="col-sm-10">
+                <textarea class="form-control" rows="5" id="observacao" name="observacao" placeholder=""></textarea>
+            </div>
+        </div>
+        
+        <?php
+        if (!Functions::isEmpty($chamado->getObservacao())) {
+            $observacao = $chamado->getObservacao();
+        } else {
+            $observacao = "";
+        }
+        
+        echo '<script>document.form.observacao.value = "' . $observacao . '";</script>';
+        
+        if ($exibeControlesAbertos) {
+            echo '';
+        } else {
+            echo '<script>document.form.observacao.disabled = true;</script>';
+            echo '<input type="hidden" name="observacao" value="' . $observacao . '" />';
+        }
+        ?>
+        
+        <!-- Anexo ---------------------------------------------------------------------------->
+        
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="anexo">Anexo:</label>
+            <div class="col-sm-10">
+                <input type="file" class="form-control" id="anexo" name="anexo" />
+            </div>
+        </div>
+        
+        <?php
+        if ($exibeControlesAbertos) {
+            echo '';
+        } else {
+            echo '<script>document.form.anexo.disabled = true;</script>';
+        }
+        ?>
+        
+        <!-- Ações ---------------------------------------------------------------------------->
+        
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="anexo">Ações:</label>
+            <div class="col-sm-10">
+                <button type="button" class="btn btn-default" onclick="javascript:voltar();">
+                    <span class="glyphicon glyphicon-arrow-left"></span>&nbsp;&nbsp;Voltar
+                </button>
+                
+                <?php if ($exibeControlesAbertos) { ?>
+                    <button type="submit" class="btn btn-default">
+                        <span class="glyphicon glyphicon-floppy-disk"></span>&nbsp;&nbsp;Salvar 
+                    </button>
+
+                    <?php if (!$inclusao) { ?>
+                        <button type="button" class="btn btn-default" onclick="javascript:finalizar(<?php echo $chamado->getId() ?>);">
+                            <span class="glyphicon glyphicon-ok-sign"></span>&nbsp;&nbsp;Finalizar
+                        </button>
+
+                        <button type="button" class="btn btn-default" onclick="javascript:cancelar(<?php echo $chamado->getId() ?>);">
+                            <span class="glyphicon glyphicon-remove-sign"></span>&nbsp;&nbsp;Cancelar
+                        </button>
+                    <?php } ?>
+                <?php } ?>
+            </div>
+        </div>
+        
+    </form>
+    
+    <?php if (!$inclusao) { ?>
+        <p><br /></p>
+        
+        <div class="well well-sm"><b>Históricos</b></div>
+        
+        <table class="table table-striped">
+            
+            <thead>
+                <tr>
+                    <th class="col-sm-2">Usuário</th>
+                    <th class="col-sm-1">Data</th>
+                    <th class="col-sm-3">Descrição</th>
+                    <th class="col-sm-2">Anexo</th>
+                </tr>
+            </thead>
+            
+            <tbody>
+            <?php foreach ($historicos AS $historico) { ?>
+                <tr>
+                    <td><?php echo $historico->getUsuario()->getNome()?></td>
+                    <td><?php echo $historico->getData()?></td>
+                    <td><?php echo $historico->getObservacao()?></td>
+                    <td><a target="_blank" href="javascript:baixar('<?php echo $historico->getAnexo(); ?>','<?php echo "uploads/CHA" . str_pad($historico->getChamado()->getId(), 11, "0", STR_PAD_LEFT) . "." . str_pad($historico->getId(), 11, "0", STR_PAD_LEFT)?>')"><?php echo $historico->getAnexo(); ?></a></td>
+                </tr>
+            <?php } ?>
+            </tbody>
+            
+        </table>
+    <?php } ?>
+    
+    <?php if ((!$inclusao) && ($exibeApontamentos)) { ?>
+        <p><br /></p>
+        
+        <div class="well well-sm"><b>Apontamentos</b></div>
+        
+        <?php if ($exibeControlesAbertos) { ?>
+            <?php if ($exibeAcoesApontamentos) { ?>
+                <button type="button" class="btn btn-default" onclick="javascript:incluir(<?php echo $chamado->getId()?>);">
+                    <span class="glyphicon glyphicon-file"></span>&nbsp;&nbsp;Novo
+                </button>
+            <?php } ?>
+            
+            <button type="button" class="btn btn-default" onclick="javascript:iniciar(<?php echo $chamado->getId()?>);">
+                <span class="glyphicon glyphicon-play"></span>&nbsp;&nbsp;Iniciar
+            </button>
+            
+            <button type="button" class="btn btn-default" onclick="javascript:parar(<?php echo $chamado->getId()?>);">
+                <span class="glyphicon glyphicon-stop"></span>&nbsp;&nbsp;Parar
+            </button>
+        <?php } ?>
+        
+        <p><br /></p>
+        
+        <table class="table table-striped">
+            
+            <thead>
+                <tr>
+                    <th class="col-sm-1">Funcionário</th>
+                    <th class="col-sm-1">Início</th>
+                    <th class="col-sm-1">Fim</th>
+                    <th class="col-sm-1">Duração</th>
+                    <th class="col-sm-2">Observação</th>
+                    <?php if (($exibeControlesAbertos) && ($exibeAcoesApontamentos)) { ?>
+                        <th class="col-sm-1">Ações</th>
+                    <?php } ?>
+                </tr>
+            </thead>
+            
+            <tbody>
+            <?php foreach ($apontamentos AS $apontamento) { ?>
+                <tr>
+                    <td><?php echo $apontamento->getUsuario()->getNome()?></td>
+                    <td><?php echo $apontamento->getDataInicio()?></td>
+                    <td><?php echo $apontamento->getDataFim()?></td>
+                    <td><?php echo $apontamento->getApontado()?></td>
+                    <td><?php echo $apontamento->getObservacao()?></td>
+                    <?php if (($exibeControlesAbertos) && ($exibeAcoesApontamentos)) { ?>
+                    <td>
+                        <button type="button" class="btn btn-default btn-xs" onclick="javascript:editar(<?php echo $apontamento->getId()?>,<?php echo $chamado->getId()?>);">
+                            <span class="glyphicon glyphicon-cog"></span>&nbsp;Alterar
+                        </button>
+                        <button type="button" class="btn btn-default btn-xs" onclick="javascript:excluir(<?php echo $apontamento->getId()?>);">
+                            <span class="glyphicon glyphicon-trash"></span>&nbsp;Excluir
+                        </button>
+                    </td>
+                    <?php } ?>
+                </tr>
+            <?php } ?>
+            </tbody>
+            
+        </table>
+    <?php } ?>
+    
+</div>
+
+<script>
+    function voltar() {
+        postViaJS('', {controle: 'Chamados', acao: 'filtrar'});
+    }
+    function finalizar(chamadoCodigo) {
+        postViaJS('', {controle: 'Chamados', acao: 'finalizar', id: chamadoCodigo});
+    }
+    function cancelar(chamadoCodigo) {
+        postViaJS('', {controle: 'Chamados', acao: 'cancelar', id: chamadoCodigo});
+    }
+    function incluir(chamadoCodigo) {
+        postViaJS('', {controle: 'Apontamentos', acao: 'cadastrar', chamado: chamadoCodigo});
+    }
+    function editar(apontamentoCodigo, chamadoCodigo) {
+        postViaJS('', {controle: 'Apontamentos', acao: 'cadastrar', id: apontamentoCodigo, chamado: chamadoCodigo});
+    }
+    function excluir(apontamentoCodigo) {
+        postViaJS('', {controle: 'Apontamentos', acao: 'excluir', id: apontamentoCodigo});
+    }
+    function baixar(nomeOriginal, nomeSistema) {
+        postViaJS('', {controle: 'Chamados', acao: 'baixar', nomeOriginal: nomeOriginal, nomeSistema: nomeSistema});
+    }
+    function iniciar(chamadoCodigo) {
+        var observacao = prompt("Informe a observação para o início do apontamento");
+        if (observacao != null) {
+            postViaJS('', {controle: 'Apontamentos', acao: 'iniciar', chamado: chamadoCodigo, observacao: observacao});
+        }
+    }
+    function parar(chamadoCodigo) {
+        var observacao = prompt("Informe a observação para o término/pausa do apontamento");
+        if (observacao != null) {
+            postViaJS('', {controle: 'Apontamentos', acao: 'parar', chamado: chamadoCodigo, observacao: observacao});
+        }
+    }
+    function iniciar2(chamadoIniciar, chamadoVisualizar) {
+        var observacao = "Iniciado automaticamente";
+        if (observacao != null) {
+            postViaJS('', {controle: 'Apontamentos', acao: 'iniciar', chamado: chamadoIniciar, observacao: observacao, visualizar: chamadoVisualizar});
+        }
+    }
+    function parar2(chamadoParar, chamadoVisualizar) {
+        var observacao = "Parado/pausado automaticamente";
+        if (observacao != null) {
+            postViaJS('', {controle: 'Apontamentos', acao: 'parar', chamado: chamadoParar, observacao: observacao, visualizar: chamadoVisualizar});
+        }
+    }
+</script>
+
+<?php 
+
+echo '
+<script>
+    alteraPrioridade(' . ( Functions::isEmpty($chamado->getImpacto()) ? 0 : $chamado->getImpacto() ) . ',' . ( ($exibeControlesAbertos) ? '1' : '0' ) . ',' . ( ($inclusao) ? '1' : '0' ) . ',' . ( Functions::isEmpty($chamado->getUsuariosAfetados()) ? 0 : $chamado->getUsuariosAfetados() ) . ',' . ( Functions::isEmpty($chamado->getAreasAfetadas()) ? 0 : $chamado->getAreasAfetadas() ) . ');
+    alteraImpacto(' . ( ($exibeControlesAbertos) ? '1' : '0' ) . ',' . ( Functions::isEmpty($chamado->getUsuariosAfetados()) ? 0 : $chamado->getUsuariosAfetados() ) . ',' . ( Functions::isEmpty($chamado->getAreasAfetadas()) ? 0 : $chamado->getAreasAfetadas() ) . ');
+</script>
+';
+?>
+
+<?php include 'pageclose.php';

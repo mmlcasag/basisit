@@ -1,0 +1,68 @@
+@CHARSET "ISO-8859-1";
+
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    margin: 0 0 241px; /* bottom = footer height */
+    padding: 0;
+    border: 0;
+}
+
+/* header */
+/* cor padrão da barra */
+.navbar-default {
+    background-color: #014961;
+}
+
+/* cor padrão do menu */
+.navbar-default .navbar-nav > .active > a, .navbar-default .navbar-nav > .active > a:hover, .navbar-default .navbar-nav > .active > a:focus {
+    background-color: #014961;
+}
+
+/* cor padrão dos itens da barra */
+.navbar-default .navbar-nav > li > a, .navbar-default .navbar-brand {
+    color: #FFFFFF;
+}
+
+/* cor do menu quando passa o cursor por cima */
+.navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus, .navbar-default .navbar-brand:hover {
+    color: #CCCCCC;
+}
+
+/* cor dos itens do menu dropdown quando passa o cursor por cima */
+.dropdown-menu > li > a:hover, .dropdown-menu > li > a:focus {
+    background-color: #014961;
+    color: #FFFFFF;
+}
+/* end-header */
+	
+/* footer */
+footer {
+    background: url("../images/bg-footer.jpg") no-repeat;
+    background-color: #004763;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 241px;
+    width: 100%;
+}
+footer table {
+    width: 90%;
+    margin-left:5%; 
+    margin-right:5%;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    margin-bottom: 10px;
+}
+address, address a {
+    font-size: 18px;
+    color: #fff;
+    line-height: 17px;
+    margin-top: 21px;
+    text-align: center;
+}
+/* end-footer */

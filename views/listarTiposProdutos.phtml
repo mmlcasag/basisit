@@ -1,0 +1,82 @@
+<?php
+    $v_params = $this->getParams();
+    
+    $mensagem = "";
+    if (array_key_exists('mensagem', $v_params)) {
+        $mensagem = $v_params['mensagem'];
+    }
+    
+    $registros = array();
+    if (array_key_exists('registros', $v_params)) {
+        $registros = $v_params['registros'];
+    }
+?>
+
+<?php include 'pageopen.php' ?>
+
+<div class="container">
+    
+    <div class="page-header">
+        <h3>Tipos de Produtos<small> / Tela de Listagem</small></h3>
+    </div>
+    
+    <?php
+    if (!Functions::isEmpty($mensagem)) {
+        if (substr($mensagem,0,1) == "N") {
+            echo '<div class="alert alert-danger"><strong>ERRO!</strong>&nbsp;&nbsp;&nbsp;' . substr($mensagem,1,999) . '</div>';
+        }
+        if (substr($mensagem,0,1) == "S") {
+            echo '<div class="alert alert-success"><strong>SUCESSO!</strong>&nbsp;&nbsp;&nbsp;' . substr($mensagem,1,999) . '</div>';
+        }
+    }
+    ?>
+    
+    <button type="button" class="btn btn-default" onclick="javascript:incluir();">
+        <span class="glyphicon glyphicon-file"></span>&nbsp;&nbsp;Novo
+    </button>
+    
+    <p><br /></p>
+    
+    <table class="table table-striped">
+        
+        <thead>
+	    <tr>
+                <th class="col-sm-3">Descrição</th>
+                <th class="col-sm-1">Ações</th>
+            </tr>
+        </thead>
+	
+        <tbody>
+            <?php foreach($registros AS $registro) { ?>
+            <tr>
+                <td><?php echo $registro->getDescricao()?></td>
+                <td>
+                    <button type="button" class="btn btn-default btn-xs" onclick="javascript:editar(<?php echo $registro->getId()?>);">
+                        <span class="glyphicon glyphicon-cog"></span>&nbsp;Alterar
+                    </button>
+                    <!--
+                    <button type="button" class="btn btn-default btn-xs" onclick="javascript:excluir(<?php echo $registro->getId()?>);">
+                        <span class="glyphicon glyphicon-trash"></span>&nbsp;Excluir
+                    </button>
+                    -->
+                </td>
+            </tr>
+            <?php } ?>
+        </tbody>
+    </table>
+    
+</div>
+
+<script type="text/javascript">
+    function incluir() {
+        postViaJS('', {controle: 'TiposProdutos', acao: 'cadastrar'});
+    }
+    function editar(codigo) {
+        postViaJS('', {controle: 'TiposProdutos', acao: 'cadastrar', id: codigo});
+    }
+    function excluir(codigo) {
+        postViaJS('', {controle: 'TiposProdutos', acao: 'excluir', id: codigo});
+    }
+</script>
+
+<?php include 'pageclose.php';

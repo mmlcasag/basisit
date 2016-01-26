@@ -1,0 +1,152 @@
+<?php
+    $v_params = $this->getParams();
+    
+    $mensagem = "";
+    if (array_key_exists('mensagem', $v_params)) {
+        $mensagem = $v_params['mensagem'];
+    }
+    
+    $periodoInicial = "";
+    if (array_key_exists('periodoInicial', $v_params)) {
+        $periodoInicial = $v_params['periodoInicial'];
+    }
+    
+    $periodoFinal = "";
+    if (array_key_exists('periodoFinal', $v_params)) {
+        $periodoFinal = $v_params['periodoFinal'];
+    }
+    
+    $usuario = new UsuariosVo();
+    if (array_key_exists('usuario', $v_params)) {
+        $usuario = $v_params['usuario'];
+    }
+    
+    $usuarios = array();
+    if (array_key_exists('usuarios', $v_params)) {
+        $usuarios = $v_params['usuarios'];
+    }
+    
+    $registros = array();
+    if (array_key_exists('registros', $v_params)) {
+        $registros = $v_params['registros'];
+    }
+?>
+
+<?php include 'pageopen.php' ?>
+
+<link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        $(".datepicker").datepicker({dateFormat: 'dd/mm/yy'});
+    });
+</script>
+
+<div class="container">
+    
+    <div class="page-header">
+        <h3>Faturamento por Analista<small> / Relatório</small></h3>
+    </div>
+    
+    <?php
+    if (!empty($mensagem)) {
+        if (substr($mensagem,0,1) == "N") {
+            echo '<div class="alert alert-danger"><strong>ERRO!</strong>&nbsp;&nbsp;&nbsp;' . substr($mensagem,1,999) . '</div>';
+        }
+        if (substr($mensagem,0,1) == "S") {
+            echo '<div class="alert alert-success"><strong>SUCESSO!</strong>&nbsp;&nbsp;&nbsp;' . substr($mensagem,1,999) . '</div>';
+        }
+    }
+    ?>
+    
+    <p><br /></p>
+    
+    <form class="form-horizontal" role="form" method="post">
+        
+        <input type='hidden' name='controle' value='Apontamentos'>
+        <input type='hidden' name='acao' value='listarFaturamentoPorFuncionario'>
+        
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="periodoInicial">Período Inicial:</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control datepicker" id="periodoInicial" name="periodoInicial" value="<?php echo $periodoInicial;?>" />
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="periodoFinal">Período Final:</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control datepicker" id="periodoFinal" name="periodoFinal" value="<?php echo $periodoFinal;?>" />
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="usuarioCodigo">Analista:</label>
+            <div class="col-sm-10">    
+                <select class="form-control" id="usuarioCodigo" name="usuarioCodigo">
+                    <option value="">Selecione</option>
+                    <?php
+                    foreach($usuarios as $row) {
+                        if ($usuario->getId() != "" && $row->getId() == $usuario->getId()) {
+                            echo '<option value="' . $row->getId() . '" selected>' . $row->getNome() . '</option>';
+                        } else {
+                            echo '<option value="' . $row->getId() . '">' . $row->getNome() . '</option>';
+                        }
+                    }
+                    ?>
+                </select>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="submit"><br /></label>
+            <div class="col-sm-10">
+                <button type="submit" class="btn btn-default">
+                    <span class="glyphicon glyphicon-search"></span>&nbsp;&nbsp;Consultar
+                </button>
+            </div>
+        </div>
+        
+    </form>
+    
+    <p><br /></p>
+    
+    <table class="table table-striped">
+        
+        <thead>
+            <tr>
+                <th class="col-sm-2">Analista</th>
+                <th class="col-sm-1">Duração</th>
+                <th class="col-sm-1">Faturado</th>
+                <th class="col-sm-1">Ações</th>
+            </tr>
+        </thead>
+        
+        <tbody>
+        <?php foreach ($registros AS $registro) { ?>
+            <tr>
+                <td><?php echo $registro['usuarioNome']; ?></td>
+                <td><?php echo $registro['apontamentoDuracao']; ?></td>
+                <td><?php echo $registro['apontamentoFaturado']; ?></td>
+                <td>
+                    <button type="button" class="btn btn-default btn-xs" onclick="javascript:detalhar(<?php echo $registro['usuarioCodigo']?>);">
+                        <span class="glyphicon glyphicon-time"></span>&nbsp;Ver Apontamentos
+                    </button>
+                </td>
+            </tr>
+        <?php } ?>
+        </tbody>
+        
+    </table>
+    
+</div>
+
+<script type="text/javascript">
+    function detalhar(usuarioCodigo) {
+        postViaJS('', {controle: 'Apontamentos', acao: 'listarApontamentosParaAvaliacao', periodoInicial: document.forms[0].periodoInicial.value, periodoFinal: document.forms[0].periodoFinal.value, usuarioCodigo: usuarioCodigo, caller: 'listarFaturamentoPorFuncionario'}, "post", "_blank");
+    }
+</script>
+
+<?php include 'pageclose.php';			

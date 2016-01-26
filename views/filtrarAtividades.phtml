@@ -1,0 +1,210 @@
+<?php
+    $v_params = $this->getParams();
+    
+    $mensagem = "";
+    if (array_key_exists('mensagem', $v_params)) {
+        $mensagem = $v_params['mensagem'];
+    }
+    
+    $situacoes = array();
+    if (array_key_exists('situacoes', $v_params)) {
+        $situacoes = $v_params['situacoes'];
+    }
+    
+    $usuarios = array();
+    if (array_key_exists('usuarios', $v_params)) {
+        $usuarios = $v_params['usuarios'];
+    }
+    
+    $empresas = array();
+    if (array_key_exists('empresas', $v_params)) {
+        $empresas = $v_params['empresas'];
+    }
+    
+    $tiposAtividades = array();
+    if (array_key_exists('tiposAtividades', $v_params)) {
+        $tiposAtividades = $v_params['tiposAtividades'];
+    }
+    
+    if ($_SESSION['perfilAdministrador'] == 1) {
+        $dataIni = "";
+        $dataFim = "";
+    } else {
+        $dataIni = date("d/m/Y", strtotime("-30 days"));
+        $dataFim = date("d/m/Y");
+    }
+    
+    if (Functions::isEmpty($_SESSION['empresaCodigo'])) {
+        $exibeEmpresaAberta = true;
+        $empresaCodigo = "";
+        $empresaDescricao = "";
+    } else {
+        $exibeEmpresaAberta = false;
+        $empresaCodigo = $_SESSION['empresaCodigo'];
+        $empresaDescricao = $_SESSION['empresaDescricao'];
+    }
+    
+    if ($_SESSION['perfilCliente'] == 1) {
+        $exibeUsuarioAberto = false;
+        $usuarioCodigo = $_SESSION['usuarioCodigo'];
+        $usuarioNome = $_SESSION['usuarioNome'];
+    } else {
+        $exibeUsuarioAberto = true;
+        $usuarioCodigo = "";
+        $usuarioNome = "";
+    }
+?>
+
+<?php include 'pageopen.php' ?>
+
+<link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        $(".datepicker").datepicker({dateFormat: 'dd/mm/yy'});
+    });
+</script>
+
+<div class="container">
+    
+    <div class="page-header">
+        <h3>Atividades<small> / Filtros para Consulta</small></h3>
+    </div>
+    
+    <?php
+    if (!empty($mensagem)) {
+        if (substr($mensagem,0,1) == "N") {
+            echo '<div class="alert alert-danger"><strong>ERRO!</strong>&nbsp;&nbsp;&nbsp;' . substr($mensagem,1,999) . '</div>';
+        }
+        if (substr($mensagem,0,1) == "S") {
+            echo '<div class="alert alert-success"><strong>SUCESSO!</strong>&nbsp;&nbsp;&nbsp;' . substr($mensagem,1,999) . '</div>';
+        }
+    }
+    ?>
+    
+    <form class="form-horizontal" role="form" method="post">
+        
+        <button type="button" class="btn btn-default" onclick="javascript:incluir();">
+            <span class="glyphicon glyphicon-file"></span>&nbsp;&nbsp;Novo
+        </button>
+        
+        <button type="submit" class="btn btn-default">
+            <span class="glyphicon glyphicon-search"></span>&nbsp;&nbsp;Consultar
+        </button>
+        
+        <p><br /></p>
+        
+        <input type='hidden' name='controle' value='atividades'>
+        <input type='hidden' name='acao' value='listar'>
+        
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="id">Código:</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" id="id" name="id" placeholder="" value="">
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="dataIni">Data Abertura (de):</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control datepicker" id="dataIni" name="dataIni" value="<?php echo $dataIni?>" />
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="dataFim">Data Abertura (até):</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control datepicker" id="dataFim" name="dataFim" value="<?php echo $dataFim?>" />
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="situacao">Situação:</label>
+            <div class="col-sm-10">
+                <select class="form-control" id="situacao" name="situacao">
+                    <option value="">Selecione</option>
+                    <?php
+                    foreach($situacoes as $situacao) {
+                        echo '<option value="' . $situacao->getId() . '">' . $situacao->getDescricao() . '</option>';
+                    }
+                    ?>
+                </select>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="usuario">Analista:</label>
+            <div class="col-sm-10">
+                <?php 
+                if ($exibeUsuarioAberto) {
+                    echo '<select class="form-control" id="usuario" name="usuario">';
+                    echo '<option value="">Selecione</option>';
+                    foreach($usuarios as $usuario) {
+                        if ($usuario->getId() == $_SESSION['usuarioCodigo']) {
+                            echo '<option selected value="' . $usuario->getId() . '">' . $usuario->getNome() . '</option>';
+                        } else {
+                            echo '<option value="' . $usuario->getId() . '">' . $usuario->getNome() . '</option>';
+                        }
+                    }
+                    echo '</select>';
+                } else {
+                    echo '<input type="hidden" name="usuario" value="' . $usuarioCodigo . '" />';
+                    echo '<input type="text" class="form-control" id="usuario" name="usuario" value="' . $usuarioNome . '" disabled="disabled" />';
+                }
+                ?>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="empresa">Empresa:</label>
+            <div class="col-sm-10">
+                <?php 
+                if ($exibeEmpresaAberta) {
+                    echo '<select class="form-control" id="empresa" name="empresa">';
+                    echo '<option value="">Selecione</option>';
+                    foreach($empresas as $empresa) {
+                        echo '<option value="' . $empresa->getId() . '">' . $empresa->getDescricao() . '</option>';
+                    }
+                    echo '</select>';
+                } else {
+                    echo '<input type="hidden" name="empresa" value="' . $empresaCodigo . '" />';
+                    echo '<input type="text" class="form-control" id="empresa" name="empresa" value="' . $empresaDescricao . '" disabled="disabled" />';
+                }
+                ?>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="tipoAtividade">Tipo de Atividade:</label>
+            <div class="col-sm-10">
+                <select class="form-control" id="tipoAtividade" name="tipoAtividade">
+                    <option value="">Selecione</option>
+                    <?php
+                    foreach($tiposAtividades as $tipoAtividade) {
+                        echo '<option value="' . $tipoAtividade->getId() . '">' . $tipoAtividade->getDescricao() . '</option>';
+                    }
+                    ?>
+                </select>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="observacao">Observação:</label>
+            <div class="col-sm-10">
+                <textarea class="form-control" rows="5" id="observacao" name="observacao" placeholder=""></textarea>
+            </div>
+        </div>
+        
+    </form>
+    
+</div>
+
+<script>
+    function incluir() {
+        postViaJS('', {controle: 'Atividades', acao: 'cadastrar'}, "post", "_blank");
+    }
+</script>
+
+<?php include 'pageclose.php';

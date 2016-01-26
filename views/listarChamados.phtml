@@ -1,0 +1,110 @@
+<?php
+    $v_params = $this->getParams();
+    
+    $mensagem = "";
+    if (array_key_exists('mensagem', $v_params)) {
+        $mensagem = $v_params['mensagem'];
+    }
+    
+    $registros = array();
+    if (array_key_exists('registros', $v_params)) {
+        $registros = $v_params['registros'];
+    }
+?>
+
+<?php include 'pageopen.php' ?>
+
+<div class="container">
+    
+    <div class="page-header">
+        <h3>Chamados<small> / Tela de Listagem</small></h3>
+    </div>
+    
+    <?php
+    if (!Functions::isEmpty($mensagem)) {
+        if (substr($mensagem,0,1) == "N") {
+            echo '<div class="alert alert-danger"><strong>ERRO!</strong>&nbsp;&nbsp;&nbsp;' . substr($mensagem,1,999) . '</div>';
+        }
+        if (substr($mensagem,0,1) == "S") {
+            echo '<div class="alert alert-success"><strong>SUCESSO!</strong>&nbsp;&nbsp;&nbsp;' . substr($mensagem,1,999) . '</div>';
+        }
+    }
+    ?>
+    
+    <button type="button" class="btn btn-default" onclick="javascript:voltar();">
+        <span class="glyphicon glyphicon-arrow-left"></span>&nbsp;&nbsp;Voltar
+    </button>
+    
+    <button type="button" class="btn btn-default" onclick="javascript:incluir();">
+        <span class="glyphicon glyphicon-file"></span>&nbsp;&nbsp;Novo
+    </button>
+    
+    <p><br /></p>
+    
+    <table class="table table-striped">
+        
+        <thead>
+            <tr>
+                <th class="col-sm-1">Código</th>
+                <th class="col-sm-1">Criação</th>
+                <th class="col-sm-1">Previsão</th>
+                <th class="col-sm-1">Empresa</th>
+                <th class="col-sm-1">Categoria</th>
+                <th class="col-sm-1">Tipo Ambiente</th>
+                <th class="col-sm-1">Tipo Produto</th>
+                <th class="col-sm-1">Impacto</th>
+                <th class="col-sm-1">Prioridade</th>
+                <th class="col-sm-1">Situação</th>
+                <th class="col-sm-1">Ações</th>
+            </tr>
+        </thead>
+	
+        <tbody>
+            <?php foreach($registros AS $registro) { ?>
+            <tr>
+                <td><?php echo $registro->getId()?></td>
+                <td><?php echo $registro->getData()?></td>
+                <td><?php echo $registro->getPrevisaoTermino()?></td>
+                <td><?php echo $registro->getEmpresa()->getDescricao()?></td>
+                <td><?php echo $registro->getCategoria()->getDescricao()?></td>
+                <td><?php echo $registro->getTipoAmbiente()->getDescricao()?></td>
+                <td><?php echo $registro->getTipoProduto()->getDescricao()?></td>
+                <td><?php echo $registro->getImpactoExtenso()?></td>
+                <td><?php echo $registro->getPrioridade()->getDescricao()?></td>
+                <td><?php echo $registro->getSituacao()->getDescricao()?></td>
+                <td>
+                    <button type="button" class="btn btn-default btn-xs" onclick="javascript:editar(<?php echo $registro->getId()?>);">
+                        <span class="glyphicon glyphicon-cog"></span>&nbsp;Alterar
+                    </button>
+                </td>
+            </tr>
+            <?php } ?>
+        </tbody>
+        
+    </table>
+    
+    <p><br /></p>
+    
+    <button type="button" class="btn btn-default" onclick="javascript:voltar();">
+        <span class="glyphicon glyphicon-arrow-left"></span>&nbsp;&nbsp;Voltar
+    </button>
+    
+    <button type="button" class="btn btn-default" onclick="javascript:incluir();">
+        <span class="glyphicon glyphicon-file"></span>&nbsp;&nbsp;Novo
+    </button>
+    
+</div>
+
+<script type="text/javascript">
+    function voltar() {
+        postViaJS('', {controle: 'Chamados', acao: 'filtrar'});
+    }
+    function incluir() {
+        postViaJS('', {controle: 'Chamados', acao: 'cadastrar'}, "post", "_blank");
+    }
+    function editar(chamadoCodigo) {
+        postViaJS('', {controle: 'Chamados', acao: 'cadastrar', id: chamadoCodigo}, "post", "_blank");
+    }
+</script>
+
+<?php include 'pageclose.php';
