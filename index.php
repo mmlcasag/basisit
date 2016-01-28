@@ -1,11 +1,11 @@
 <?php
-/*
+
 if(!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == ""){
     $redirect = "https://basisit3.websiteseguro.com".$_SERVER['REQUEST_URI'];
     header("HTTP/1.1 301 Moved Permanently");
     header("Location: $redirect");
 }
-*/
+
 require 'models/Databases.php';
 
 require 'lib/Application.php';
@@ -75,9 +75,9 @@ date_default_timezone_set('America/Sao_Paulo');
 ini_set('session.cookie_lifetime', '360000'); //100 hours
 ini_set('default_charset', 'UTF-8');
 ini_set('file_uploads', 'On');
-ini_set('display_errors', 'On');
+ini_set('display_errors', 'Off');
 
-error_reporting(E_ALL & ~E_STRICT);
+error_reporting(0);
 
 session_start();
 

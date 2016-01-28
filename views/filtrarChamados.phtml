@@ -53,21 +53,20 @@
         $prioridades = $v_params['prioridades'];
     }
     
-    if ($_SESSION['perfilAdministrador'] == 1) {
-        $dataIni = "";
-        $dataFim = "";
-        
-        $exibeUsuarioAberto = true;
-        $usuarioCodigo = "";
-        $usuarioNome = "";
-    } else {
+    if ($_SESSION['perfilCliente'] == 1) {
         $dataIni = date("d/m/Y", strtotime("-30 days"));
         $dataFim = date("d/m/Y");
         
         $exibeUsuarioAberto = false;
-        $usuarioCodigo = $_SESSION['usuarioCodigo'];
-        $usuarioNome = $_SESSION['usuarioNome'];
+    } else {
+        $dataIni = "";
+        $dataFim = "";
+        
+        $exibeUsuarioAberto = true;
     }
+    
+    $usuarioCodigo = $_SESSION['usuarioCodigo'];
+    $usuarioNome = $_SESSION['usuarioNome'];
     
     if (Functions::isEmpty($_SESSION['empresaCodigo'])) {
         $exibeEmpresaAberta = true;
@@ -153,7 +152,11 @@
                     echo '<select class="form-control" id="usuario" name="usuario">';
                     echo '<option value="">Selecione</option>';
                     foreach($usuarios as $usuario) {
-                        echo '<option value="' . $usuario->getId() . '">' . $usuario->getNome() . '</option>';
+                        if ($usuario->getId() == $usuarioCodigo) {
+                            echo '<option value="' . $usuario->getId() . '" selected>' . $usuario->getNome() . '</option>';
+                        } else {
+                            echo '<option value="' . $usuario->getId() . '">' . $usuario->getNome() . '</option>';
+                        }
                     }
                     echo '</select>';
                 } else {

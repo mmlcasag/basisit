@@ -513,8 +513,9 @@ class ChamadosController extends BaseController {
     public function baixarAction() {
         $nomeOriginal = $this->getParametroTela('nomeOriginal');
         $nomeSistema  = $this->getParametroTela('nomeSistema');
-
+        
         header('Content-Disposition: attachment; filename="' . $nomeOriginal . '"');
+        
         readfile($nomeSistema);
     }
     
