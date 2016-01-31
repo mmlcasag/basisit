@@ -1,4 +1,7 @@
-# ignore vendor folder and all files within it
+# ignore these folders
 vendor/*
 uploads/*
 nbproject/*
+
+#ignore these files
+lib/jquery-ui-1.11.4.custom/images/Thumbs.db
