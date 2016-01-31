@@ -1,8 +1,4 @@
 # ignore vendor folder and all files within it
 vendor/*
-
-# ignore uploads folder and all files within it
 uploads/*
-
-# ignore nproject folder and all files within it
 nbproject/*
