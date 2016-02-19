@@ -59,7 +59,7 @@
         
         <div class="form-group">
             <label class="control-label col-sm-2" for="id">Código:</label>
-            <div class="col-sm-10">
+            <div class="col-sm-2">
                 <input type="hidden" id="id" name="id" value="<?php echo $registro->getId()?>">
                 <input type="text" class="form-control" id="id" name="id" placeholder="Será gerado automaticamente pelo sistema" value="<?php echo $registro->getId()?>" disabled="disabled">
             </div>
@@ -67,14 +67,14 @@
         
         <div class="form-group">
             <label class="control-label col-sm-2" for="descricao">Descrição:</label>
-            <div class="col-sm-10">
+            <div class="col-sm-4">
                 <input type="text" class="form-control" id="descricao" name="descricao" placeholder="" value="<?php echo $registro->getDescricao()?>">
             </div>
         </div>
         
         <div class="form-group">
             <label class="control-label col-sm-2" for="administrador">Administrador:</label>
-            <div class="col-sm-10">
+            <div class="col-sm-6">
                 <label class="radio-inline"><input type="radio" name="administrador" value="0" <?php echo ( $registro->getAdministrador() == 0 ) ? 'checked="checked"' : '' ?> ><?php echo $registro->getAdministradorExtensoParam(0)?></label>
                 <label class="radio-inline"><input type="radio" name="administrador" value="1" <?php echo ( $registro->getAdministrador() == 1 ) ? 'checked="checked"' : '' ?> ><?php echo $registro->getAdministradorExtensoParam(1)?></label>
             </div>
@@ -82,7 +82,7 @@
         
         <div class="form-group">
             <label class="control-label col-sm-2" for="funcionario">Funcionário:</label>
-            <div class="col-sm-10">
+            <div class="col-sm-6">
                 <label class="radio-inline"><input type="radio" name="funcionario" value="0" <?php echo ( $registro->getFuncionario() == 0 ) ? 'checked="checked"' : '' ?> ><?php echo $registro->getFuncionarioExtensoParam(0)?></label>
                 <label class="radio-inline"><input type="radio" name="funcionario" value="1" <?php echo ( $registro->getFuncionario() == 1 ) ? 'checked="checked"' : '' ?> ><?php echo $registro->getFuncionarioExtensoParam(1)?></label>
             </div>
@@ -90,7 +90,7 @@
         
         <div class="form-group">
             <label class="control-label col-sm-2" for="cliente">Cliente:</label>
-            <div class="col-sm-10">
+            <div class="col-sm-6">
                 <label class="radio-inline"><input type="radio" name="cliente" value="0" <?php echo ( $registro->getCliente() == 0 ) ? 'checked="checked"' : '' ?> ><?php echo $registro->getClienteExtensoParam(0)?></label>
                 <label class="radio-inline"><input type="radio" name="cliente" value="1" <?php echo ( $registro->getCliente() == 1 ) ? 'checked="checked"' : '' ?> ><?php echo $registro->getClienteExtensoParam(1)?></label>
             </div>
@@ -98,7 +98,7 @@
         
         <div class="form-group">
             <label class="control-label col-sm-2" for="situacao">Situação:</label>
-            <div class="col-sm-10">
+            <div class="col-sm-6">
                 <label class="radio-inline"><input type="radio" name="situacao" value="0" <?php echo ( $registro->getSituacao() == 0 ) ? 'checked="checked"' : '' ?> ><?php echo $registro->getSituacaoExtensoParam(0)?></label>
                 <label class="radio-inline"><input type="radio" name="situacao" value="1" <?php echo ( $registro->getSituacao() == 1 ) ? 'checked="checked"' : '' ?> ><?php echo $registro->getSituacaoExtensoParam(1)?></label>
             </div>
@@ -115,7 +115,9 @@
 
             <thead>
                 <tr>
-                    <th class="col-sm-3">Tipo de Sistema</th>
+                    <th class="col-sm-1">#</th>
+                    <th class="col-sm-8">Tipo de Sistema</th>
+                    <th class="col-sm-2">Situação</th>
                     <th class="col-sm-1">Ações</th>
                 </tr>
             </thead>
@@ -123,7 +125,9 @@
             <tbody>
                 <?php foreach($perfisPermissoes AS $perfilPermissao) { ?>
                 <tr>
+                    <td><?php echo $perfilPermissao->getId()?></td>
                     <td><?php echo $perfilPermissao->getTipoSistema()->getDescricao()?></td>
+                    <td><?php echo $perfilPermissao->getSituacaoExtenso()?></td>
                     <td>
                         <button type="button" class="btn btn-default btn-xs" onclick="javascript:editar(<?php echo $registro->getId()?>,<?php echo $perfilPermissao->getId()?>);">
                             <span class="glyphicon glyphicon-cog"></span>&nbsp;Alterar

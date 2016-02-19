@@ -164,6 +164,42 @@ class UsuariosModel {
         }
     }
     
+    public function loadClientesDeUmaEmpresa($connection, $apenasAtivos, $empresaCodigo) {
+        $registros = array();
+        
+        $query = " SELECT *
+                   FROM   usuarios, perfis
+                   WHERE  prf_cdiperfil  = usu_cdiperfil
+                   AND    prf_oplcliente = 1 ";
+
+        if ($apenasAtivos == 1) {
+            $query = $query . " AND usu_opldesativado = 0 ";
+        }
+        if (!Functions::isEmpty($empresaCodigo)) {
+            $query = $query . " AND usu_cdiempresa = :usu_cdiempresa ";
+        }
+        
+        $query = $query . " ORDER BY usu_dssnome ";
+        
+        $stmt = $connection->prepare($query);
+        
+        if (!Functions::isEmpty($empresaCodigo)) {
+            $stmt->bindParam(':usu_cdiempresa', $empresaCodigo);
+        }
+        
+        $stmt->execute();
+        
+        $rows = $stmt->fetchAll();
+        
+        foreach ($rows as $row) {
+            $vo = $this->populateVo($connection, $row);
+            
+            array_push($registros, $vo);
+        }
+        
+        return $registros;
+    }
+    
     public function loadById($connection, $codigo) {
         $query = " SELECT *
                    FROM   usuarios 

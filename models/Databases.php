@@ -4,17 +4,17 @@ class Databases {
     
     static function connect() {
         
-        // Base de Produção
-        $host = '177.153.16.177';
-        $banco = 'basisit1';
-        $usuario = 'basisit1';
-        $senha = 'C0ntr0l3H0r4s';
-        
         // Base de Acesso Local
         $host = 'localhost';
         $banco = 'basisit1';
         $usuario = 'root';
         $senha = '';
+        
+        // Base de Produção
+        $host = '177.153.16.177';
+        $banco = 'basisit1';
+        $usuario = 'basisit1';
+        $senha = 'C0ntr0l3H0r4s';
         
         // Base de Teste
         $host = '177.153.16.177';

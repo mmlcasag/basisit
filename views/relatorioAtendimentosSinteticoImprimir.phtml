@@ -1,0 +1,178 @@
+<?php
+    
+    $v_params = $this->getParams();
+    
+    $mensagem = array();
+    if (array_key_exists('mensagem', $v_params)) {
+        $mensagem = $v_params['mensagem'];
+    }
+    
+    $periodoInicial = array();
+    if (array_key_exists('periodoInicial', $v_params)) {
+        $periodoInicial = $v_params['periodoInicial'];
+    }
+    
+    $periodoFinal = array();
+    if (array_key_exists('periodoFinal', $v_params)) {
+        $periodoFinal = $v_params['periodoFinal'];
+    }
+    
+    $tiposRelatorios = array();
+    if (array_key_exists('tiposRelatorios', $v_params)) {
+        $tiposRelatorios = $v_params['tiposRelatorios'];
+    }
+    
+    $tipoRelatorio = "";
+    if (array_key_exists('tipoRelatorio', $v_params)) {
+        $tipoRelatorio = $v_params['tipoRelatorio'];
+    }
+    
+    $exibeEmpresaAberta = 0;
+    if (array_key_exists('exibeEmpresaAberta', $v_params)) {
+        $exibeEmpresaAberta = $v_params['exibeEmpresaAberta'];
+    }
+    
+    $empresas = array();
+    if (array_key_exists('empresas', $v_params)) {
+        $empresas = $v_params['empresas'];
+    }
+    
+    $empresa = "";
+    if (array_key_exists('empresa', $v_params)) {
+        $empresa = $v_params['empresa'];
+    }
+    
+    $situacoes = array();
+    if (array_key_exists('situacoes', $v_params)) {
+        $situacoes = $v_params['situacoes'];
+    }
+    
+    $situacao = "";
+    if (array_key_exists('situacao', $v_params)) {
+        $situacao = $v_params['situacao'];
+    }
+    
+    $categorias = array();
+    if (array_key_exists('categorias', $v_params)) {
+        $categorias = $v_params['categorias'];
+    }
+    
+    $categoria = "";
+    if (array_key_exists('categoria', $v_params)) {
+        $categoria = $v_params['categoria'];
+    }
+    
+    $tiposAmbientes = array();
+    if (array_key_exists('tiposAmbientes', $v_params)) {
+        $tiposAmbientes = $v_params['tiposAmbientes'];
+    }
+    
+    $tipoAmbiente = "";
+    if (array_key_exists('tipoAmbiente', $v_params)) {
+        $tipoAmbiente = $v_params['tipoAmbiente'];
+    }
+    
+    $tiposProdutos = array();
+    if (array_key_exists('tiposProdutos', $v_params)) {
+        $tiposProdutos = $v_params['tiposProdutos'];
+    }
+    
+    $tipoProduto = "";
+    if (array_key_exists('tipoProduto', $v_params)) {
+        $tipoProduto = $v_params['tipoProduto'];
+    }
+    
+    $modulos = array();
+    if (array_key_exists('modulos', $v_params)) {
+        $modulos = $v_params['modulos'];
+    }
+    
+    $modulo = "";
+    if (array_key_exists('modulo', $v_params)) {
+        $modulo = $v_params['modulo'];
+    }
+    
+    $registros = array();
+    if (array_key_exists('registros', $v_params)) {
+        $registros = $v_params['registros'];
+    }
+    
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <link rel="shortcut icon" href="template/images/favicon.ico">
+    
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>BasisIT</title>
+</head>
+
+<body>
+    <table align="center" border="1" cellspacing="1" cellpadding="1" width="100%">
+        <tr>
+            <td align="left"><img src="template/images/logo.jpg"></td>
+            <td align="center"><b><?php echo "Relatório de Atendimentos - Sintético" ?></b></td>
+            <td align="right"><?php echo "Impresso em: " . date("d/m/Y") ?></td>
+        </tr>
+        <tr>
+            <td align="left" colspan="3">
+                <?php
+                if (!Functions::isEmpty($mensagem)) {
+                    if (substr($mensagem,0,1) == "N") {
+                        echo '<div class="alert alert-danger"><strong>ERRO!</strong>&nbsp;&nbsp;&nbsp;' . substr($mensagem,1,999) . '</div>';
+                    }
+                    if (substr($mensagem,0,1) == "S") {
+                        echo '<div class="alert alert-success"><strong>SUCESSO!</strong>&nbsp;&nbsp;&nbsp;' . substr($mensagem,1,999) . '</div>';
+                    }
+                } else {
+                    echo '<br />';
+                }
+                ?>
+            </td>
+        </tr>
+        <tr>
+            <td align="left" colspan="3">
+                <table align="center" border="1" cellspacing="1" cellpadding="1" width="100%">
+                    <tr>
+                        <th align="right">Chamado</th>
+                        <th align="center">Data</th>
+                        <th align="left">Empresa</th>
+                        <th align="left">Situação</th>
+                        <th align="left">Categoria</th>
+                        <th align="left">Ambiente</th>
+                        <th align="left">Produto</th>
+                        <th align="left">Módulo</th>
+                        <th align="left">Assunto</th>
+                    </tr>
+
+                    <?php foreach($registros AS $registro) { ?>
+                    <tr>
+                        <td align="right"><?php echo $registro['chamadoCodigo']?></td>
+                        <td align="center"><?php echo $registro['chamadoData']?></td>
+                        <td align="left"><?php echo $registro['empresaDescricao']?></td>
+                        <td align="left"><?php echo $registro['situacaoDescricao']?></td>
+                        <td align="left"><?php echo $registro['categoriaDescricao']?></td>
+                        <td align="left"><?php echo $registro['tipoAmbienteDescricao']?></td>
+                        <td align="left"><?php echo $registro['tipoProdutoDescricao']?></td>
+                        <td align="left"><?php echo $registro['moduloDescricao']?></td>
+                        <td align="left"><?php echo $registro['chamadoAssunto']?></td>
+                    </tr>
+                    <?php } ?>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td align="center" colspan="3"><br /></td>
+        </tr>
+    </table>
+    <script>
+        window.print();
+    </script>
+</body>
+</html>

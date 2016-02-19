@@ -113,25 +113,37 @@
     <form class="form-horizontal" role="form" method="post">
         
         <input type='hidden' name='controle' value='Apontamentos'>
-        <input type='hidden' name='acao' value='listarApontamentosParaAvaliacao'>
+        <input type='hidden' name='acao' value='relatorioApontamentosParaAvaliacao'>
         
         <div class="form-group">
             <label class="control-label col-sm-2" for="periodoInicial">Período Inicial:</label>
-            <div class="col-sm-10">
+            <div class="col-sm-3">
                 <input type="text" class="form-control datepicker" id="periodoInicial" name="periodoInicial" value="<?php echo $periodoInicial;?>" />
             </div>
-        </div>
-        
-        <div class="form-group">
             <label class="control-label col-sm-2" for="periodoFinal">Período Final:</label>
-            <div class="col-sm-10">
+            <div class="col-sm-3">
                 <input type="text" class="form-control datepicker" id="periodoFinal" name="periodoFinal" value="<?php echo $periodoFinal;?>" />
             </div>
         </div>
         
         <div class="form-group">
+            <label class="control-label col-sm-2" for="empresaCodigo">Empresa:</label>
+            <div class="col-sm-3">
+                <select class="form-control" id="empresaCodigo" name="empresaCodigo">
+                    <option value="">Selecione</option>
+                    <?php
+                    foreach($empresas as $row) {
+                        if ($empresa->getId() != "" && $row->getId() == $empresa->getId()) {
+                            echo '<option value="' . $row->getId() . '" selected>' . $row->getDescricao() . '</option>';
+                        } else {
+                            echo '<option value="' . $row->getId() . '">' . $row->getDescricao() . '</option>';
+                        }
+                    }
+                    ?>
+                </select>
+            </div>
             <label class="control-label col-sm-2" for="usuarioCodigo">Analista:</label>
-            <div class="col-sm-10">    
+            <div class="col-sm-3">    
                 <select class="form-control" id="usuarioCodigo" name="usuarioCodigo">
                     <option value="">Selecione</option>
                     <?php
@@ -148,26 +160,8 @@
         </div>
         
         <div class="form-group">
-            <label class="control-label col-sm-2" for="empresaCodigo">Empresa:</label>
-            <div class="col-sm-10">
-                <select class="form-control" id="empresaCodigo" name="empresaCodigo">
-                    <option value="">Selecione</option>
-                    <?php
-                    foreach($empresas as $row) {
-                        if ($empresa->getId() != "" && $row->getId() == $empresa->getId()) {
-                            echo '<option value="' . $row->getId() . '" selected>' . $row->getDescricao() . '</option>';
-                        } else {
-                            echo '<option value="' . $row->getId() . '">' . $row->getDescricao() . '</option>';
-                        }
-                    }
-                    ?>
-                </select>
-            </div>
-        </div>
-        
-        <div class="form-group">
             <label class="control-label col-sm-2" for="apontamentoAvaliacao">Tipo de Avaliação:</label>
-            <div class="col-sm-10">
+            <div class="col-sm-3">
                 <select class="form-control" id="apontamentoAvaliacao" name="apontamentoAvaliacao">
                     <option value=""  <?php echo $apontamentoAvaliacao == ""  ? "selected" : "" ?>>Selecione</option>
                     <option value="9" <?php echo $apontamentoAvaliacao == "9" ? "selected" : "" ?>>Não Avaliado</option>
@@ -176,11 +170,8 @@
                     <option value="3" <?php echo $apontamentoAvaliacao == "3" ? "selected" : "" ?>>Não Faturado</option>
                 </select>
             </div>
-        </div>
-        
-        <div class="form-group">
             <label class="control-label col-sm-2" for="apontamentoTipo">Tipo de Apontamento:</label>
-            <div class="col-sm-10">
+            <div class="col-sm-3">
                 <select class="form-control" id="apontamentoTipo" name="apontamentoTipo">
                     <option value="" <?php echo $apontamentoTipo == ""  ? "selected" : "" ?>>Selecione</option>
                     <option value="Atividade" <?php echo $apontamentoTipo == "Atividade" ? "selected" : "" ?>>Apenas Atividades</option>

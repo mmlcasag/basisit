@@ -48,7 +48,7 @@
         
         <div class="form-group">
             <label class="control-label col-sm-2" for="id">Código:</label>
-            <div class="col-sm-10">
+            <div class="col-sm-2">
                 <input type="hidden" id="id" name="id" value="<?php echo $tipoSistema->getId() ?>">
                 <input type="text" class="form-control" id="id" name="id" placeholder="Será gerado automaticamente pelo sistema" value="<?php echo $tipoSistema->getId()?>" disabled="disabled">
             </div>
@@ -56,35 +56,28 @@
         
         <div class="form-group">
             <label class="control-label col-sm-2" for="descricao">Descrição:</label>
-            <div class="col-sm-10">
+            <div class="col-sm-4">
                 <input type="text" class="form-control" id="descricao" name="descricao" placeholder="Informe a descrição" value="<?php echo $tipoSistema->getDescricao()?>">
             </div>
         </div>
         
         <div class="form-group">
-            <label class="control-label col-sm-2" for="nomeMenu">Nome do Menu:</label>
-            <div class="col-sm-10">
+            <label class="control-label col-sm-2" for="nomeMenu">Classe:</label>
+            <div class="col-sm-4">
                 <input type="text" class="form-control" id="nomeMenu" name="nomeMenu" placeholder="Valor a ser passado no parâmetro controle do redirect" value="<?php echo $tipoSistema->getNomeMenu()?>">
             </div>
         </div>
         
         <div class="form-group">
-            <label class="control-label col-sm-2" for="enderecoListar">Ação de Listagem:</label>
-            <div class="col-sm-10">
+            <label class="control-label col-sm-2" for="enderecoListar">Método:</label>
+            <div class="col-sm-4">
                 <input type="text" class="form-control" id="enderecoListar" name="enderecoListar" placeholder="Valor a ser passado no parâmetro acao do redirect para telas de listagem" value="<?php echo $tipoSistema->getEnderecoListar()?>">
             </div>
         </div>
         
         <div class="form-group">
-            <label class="control-label col-sm-2" for="enderecoManter">Ação de Manutenção:</label>
-            <div class="col-sm-10">
-                <input type="text" class="form-control" id="enderecoManter" name="enderecoManter" placeholder="Valor a ser passado no parâmetro acao do redirect para telas de manutenção" value="<?php echo $tipoSistema->getEnderecoManter()?>">
-            </div>
-        </div>
-        
-        <div class="form-group">
             <label class="control-label col-sm-2" for="situacao">Situação:</label>
-            <div class="col-sm-10">
+            <div class="col-sm-6">
                 <label class="radio-inline"><input type="radio" name="situacao" value="0" <?php echo ( $tipoSistema->getSituacao() == 0 ) ? 'checked="checked"' : '' ?> ><?php echo $tipoSistema->getSituacaoExtensoParam(0)?></label>
                 <label class="radio-inline"><input type="radio" name="situacao" value="1" <?php echo ( $tipoSistema->getSituacao() == 1 ) ? 'checked="checked"' : '' ?> ><?php echo $tipoSistema->getSituacaoExtensoParam(1)?></label>
             </div>

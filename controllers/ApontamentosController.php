@@ -193,7 +193,7 @@ class ApontamentosController extends BaseController {
         }
     }
     
-    public function listarFaturamentoPorFuncionarioAction() {
+    public function relatorioFaturamentoPorFuncionarioAction() {
         $connection = Databases::connect();
 
         if (Functions::isEmpty($this->getParametroTela('periodoInicial'))) {
@@ -247,12 +247,12 @@ class ApontamentosController extends BaseController {
     }
     
     private function exibirFaturamentoPorFuncionario($dados = array()) {
-        $view = new View('views/listarFaturamentoPorFuncionario.phtml');
+        $view = new View('views/relatorioFaturamentoPorFuncionario.phtml');
         $view->setParams($dados);
         $view->showContents();
     }
     
-    public function listarFaturamentoPorEmpresaAction() {
+    public function relatorioFaturamentoPorEmpresaAction() {
         $connection = Databases::connect();
 
         if (Functions::isEmpty($this->getParametroTela('periodoInicial'))) {
@@ -306,12 +306,12 @@ class ApontamentosController extends BaseController {
     }
     
     private function exibirFaturamentoPorEmpresa($dados = array()) {
-        $view = new View('views/listarFaturamentoPorEmpresa.phtml');
+        $view = new View('views/relatorioFaturamentoPorEmpresa.phtml');
         $view->setParams($dados);
         $view->showContents();
     }
     
-    public function listarApontamentosParaAvaliacaoAction() {
+    public function relatorioApontamentosParaAvaliacaoAction() {
         $connection = Databases::connect();
 
         if (Functions::isEmpty($this->getParametroTela('periodoInicial'))) {
@@ -387,7 +387,7 @@ class ApontamentosController extends BaseController {
     }
     
     private function exibirApontamentosParaAvaliacao($dados = array()) {
-        $view = new View('views/listarApontamentosParaAvaliacao.phtml');
+        $view = new View('views/relatorioApontamentosParaAvaliacao.phtml');
         $view->setParams($dados);
         $view->showContents();
     }

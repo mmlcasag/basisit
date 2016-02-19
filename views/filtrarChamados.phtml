@@ -57,12 +57,34 @@
         $dataIni = date("d/m/Y", strtotime("-30 days"));
         $dataFim = date("d/m/Y");
         
-        $exibeUsuarioAberto = false;
+        $exibeUsuarioAberto = true;
+        $exibeRequisitante = false;
+        $exibeCategoria = false;
+        $exibeTipoAmbiente = false;
+        $exibeTipoProduto = false;
+        $exibeModulo = false;
+        $exibePrioridade = false;
+        $exibeImpacto = false;
+        $exibePrevisoesTermino = false;
+        $exibeAssunto = false;
+        $exibeObservacao = false;
+        $exibeAcoesEmbaixo = false;
     } else {
         $dataIni = "";
         $dataFim = "";
         
         $exibeUsuarioAberto = true;
+        $exibeRequisitante = true;
+        $exibeCategoria = true;
+        $exibeTipoAmbiente = true;
+        $exibeTipoProduto = true;
+        $exibeModulo = true;
+        $exibePrioridade = true;
+        $exibeImpacto = true;
+        $exibePrevisoesTermino = true;
+        $exibeAssunto = true;
+        $exibeObservacao = true;
+        $exibeAcoesEmbaixo = true;
     }
     
     $usuarioCodigo = $_SESSION['usuarioCodigo'];
@@ -145,6 +167,25 @@
         </div>
         
         <div class="form-group">
+            <label class="control-label col-sm-2" for="empresa">Empresa:</label>
+            <div class="col-sm-10">
+                <?php 
+                if ($exibeEmpresaAberta) {
+                    echo '<select class="form-control" id="empresa" name="empresa">';
+                    echo '<option value="">Selecione</option>';
+                    foreach($empresas as $empresa) {
+                        echo '<option value="' . $empresa->getId() . '">' . $empresa->getDescricao() . '</option>';
+                    }
+                    echo '</select>';
+                } else {
+                    echo '<input type="hidden" name="empresa" value="' . $empresaCodigo . '" />';
+                    echo '<input type="text" class="form-control" id="empresa" name="empresa" value="' . $empresaDescricao . '" disabled="disabled" />';
+                }
+                ?>
+            </div>
+        </div>
+        
+        <div class="form-group">
             <label class="control-label col-sm-2" for="usuario">Usuário:</label>
             <div class="col-sm-10">
                 <?php 
@@ -167,6 +208,7 @@
             </div>
         </div>
         
+        <?php if ($exibeRequisitante) { ?>
         <div class="form-group">
             <label class="control-label col-sm-2" for="requisitante">Requisitante:</label>
             <div class="col-sm-10">
@@ -180,6 +222,7 @@
                 </select>
             </div>
         </div>
+        <?php } ?>
         
         <div class="form-group">
             <label class="control-label col-sm-2" for="atendente">Analista:</label>
@@ -209,25 +252,7 @@
             </div>
         </div>
         
-        <div class="form-group">
-            <label class="control-label col-sm-2" for="empresa">Empresa:</label>
-            <div class="col-sm-10">
-                <?php 
-                if ($exibeEmpresaAberta) {
-                    echo '<select class="form-control" id="empresa" name="empresa">';
-                    echo '<option value="">Selecione</option>';
-                    foreach($empresas as $empresa) {
-                        echo '<option value="' . $empresa->getId() . '">' . $empresa->getDescricao() . '</option>';
-                    }
-                    echo '</select>';
-                } else {
-                    echo '<input type="hidden" name="empresa" value="' . $empresaCodigo . '" />';
-                    echo '<input type="text" class="form-control" id="empresa" name="empresa" value="' . $empresaDescricao . '" disabled="disabled" />';
-                }
-                ?>
-            </div>
-        </div>
-        
+        <?php if ($exibeCategoria) { ?>
         <div class="form-group">
             <label class="control-label col-sm-2" for="categoria">Categoria:</label>
             <div class="col-sm-10">
@@ -241,7 +266,9 @@
                 </select>
             </div>
         </div>
+        <?php } ?>
         
+        <?php if ($exibeTipoAmbiente) { ?>
         <div class="form-group">
             <label class="control-label col-sm-2" for="tipoAmbiente">Tipo de Ambiente:</label>
             <div class="col-sm-10">
@@ -255,7 +282,9 @@
                 </select>
             </div>
         </div>
+        <?php } ?>
         
+        <?php if ($exibeTipoProduto) { ?>
         <div class="form-group">
             <label class="control-label col-sm-2" for="tipoProduto">Tipo de Produto:</label>
             <div class="col-sm-10">
@@ -269,7 +298,9 @@
                 </select>
             </div>
         </div>
+        <?php } ?>
         
+        <?php if ($exibeModulo) { ?>
         <div class="form-group">
             <label class="control-label col-sm-2" for="modulo">Módulo:</label>
             <div class="col-sm-10">
@@ -283,7 +314,9 @@
                 </select>
             </div>
         </div>
+        <?php } ?>
         
+        <?php if ($exibePrioridade) { ?>
         <div class="form-group">
             <label class="control-label col-sm-2" for="prioridade">Prioridade:</label>
             <div class="col-sm-10">
@@ -297,7 +330,9 @@
                 </select>
             </div>
         </div>
+        <?php } ?>
         
+        <?php if ($exibeImpacto) { ?>
         <div class="form-group">
             <label class="control-label col-sm-2" for="impacto">Impacto:</label>
             <div class="col-sm-10">
@@ -305,35 +340,45 @@
                 <label class="radio-inline"><input type="radio" name="impacto" value="1"><?php echo $vo->getImpactoExtensoParam(1)?></label>
             </div>
         </div>
+        <?php } ?>
         
+        <?php if ($exibePrevisoesTermino) { ?>
         <div class="form-group">
             <label class="control-label col-sm-2" for="previsaoTerminoIni">Previsão Término (de):</label>
             <div class="col-sm-10">
                 <input type="text" class="form-control datepicker" id="previsaoTerminoIni" name="previsaoTerminoIni" value="" />
             </div>
         </div>
+        <?php } ?>
         
+        <?php if ($exibePrevisoesTermino) { ?>
         <div class="form-group">
             <label class="control-label col-sm-2" for="previsaoTerminoFim">Previsão Término (até):</label>
             <div class="col-sm-10">
                 <input type="text" class="form-control datepicker" id="previsaoTerminoFim" name="previsaoTerminoFim" value="" />
             </div>
         </div>
+        <?php } ?>
         
+        <?php if ($exibeAssunto) { ?>
         <div class="form-group">
             <label class="control-label col-sm-2" for="assunto">Assunto:</label>
             <div class="col-sm-10">
                 <input type="text" class="form-control" id="assunto" name="assunto" placeholder="" value="">
             </div>
         </div>
+        <?php } ?>
         
+        <?php if ($exibeObservacao) { ?>
         <div class="form-group">
             <label class="control-label col-sm-2" for="observacao">Descrição:</label>
             <div class="col-sm-10">
                 <textarea class="form-control" rows="5" id="observacao" name="observacao" placeholder=""></textarea>
             </div>
         </div>
+        <?php } ?>
         
+        <?php if ($exibeAcoesEmbaixo) { ?>
         <div class="form-group">
             <label class="control-label col-sm-2" for="observacao">Ações:</label>
             <div class="col-sm-10">
@@ -346,6 +391,7 @@
                 </button>
             </div>
         </div>
+        <?php } ?>
         
     </form>
     

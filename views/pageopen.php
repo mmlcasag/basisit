@@ -5,6 +5,26 @@ $connection = Databases::connect();
     $items = $model->loadByPerfil($connection, $_SESSION['perfilCodigo']);
 Databases::disconnect($connection);
 
+$quantidadeCadastros = 0;
+foreach($items as $item) {
+    if (substr($item->getDescricao(),0,1) == "C") {
+        $quantidadeCadastros++;
+    }
+}
+
+$quantidadeLancamentos = 0;
+foreach($items as $item) {
+    if (substr($item->getDescricao(),0,1) == "L") {
+        $quantidadeLancamentos++;
+    }
+}
+
+$quantidadeRelatorios = 0;
+foreach($items as $item) {
+    if (substr($item->getDescricao(),0,1) == "R") {
+        $quantidadeRelatorios++;
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -29,15 +49,15 @@ Databases::disconnect($connection);
         <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
         <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
-
+    
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="lib/jquery/jquery.js"></script>
-
+    
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="lib/bootstrap-3.3.4-dist/js/bootstrap.min.js"></script>
-
+    
     <link href="template/css/template.css" rel="stylesheet">
-
+    
     <script type="text/javascript" src="template/js/default.js"></script>
     
     <style type="text/css">
@@ -77,11 +97,12 @@ Databases::disconnect($connection);
                 <div class="collapse navbar-collapse" id="myNavbar">
                     <ul class="nav navbar-nav">
                         <li><a href="#" onclick="redirect('Index','index')"><span class="glyphicon glyphicon-home"></span>&nbsp;&nbsp;&nbsp;Home</a></li>
+                        <?php if ($quantidadeCadastros > 0) { ?>
                         <li class="dropdown">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#">Cadastros
                             <span class="caret"></span></a>
                             <ul class="dropdown-menu">
-                                <?php 
+                                <?php
                                 foreach($items as $item) {
                                     if (substr($item->getDescricao(),0,1) == "C") {
                                         echo "<li><a href='#' onclick=javascript:redirect('" . $item->getNomeMenu() . "','" . $item->getEnderecoListar() . "')>" . $item->getDescricao() . "</a></li>";
@@ -90,11 +111,13 @@ Databases::disconnect($connection);
                                 ?>
                             </ul>
                         </li>
+                        <?php } ?>
+                        <?php if ($quantidadeLancamentos > 0) { ?>
                         <li class="dropdown">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#">Lançamentos
                             <span class="caret"></span></a>
                             <ul class="dropdown-menu">
-                                <?php 
+                                <?php
                                 foreach($items as $item) {
                                     if (substr($item->getDescricao(),0,1) == "L") {
                                         echo "<li><a href='#' onclick=javascript:redirect('" . $item->getNomeMenu() . "','" . $item->getEnderecoListar() . "')>" . $item->getDescricao() . "</a></li>";
@@ -103,11 +126,13 @@ Databases::disconnect($connection);
                                 ?>
                             </ul>
                         </li>
+                        <?php } ?>
+                        <?php if ($quantidadeRelatorios > 0) { ?>
                         <li class="dropdown">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#">Relatórios
                             <span class="caret"></span></a>
                             <ul class="dropdown-menu">
-                                <?php 
+                                <?php
                                 foreach($items as $item) {
                                     if (substr($item->getDescricao(),0,1) == "R") {
                                         echo "<li><a href='#' onclick=javascript:redirect('" . $item->getNomeMenu() . "','" . $item->getEnderecoListar() . "')>" . $item->getDescricao() . "</a></li>";
@@ -116,6 +141,7 @@ Databases::disconnect($connection);
                                 ?>
                             </ul>
                         </li>
+                        <?php } ?>
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
                         <li><a href="#" onclick="profile(<?php echo $_SESSION['usuarioCodigo']; ?>);"><span class="glyphicon glyphicon-user"></span>&nbsp;&nbsp;&nbsp;Meus Dados</a></li>

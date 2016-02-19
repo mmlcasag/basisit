@@ -48,7 +48,7 @@
         
         <div class="form-group">
             <label class="control-label col-sm-2" for="id">Código:</label>
-            <div class="col-sm-10">
+            <div class="col-sm-2">
                 <input type="hidden" id="id" name="id" value="<?php echo $registro->getId() ?>">
                 <input type="text" class="form-control" id="id" name="id" placeholder="Será gerado automaticamente pelo sistema" value="<?php echo $registro->getId()?>" disabled="disabled">
             </div>
@@ -56,21 +56,21 @@
         
         <div class="form-group">
             <label class="control-label col-sm-2" for="nome">Nome do Parâmetro:</label>
-            <div class="col-sm-10">
+            <div class="col-sm-4">
                 <input type="text" class="form-control" id="nome" name="nome" placeholder="" value="<?php echo $registro->getNome()?>">
             </div>
         </div>
         
         <div class="form-group">
             <label class="control-label col-sm-2" for="valor">Valor do Parâmetro:</label>
-            <div class="col-sm-10">
+            <div class="col-sm-6">
                 <input type="text" class="form-control" id="valor" name="valor" placeholder="" value="<?php echo $registro->getValor()?>">
             </div>
         </div>
         
         <div class="form-group">
             <label class="control-label col-sm-2" for="situacao">Situação:</label>
-            <div class="col-sm-10">
+            <div class="col-sm-6">
                 <label class="radio-inline"><input type="radio" name="situacao" value="0" <?php echo ( $registro->getSituacao() == 0 ) ? 'checked="checked"' : '' ?> ><?php echo $registro->getSituacaoExtensoParam(0)?></label>
                 <label class="radio-inline"><input type="radio" name="situacao" value="1" <?php echo ( $registro->getSituacao() == 1 ) ? 'checked="checked"' : '' ?> ><?php echo $registro->getSituacaoExtensoParam(1)?></label>
             </div>

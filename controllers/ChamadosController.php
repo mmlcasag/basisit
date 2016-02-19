@@ -68,11 +68,21 @@ class ChamadosController extends BaseController {
     }
     
     private function carregarDadosFiltrar($connection, $mensagem = "") {
-        $usuariosModel = new UsuariosModel();
-        $usuarios = $usuariosModel->load($connection, 0);
+        if ($_SESSION['perfilCliente'] == 1) {
+            $usuariosModel = new UsuariosModel();
+            $usuarios = $usuariosModel->loadClientesDeUmaEmpresa($connection, 0, $_SESSION['empresaCodigo']);
+        } else {
+            $usuariosModel = new UsuariosModel();
+            $usuarios = $usuariosModel->load($connection, 0);
+        }
         
-        $requisitantesModel = new UsuariosModel();
-        $requisitantes = $requisitantesModel->loadClientes($connection, 0);
+        if ($_SESSION['perfilCliente'] == 1) {
+            $requisitantesModel = new UsuariosModel();
+            $requisitantes = $requisitantesModel->loadClientesDeUmaEmpresa($connection, 0, $_SESSION['empresaCodigo']);
+        } else {
+            $requisitantesModel = new UsuariosModel();
+            $requisitantes = $requisitantesModel->loadClientes($connection, 0);
+        }
         
         $atendentesModel = new UsuariosModel();
         $atendentes = $atendentesModel->loadNaoClientes($connection, 0);
@@ -129,6 +139,35 @@ class ChamadosController extends BaseController {
         $this->exibirTelaListar($dados);
     }
     
+    public function clienteSelecionouEmpresaInvalida($connection, $empresaClienteSelecionou) {
+        if (Functions::isEmpty($empresaClienteSelecionou)) {
+            return false;
+        }
+        if ($_SESSION['perfilCliente'] == 1) {
+            if ($empresaClienteSelecionou <> $_SESSION['empresaCodigo']) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public function clienteSelecionouUsuarioInvalido($connection, $usuarioClienteSelecionou) {
+        if (Functions::isEmpty($usuarioClienteSelecionou)) {
+            return false;
+        }
+        if ($_SESSION['perfilCliente'] == 1) {
+            $usuariosModel = new UsuariosModel();
+            $clientesDaEmpresa = $usuariosModel->loadClientesDeUmaEmpresa($connection, 1, $_SESSION['empresaCodigo']);
+            foreach ($clientesDaEmpresa as $cliente) {
+                if ($cliente->getId() == $usuarioClienteSelecionou) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+    
     private function carregarDadosListar($connection, $mensagem = "") {
         $codigo             = $this->getParametroTela('id');
         $usuario            = $this->getParametroTela('usuario');
@@ -149,8 +188,28 @@ class ChamadosController extends BaseController {
         $assunto            = $this->getParametroTela('assunto');
         $observacao         = $this->getParametroTela('observacao');
         
-        $model = new ChamadosModel();
-        $registros = $model->loadByCriteria($connection, $codigo, $usuario, $requisitante, $atendente, $dataIni, $dataFim, $situacao, $empresa, $categoria, $tipoAmbiente, $tipoProduto, $modulo, $prioridade, $impacto, $previsaoTerminoIni, $previsaoTerminoFim, $assunto, $observacao);
+        $erro = false;
+        
+        // Validações adicionais de segurança para o perfil de cliente
+        if ($_SESSION['perfilCliente'] == 1) {
+            // Valida se cliente fez malandragem de trocar empresa
+            if ($this->clienteSelecionouEmpresaInvalida($connection, $empresa)) {
+                $erro = true;
+                $mensagem = 'NPercebemos que você selecionou uma empresa diferente da sua. Por motivos de segurança, não listaremos o resultado';
+            }
+            // Valida se cliente fez malandragem de trocar usuário
+            if ($this->clienteSelecionouUsuarioInvalido($connection, $usuario)) {
+                $erro = true;
+                $mensagem = 'NPercebemos que você selecionou um usuário de uma empresa diferente da sua. Por motivos de segurança, não listaremos o resultado';
+            }
+        }
+        
+        if ($erro) {
+            $registros = array();
+        } else {
+            $model = new ChamadosModel();
+            $registros = $model->loadByCriteria($connection, $codigo, $usuario, $requisitante, $atendente, $dataIni, $dataFim, $situacao, $empresa, $categoria, $tipoAmbiente, $tipoProduto, $modulo, $prioridade, $impacto, $previsaoTerminoIni, $previsaoTerminoFim, $assunto, $observacao);
+        }
         
         return $this->trabalharDadosListar($registros, $mensagem);
     }
@@ -299,7 +358,7 @@ class ChamadosController extends BaseController {
 
         $empresasModel = new EmpresasModel();
         $empresaVo = $empresasModel->loadById($connection, $this->getParametroTela('empresa'));
-
+        
         $categoriasModel = new CategoriasModel();
         $categoriaVo = $categoriasModel->loadById($connection, $this->getParametroTela('categoria'));
 
@@ -349,7 +408,25 @@ class ChamadosController extends BaseController {
         $vo->setObservacao($this->getParametroTela('observacao'));
         $vo->setAnexo($_FILES["anexo"]);
         
-        $mensagem = $this->validarFormulario($vo);
+        $erro = false;
+        
+        // Validações adicionais de segurança para o perfil de cliente
+        if ($_SESSION['perfilCliente'] == 1) {
+            // Valida se cliente fez malandragem de trocar empresa
+            if ($this->clienteSelecionouEmpresaInvalida($connection, $empresaVo->getId())) {
+                $erro = true;
+                $mensagem = 'N' . 'Percebemos que você selecionou uma empresa diferente da sua. Por motivos de segurança, não gravaremos o chamado';
+            }
+            // Valida se cliente fez malandragem de trocar usuário
+            if ($this->clienteSelecionouUsuarioInvalido($connection, $usuarioVo->getId())) {
+                $erro = true;
+                $mensagem = 'N' . 'Percebemos que você selecionou um usuário de uma empresa diferente da sua. Por motivos de segurança, não gravaremos o chamado';
+            }
+        }
+        
+        if (!$erro) {
+            $mensagem = $this->validarFormulario($vo);
+        }
         
         if (substr($mensagem, 0, 1) == 'S') {
             $id = $this->salvarRegistro($connection, $vo);
@@ -701,6 +778,140 @@ class ChamadosController extends BaseController {
         } else {
             echo '<input type="hidden" id="areasAfetadas" name="areasAfetadas" value="0" />';
         }
+    }
+    
+    public function relatorioAtendimentosAction() {
+        $connection = Databases::connect();
+        
+        // Carrega dados da tela
+        $tiposRelatoriosModel = new TiposRelatoriosModel();
+        $tiposRelatoriosArray = $tiposRelatoriosModel->load($connection);
+        
+        $empresasArray = array();
+        if ($_SESSION['perfilCliente'] == 1) {
+            $exibeEmpresaAberta = 0;
+            
+            $empresasModel = new EmpresasModel();
+            $empresasVo = $empresasModel->loadById($connection, $_SESSION['empresaCodigo']);
+            
+            array_push($empresasArray, $empresasVo);
+        } else {
+            $exibeEmpresaAberta = 1;
+            
+            $empresasModel = new EmpresasModel();
+            $empresasArray = $empresasModel->load($connection);
+        }
+        
+        $situacoesModel = new SituacoesModel();
+        $situacoesArray = $situacoesModel->load($connection);
+        
+        $categoriasModel = new CategoriasModel();
+        $categoriasArray = $categoriasModel->load($connection);
+        
+        $tiposAmbientesModel = new TiposAmbientesModel();
+        $tiposAmbientesArray = $tiposAmbientesModel->load($connection);
+        
+        $tiposProdutosModel = new TiposProdutosModel();
+        $tiposProdutosArray = $tiposProdutosModel->load($connection);
+        
+        $modulosModel = new ModulosModel();
+        $modulosArray = $modulosModel->load($connection);
+        
+        // Carrega valores que usuário setou
+        $periodoInicial = $this->getParametroTela('periodoInicial');
+        $periodoFinal = $this->getParametroTela('periodoFinal');
+        $tipoRelatorio = $this->getParametroTela('tipoRelatorio');
+        $empresa = $this->getParametroTela('empresa');
+        $situacao = $this->getParametroTela('situacao');
+        $categoria = $this->getParametroTela('categoria');
+        $tipoAmbiente = $this->getParametroTela('tipoAmbiente');
+        $tipoProduto = $this->getParametroTela('tipoProduto');
+        $modulo = $this->getParametroTela('modulo');
+        $imprimir = $this->getParametroTela('imprimir');
+        
+        // Define valores padrão
+        if (Functions::isEmpty($periodoInicial)) {
+            $periodoInicial = date('d/m/Y');
+        }
+        if (Functions::isEmpty($periodoFinal)) {
+            $periodoFinal = date('d/m/Y');
+        }
+        if (Functions::isEmpty($tipoRelatorio)) {
+            $tipoRelatorio = 'S';
+        }
+        if (Functions::isEmpty($imprimir)) {
+            $imprimir = 0;
+        }
+        
+        // Monta array de parâmetros
+        $parametros = array( 'periodoInicial'     => $periodoInicial
+                           , 'periodoFinal'       => $periodoFinal
+                           , 'tiposRelatorios'    => $tiposRelatoriosArray
+                           , 'tipoRelatorio'      => $tipoRelatorio
+                           , 'exibeEmpresaAberta' => $exibeEmpresaAberta
+                           , 'empresas'           => $empresasArray
+                           , 'empresa'            => $empresa
+                           , 'situacoes'          => $situacoesArray
+                           , 'situacao'           => $situacao
+                           , 'categorias'         => $categoriasArray
+                           , 'categoria'          => $categoria
+                           , 'tiposAmbientes'     => $tiposAmbientesArray
+                           , 'tipoAmbiente'       => $tipoAmbiente
+                           , 'tiposProdutos'      => $tiposProdutosArray
+                           , 'tipoProduto'        => $tipoProduto
+                           , 'modulos'            => $modulosArray
+                           , 'modulo'             => $modulo
+                           , 'registros'          => array()
+                           , 'mensagem'           => ""
+                           ) ;
+        
+        $erro = false;
+        
+        // Validações adicionais de segurança para o perfil de cliente
+        if ($_SESSION['perfilCliente'] == 1) {
+            // Valida se cliente fez malandragem de trocar empresa
+            if ($this->clienteSelecionouEmpresaInvalida($connection, $empresa)) {
+                $erro = true;
+                $mensagem = 'N' . 'Percebemos que você selecionou uma empresa diferente da sua. Por motivos de segurança, não exibiremos o resultado do relatório';
+            }
+        }
+        
+        // Se validações apuraram algum erro
+        if ($erro) {
+            if ($imprimir == 1) {
+                $view = 'views/relatorioAtendimentosSinteticoImprimir.phtml';
+            } else {
+                $view = 'views/relatorioAtendimentosSintetico.phtml';
+            }
+            $parametros['mensagem'] = $mensagem;
+        // Se relatório sintético
+        } else if ($tipoRelatorio == 'S') {
+            if ($imprimir == 1) {
+                $view = 'views/relatorioAtendimentosSinteticoImprimir.phtml';
+            } else {
+                $view = 'views/relatorioAtendimentosSintetico.phtml';
+            }
+            $chamadosModel = new ChamadosModel();
+            $registrosArray = $chamadosModel->loadRelatorioAtendimentosSintetico($connection, $periodoInicial, $periodoFinal, $empresa, $situacao, $categoria, $tipoAmbiente, $tipoProduto, $modulo);
+            $parametros['registros'] = $registrosArray;
+        // Se relatório analítico
+        } else if ($tipoRelatorio == 'A') {
+            if ($imprimir == 1) {
+                $view = 'views/relatorioAtendimentosAnaliticoImprimir.phtml';
+            } else {
+                $view = 'views/relatorioAtendimentosAnalitico.phtml';
+            }
+            $chamadosModel = new ChamadosModel();
+            $registrosArray = $chamadosModel->loadRelatorioAtendimentosAnalitico($connection, $periodoInicial, $periodoFinal, $empresa, $situacao, $categoria, $tipoAmbiente, $tipoProduto, $modulo);
+            $parametros['registros'] = $registrosArray;
+        }
+        
+        Databases::disconnect($connection);
+        
+        // Exibe a tela
+        $view = new View($view);
+        $view->setParams($parametros);
+        $view->showContents();
     }
     
 }

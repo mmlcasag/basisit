@@ -41,8 +41,10 @@
         
         <thead>
 	    <tr>
-                <th class="col-sm-3">Descrição</th>
-                <th class="col-sm-1">Exibe Impacto</th>
+                <th class="col-sm-1">#</th>
+                <th class="col-sm-5">Descrição</th>
+                <th class="col-sm-3">Exibe Impacto</th>
+                <th class="col-sm-2">Situação</th>
                 <th class="col-sm-1">Ações</th>
             </tr>
         </thead>
@@ -50,8 +52,10 @@
         <tbody>
             <?php foreach($registros AS $registro) { ?>
             <tr>
+                <td><?php echo $registro->getId()?></td>
                 <td><?php echo $registro->getDescricao()?></td>
                 <td><?php echo $registro->getExibeImpactoExtenso()?></td>
+                <td><?php echo $registro->getSituacaoExtenso()?></td>
                 <td>
                     <button type="button" class="btn btn-default btn-xs" onclick="javascript:editar(<?php echo $registro->getId()?>);">
                         <span class="glyphicon glyphicon-cog"></span>&nbsp;Alterar

@@ -41,10 +41,11 @@
 
         <thead>
             <tr>
-                <th class="col-sm-2">Nome</th>
-                <th class="col-sm-2">E-mail</th>
-                <th class="col-sm-1">Perfil</th>
-                <th class="col-sm-1">Empresa</th>
+                <th class="col-sm-1">#</th>
+                <th class="col-sm-3">Nome</th>
+                <th class="col-sm-3">E-mail</th>
+                <th class="col-sm-2">Perfil</th>
+                <th class="col-sm-2">Empresa</th>
                 <th class="col-sm-1">Ações</th>
             </tr>
         </thead>
@@ -52,6 +53,7 @@
         <tbody>
             <?php foreach($registros AS $usuario) { ?>
             <tr>
+                <td><?php echo $usuario->getId()?></td>
                 <td><?php echo $usuario->getNome()?></td>
                 <td><?php echo $usuario->getEmail()?></td>
                 <td><?php echo $usuario->getPerfil()->getDescricao()?></td>

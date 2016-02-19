@@ -27,6 +27,7 @@ require 'vo/SituacoesVo.php';
 require 'vo/TiposAmbientesVo.php';
 require 'vo/TiposAtividadesVo.php';
 require 'vo/TiposProdutosVo.php';
+require 'vo/TiposRelatoriosVo.php';
 require 'vo/TiposSistemasVo.php';
 require 'vo/UsuariosVo.php';
 
@@ -45,6 +46,7 @@ require 'models/SituacoesModel.php';
 require 'models/TiposAmbientesModel.php';
 require 'models/TiposAtividadesModel.php';
 require 'models/TiposProdutosModel.php';
+require 'models/TiposRelatoriosModel.php';
 require 'models/TiposSistemasModel.php';
 require 'models/UsuariosModel.php';
 

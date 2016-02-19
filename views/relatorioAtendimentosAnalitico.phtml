@@ -1,0 +1,370 @@
+<?php
+    
+    $v_params = $this->getParams();
+    
+    $mensagem = array();
+    if (array_key_exists('mensagem', $v_params)) {
+        $mensagem = $v_params['mensagem'];
+    }
+    
+    $periodoInicial = array();
+    if (array_key_exists('periodoInicial', $v_params)) {
+        $periodoInicial = $v_params['periodoInicial'];
+    }
+    
+    $periodoFinal = array();
+    if (array_key_exists('periodoFinal', $v_params)) {
+        $periodoFinal = $v_params['periodoFinal'];
+    }
+    
+    $tiposRelatorios = array();
+    if (array_key_exists('tiposRelatorios', $v_params)) {
+        $tiposRelatorios = $v_params['tiposRelatorios'];
+    }
+    
+    $tipoRelatorio = "";
+    if (array_key_exists('tipoRelatorio', $v_params)) {
+        $tipoRelatorio = $v_params['tipoRelatorio'];
+    }
+    
+    $exibeEmpresaAberta = 0;
+    if (array_key_exists('exibeEmpresaAberta', $v_params)) {
+        $exibeEmpresaAberta = $v_params['exibeEmpresaAberta'];
+    }
+    
+    $empresas = array();
+    if (array_key_exists('empresas', $v_params)) {
+        $empresas = $v_params['empresas'];
+    }
+    
+    $empresa = "";
+    if (array_key_exists('empresa', $v_params)) {
+        $empresa = $v_params['empresa'];
+    }
+    
+    $situacoes = array();
+    if (array_key_exists('situacoes', $v_params)) {
+        $situacoes = $v_params['situacoes'];
+    }
+    
+    $situacao = "";
+    if (array_key_exists('situacao', $v_params)) {
+        $situacao = $v_params['situacao'];
+    }
+    
+    $categorias = array();
+    if (array_key_exists('categorias', $v_params)) {
+        $categorias = $v_params['categorias'];
+    }
+    
+    $categoria = "";
+    if (array_key_exists('categoria', $v_params)) {
+        $categoria = $v_params['categoria'];
+    }
+    
+    $tiposAmbientes = array();
+    if (array_key_exists('tiposAmbientes', $v_params)) {
+        $tiposAmbientes = $v_params['tiposAmbientes'];
+    }
+    
+    $tipoAmbiente = "";
+    if (array_key_exists('tipoAmbiente', $v_params)) {
+        $tipoAmbiente = $v_params['tipoAmbiente'];
+    }
+    
+    $tiposProdutos = array();
+    if (array_key_exists('tiposProdutos', $v_params)) {
+        $tiposProdutos = $v_params['tiposProdutos'];
+    }
+    
+    $tipoProduto = "";
+    if (array_key_exists('tipoProduto', $v_params)) {
+        $tipoProduto = $v_params['tipoProduto'];
+    }
+    
+    $modulos = array();
+    if (array_key_exists('modulos', $v_params)) {
+        $modulos = $v_params['modulos'];
+    }
+    
+    $modulo = "";
+    if (array_key_exists('modulo', $v_params)) {
+        $modulo = $v_params['modulo'];
+    }
+    
+    $registros = array();
+    if (array_key_exists('registros', $v_params)) {
+        $registros = $v_params['registros'];
+    }
+    
+?>
+
+<?php include 'pageopen.php' ?>
+
+<link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        $(".datepicker").datepicker({dateFormat: 'dd/mm/yy'});
+    });
+</script>
+
+<div class="container">
+    
+    <div class="page-header">
+        <h3>Relatório de Atendimentos<small> / Analítico</small></h3>
+    </div>
+    
+    <?php
+    if (!Functions::isEmpty($mensagem)) {
+        if (substr($mensagem,0,1) == "N") {
+            echo '<div class="alert alert-danger"><strong>ERRO!</strong>&nbsp;&nbsp;&nbsp;' . substr($mensagem,1,999) . '</div>';
+        }
+        if (substr($mensagem,0,1) == "S") {
+            echo '<div class="alert alert-success"><strong>SUCESSO!</strong>&nbsp;&nbsp;&nbsp;' . substr($mensagem,1,999) . '</div>';
+        }
+    }
+    ?>
+    
+    <p><br /></p>
+    
+    <form name="filtros" class="form-horizontal" role="form" method="post" onsubmit="return validar();">
+        
+        <input type='hidden' name='controle' value='Chamados'>
+        <input type='hidden' name='acao' value='relatorioAtendimentos'>
+        
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="periodoInicial">Início:</label>
+            <div class="col-sm-3">
+                <input type="text" class="form-control datepicker" id="periodoInicial" name="periodoInicial" value="<?php echo $periodoInicial; ?>" />
+            </div>
+            <label class="control-label col-sm-2" for="periodoFinal">Término: </label>
+            <div class="col-sm-3">
+                <input type="text" class="form-control datepicker" id="periodoFinal" name="periodoFinal" value="<?php echo $periodoFinal; ?>" />
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="tipoRelatorio">Tipo de Relatório:</label>
+            <div class="col-sm-3">
+                <select class="form-control" id="tipoRelatorio" name="tipoRelatorio">
+                    <option value="">Selecione</option>
+                    <?php
+                    foreach($tiposRelatorios as $row) {
+                        echo '<option value="' . $row->getId() . '">' . $row->getDescricao() . '</option>';
+                    }
+                    ?>
+                </select>
+            </div>
+            <script>document.filtros.tipoRelatorio.value = "<?php echo $tipoRelatorio ?>";</script>
+            <?php 
+            if ($exibeEmpresaAberta == 0) {
+                foreach($empresas as $row) {
+                    echo '<label class="control-label col-sm-2" for="empresa">Empresa:</label>'
+                       . '<div class="col-sm-3">'
+                       . '  <input type="text" class="form-control" value="' . $row->getDescricao() . '" disabled="true" />'
+                       . '  <input type="hidden" id="empresa" name="empresa" value="' . $row->getId() . '" />'
+                       . '</div>';
+                }
+            } else { ?>
+                <label class="control-label col-sm-2" for="empresa">Empresa:</label>
+                <div class="col-sm-3">
+                    <select class="form-control" id="empresa" name="empresa">
+                        <option value="">Selecione</option>
+                        <?php
+                        foreach($empresas as $row) {
+                            echo '<option value="' . $row->getId() . '">' . $row->getDescricao() . '</option>';
+                        }
+                        ?>
+                    </select>
+                </div>
+                <script>document.filtros.empresa.value = "<?php echo $empresa ?>";</script>
+            <?php } ?>
+        </div>
+        
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="situacao">Situação:</label>
+            <div class="col-sm-3">
+                <select class="form-control" id="situacao" name="situacao">
+                    <option value="">Selecione</option>
+                    <?php
+                    foreach($situacoes as $row) {
+                        echo '<option value="' . $row->getId() . '">' . $row->getDescricao() . '</option>';
+                    }
+                    ?>
+                </select>
+            </div>
+            <script>document.filtros.situacao.value = "<?php echo $situacao ?>";</script>
+            <label class="control-label col-sm-2" for="categoria">Categoria:</label>
+            <div class="col-sm-3">
+                <select class="form-control" id="categoria" name="categoria">
+                    <option value="">Selecione</option>
+                    <?php
+                    foreach($categorias as $row) {
+                        echo '<option value="' . $row->getId() . '">' . $row->getDescricao() . '</option>';
+                    }
+                    ?>
+                </select>
+            </div>
+            <script>document.filtros.categoria.value = "<?php echo $categoria ?>";</script>
+        </div>
+                
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="tipoAmbiente">Tipo de Ambiente:</label>
+            <div class="col-sm-3">
+                <select class="form-control" id="tipoAmbiente" name="tipoAmbiente">
+                    <option value="">Selecione</option>
+                    <?php
+                    foreach($tiposAmbientes as $row) {
+                        echo '<option value="' . $row->getId() . '">' . $row->getDescricao() . '</option>';
+                    }
+                    ?>
+                </select>
+            </div>
+            <script>document.filtros.tipoAmbiente.value = "<?php echo $tipoAmbiente ?>";</script>
+            <label class="control-label col-sm-2" for="tipoProduto">Tipo de Produto:</label>
+            <div class="col-sm-3">
+                <select class="form-control" id="tipoProduto" name="tipoProduto">
+                    <option value="">Selecione</option>
+                    <?php
+                    foreach($tiposProdutos as $row) {
+                        echo '<option value="' . $row->getId() . '">' . $row->getDescricao() . '</option>';
+                    }
+                    ?>
+                </select>
+            </div>
+            <script>document.filtros.tipoProduto.value = "<?php echo $tipoProduto ?>";</script>
+        </div>
+        
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="modulo">Módulo:</label>
+            <div class="col-sm-3">
+                <select class="form-control" id="modulo" name="modulo">
+                    <option value="">Selecione</option>
+                    <?php
+                    foreach($modulos as $row) {
+                        echo '<option value="' . $row->getId() . '">' . $row->getDescricao() . '</option>';
+                    }
+                    ?>
+                </select>
+            </div>
+            <script>document.filtros.modulo.value = "<?php echo $modulo ?>";</script>
+        </div>
+        
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="submit"><br /></label>
+            <div class="col-sm-10">
+                <button type="submit" class="btn btn-default">
+                    <span class="glyphicon glyphicon-search"></span>&nbsp;&nbsp;Consultar
+                </button>
+            </div>
+        </div>
+        
+    </form>
+    
+    <p><br /></p>
+    
+    <?php foreach($registros AS $registro) { ?>
+    <div class="panel panel-default">
+        <div class="panel-heading"><?php echo '<b>' . 'Chamado: ' . $registro['chamadoCodigo'] . ' - ' . $registro['situacaoDescricao'] . '</b>'?></div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-sm-1" style="height:26px;"><b>Data:</b></div>
+                <div class="col-sm-3" style="height:26px;"><?php echo $registro['chamadoData']?></div>
+                <div class="col-sm-1" style="height:26px;"><b>Assunto:</b></div>
+                <div class="col-sm-7" style="height:26px;"><?php echo $registro['chamadoAssunto']?></div>
+            </div>
+            <div class="row">
+                <div class="col-sm-1" style="height:26px;"><b>Empresa:</b></div>
+                <div class="col-sm-3" style="height:26px;"><?php echo $registro['empresaDescricao']?></div>
+                <div class="col-sm-1" style="height:26px;"><b>Cliente:</b></div>
+                <div class="col-sm-7" style="height:26px;"><?php echo $registro['usuarioNome']?></div>
+            </div>
+            <div class="row">
+                <div class="col-sm-1" style="height:26px;"><b>Categoria:</b></div>
+                <div class="col-sm-3" style="height:26px;"><?php echo $registro['categoriaDescricao']?></div>
+                <div class="col-sm-1" style="height:26px;"><b>Ambiente:</b></div>
+                <div class="col-sm-7" style="height:26px;"><?php echo $registro['tipoAmbienteDescricao']?></div>
+            </div>
+            <div class="row">
+                <div class="col-sm-1" style="height:26px;"><b>Produto:</b></div>
+                <div class="col-sm-3" style="height:26px;"><?php echo $registro['tipoProdutoDescricao']?></div>
+                <div class="col-sm-1" style="height:26px;"><b>Módulo:</b></div>
+                <div class="col-sm-7" style="height:26px;"><?php echo $registro['moduloDescricao']?></div>
+            </div>
+
+            <br />
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th class="col-sm-4">Data</th>
+                        <th class="col-sm-8">Descrição</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach($registro['chamadoHistoricoArray'] AS $historico) { ?>
+                    <tr>
+                        <td align="left" colspan="1"><?php echo $historico->getData()?></td>
+                        <td align="left" colspan="2"><?php echo $historico->getObservacao()?></td>
+                    </tr>
+                    <?php } ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <br />
+    
+    <?php } ?>
+    
+    <button type="button" class="btn btn-default" onclick="javascript:imprimir();">
+        <span class="glyphicon glyphicon-print"></span>&nbsp;&nbsp;Imprimir
+    </button>
+    
+</div>
+
+<script type="text/javascript">
+    function validar() {
+        if (document.filtros.periodoInicial.value == "") {
+            alert('Informe algum valor para o campo "Período Inicial"');
+            document.filtros.periodoInicial.focus();
+            return false;
+        }
+        if (document.filtros.periodoFinal.value == "") {
+            alert('Informe algum valor para o campo "Período Final"');
+            document.filtros.periodoFinal.focus();
+            return false;
+        }
+        if (document.filtros.tipoRelatorio.value == "") {
+            alert('Informe algum valor para o campo "Tipo de Relatório"');
+            document.filtros.tipoRelatorio.focus();
+            return false;
+        }
+        return true;
+    }
+    function imprimir() {
+        postViaJS
+        ( ''
+        , { controle: 'Chamados'
+          , acao: 'relatorioAtendimentos'
+          , periodoInicial: document.filtros.periodoInicial.value
+          , periodoFinal: document.filtros.periodoFinal.value
+          , tipoRelatorio: document.filtros.tipoRelatorio.value
+          , empresa: document.filtros.empresa.value
+          , situacao: document.filtros.situacao.value
+          , categoria: document.filtros.categoria.value
+          , tipoAmbiente: document.filtros.tipoAmbiente.value
+          , tipoProduto: document.filtros.tipoProduto.value
+          , modulo: document.filtros.modulo.value
+          , imprimir: 1
+          }
+        , "post"
+        , "_blank"
+        ) ;
+    }
+</script>
+
+<?php include 'pageclose.php';

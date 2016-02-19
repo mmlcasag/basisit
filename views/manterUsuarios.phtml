@@ -58,36 +58,36 @@
         
         <div class="form-group">
             <label class="control-label col-sm-2" for="id">Código:</label>
-            <div class="col-sm-10">
+            <div class="col-sm-2">
                 <input type="hidden" id="id" name="id" value="<?php echo $usuario->getId() ?>">
-                <input type="text" class="form-control" id="id" name="id" placeholder="Será gerado automaticamente pelo sistema" value="<?php echo $usuario->getId()?>" disabled="disabled">
+                <input type="text" class="form-control" id="id" name="id" placeholder="" value="<?php echo $usuario->getId()?>" disabled="disabled">
             </div>
         </div>
         
         <div class="form-group">
             <label class="control-label col-sm-2" for="nome">Nome:</label>
-            <div class="col-sm-10">
-                <input type="text" class="form-control" id="nome" name="nome" placeholder="Informe o nome do usuário" value="<?php echo $usuario->getNome()?>">
+            <div class="col-sm-4">
+                <input type="text" class="form-control" id="nome" name="nome" placeholder="" value="<?php echo $usuario->getNome()?>">
             </div>
         </div>
         
         <div class="form-group">
             <label class="control-label col-sm-2" for="email">E-mail:</label>
-            <div class="col-sm-10">
-                <input type="text" class="form-control" id="email" name="email" placeholder="Informe o e-mail do usuário" value="<?php echo $usuario->getEmail()?>">
+            <div class="col-sm-4">
+                <input type="text" class="form-control" id="email" name="email" placeholder="" value="<?php echo $usuario->getEmail()?>">
             </div>
         </div>
         
         <div class="form-group">
             <label class="control-label col-sm-2" for="senha">Senha:</label>
-            <div class="col-sm-10">
-                <input type="password" class="form-control" id="senha" name="senha" placeholder="Informe a senha do usuário" value="<?php echo $usuario->getSenha()?>">
+            <div class="col-sm-2">
+                <input type="password" class="form-control" id="senha" name="senha" placeholder="" value="<?php echo $usuario->getSenha()?>">
             </div>
         </div>
         
         <div class="form-group">
             <label class="control-label col-sm-2" for="perfil">Perfil:</label>
-            <div class="col-sm-10">
+            <div class="col-sm-4">
                 <select class="form-control" id="perfil" name="perfil">
                     <option value="">Selecione</option>
                     <?php
@@ -105,7 +105,7 @@
         
         <div class="form-group">
             <label class="control-label col-sm-2" for="perfil">Empresa:</label>
-            <div class="col-sm-10">
+            <div class="col-sm-4">
                 <select class="form-control" id="empresa" name="empresa">
                     <option value="">Selecione</option>
                     <?php
@@ -123,35 +123,35 @@
         
         <div class="form-group">
             <label class="control-label col-sm-2" for="setor">Setor:</label>
-            <div class="col-sm-10">
-                <input type="text" class="form-control" id="setor" name="setor" placeholder="Informe o setor do usuário" value="<?php echo $usuario->getSetor()?>">
+            <div class="col-sm-4">
+                <input type="text" class="form-control" id="setor" name="setor" placeholder="" value="<?php echo $usuario->getSetor()?>">
             </div>
         </div>
         
         <div class="form-group">
             <label class="control-label col-sm-2" for="email">Fone Comercial:</label>
-            <div class="col-sm-10">
-                <input type="text" class="form-control" id="foneComercial" name="foneComercial" placeholder="Informe o fone comercial do usuário" value="<?php echo $usuario->getFoneComercial()?>">
+            <div class="col-sm-2">
+                <input type="text" class="form-control" id="foneComercial" name="foneComercial" placeholder="" value="<?php echo $usuario->getFoneComercial()?>">
             </div>
         </div>
         
         <div class="form-group">
             <label class="control-label col-sm-2" for="email">Fone Celular:</label>
-            <div class="col-sm-10">
-                <input type="text" class="form-control" id="foneCelular" name="foneCelular" placeholder="Informe o fone celular do usuário" value="<?php echo $usuario->getFoneCelular()?>">
+            <div class="col-sm-2">
+                <input type="text" class="form-control" id="foneCelular" name="foneCelular" placeholder="" value="<?php echo $usuario->getFoneCelular()?>">
             </div>
         </div>
         
         <div class="form-group">
             <label class="control-label col-sm-2" for="observacao">Observação:</label>
-            <div class="col-sm-10">
-                <textarea class="form-control" rows="5" id="observacao" name="observacao" placeholder="Espaço para informações adicionais do usuário"><?php echo $usuario->getObservacao()?></textarea>
+            <div class="col-sm-4">
+                <textarea class="form-control" rows="5" id="observacao" name="observacao" placeholder=""><?php echo $usuario->getObservacao()?></textarea>
             </div>
         </div>
         
         <div class="form-group">
             <label class="control-label col-sm-2" for="situacao">Situação:</label>
-            <div class="col-sm-10">
+            <div class="col-sm-4">
                 <label class="radio-inline"><input type="radio" name="situacao" value="0" <?php echo ( $usuario->getSituacao() == 0 ) ? 'checked="checked"' : '' ?> ><?php echo $usuario->getSituacaoExtensoParam(0)?></label>
                 <label class="radio-inline"><input type="radio" name="situacao" value="1" <?php echo ( $usuario->getSituacao() == 1 ) ? 'checked="checked"' : '' ?> ><?php echo $usuario->getSituacaoExtensoParam(1)?></label>
             </div>

@@ -11,7 +11,6 @@ class TiposSistemasModel {
         $vo->setDescricao($row->tps_dsstiposistema);
         $vo->setNomeMenu($row->tps_dssnomemenu);
         $vo->setEnderecoListar($row->tps_dssenderecolistar);
-        $vo->setEnderecoManter($row->tps_dssenderecomanter);
         $vo->setSituacao($row->tps_opldesativado);
         
         return $vo;
@@ -124,14 +123,12 @@ class TiposSistemasModel {
                      ( tps_dsstiposistema
                      , tps_dssnomemenu
                      , tps_dssenderecolistar
-                     , tps_dssenderecomanter
                      , tps_opldesativado
                      )
                    VALUES
                      ( :tps_dsstiposistema
                      , :tps_dssnomemenu
                      , :tps_dssenderecolistar
-                     , :tps_dssenderecomanter
                      , :tps_opldesativado
                    ) ";
         
@@ -140,7 +137,6 @@ class TiposSistemasModel {
         $stmt->bindParam(':tps_dsstiposistema', $vo->getDescricao());
         $stmt->bindParam(':tps_dssnomemenu', $vo->getNomeMenu());
         $stmt->bindParam(':tps_dssenderecolistar', $vo->getEnderecoListar());
-        $stmt->bindParam(':tps_dssenderecomanter', $vo->getEnderecoManter());
         $stmt->bindParam(':tps_opldesativado', $vo->getSituacao());
         
         $stmt->execute();
@@ -151,7 +147,6 @@ class TiposSistemasModel {
                    SET    tps_dsstiposistema    = :tps_dsstiposistema
                    ,      tps_dssnomemenu       = :tps_dssnomemenu
                    ,      tps_dssenderecolistar = :tps_dssenderecolistar
-                   ,      tps_dssenderecomanter = :tps_dssenderecomanter
                    ,  	  tps_opldesativado     = :tps_opldesativado
                    WHERE  tps_cditiposistema    = :tps_cditiposistema ";
         
@@ -160,7 +155,6 @@ class TiposSistemasModel {
         $stmt->bindParam(':tps_dsstiposistema', $vo->getDescricao());
         $stmt->bindParam(':tps_dssnomemenu', $vo->getNomeMenu());
         $stmt->bindParam(':tps_dssenderecolistar', $vo->getEnderecoListar());
-        $stmt->bindParam(':tps_dssenderecomanter', $vo->getEnderecoManter());
         $stmt->bindParam(':tps_opldesativado', $vo->getSituacao());
         $stmt->bindParam(':tps_cditiposistema', $vo->getId());
         

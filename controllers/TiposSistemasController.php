@@ -16,11 +16,9 @@ class TiposSistemasController extends BaseController {
         } else if (Functions::isEmpty($vo->getDescricao())) {
             return 'N' . 'Informe o campo "Descrição"';
         } else if (Functions::isEmpty($vo->getNomeMenu())) {
-            return 'N' . 'Informe o campo "Nome do Menu"';
+            return 'N' . 'Informe o campo "Classe"';
         } else if (Functions::isEmpty($vo->getEnderecoListar())) {
-            return 'N' . 'Informe o campo "Ação de Listagem"';
-        } else if (Functions::isEmpty($vo->getEnderecoManter())) {
-            return 'N' . 'Informe o campo "Ação de Manutenção"';
+            return 'N' . 'Informe o campo "Método"';
         } else if ((!Functions::isEmpty($vo->getSituacao())) && (!is_numeric($vo->getSituacao()))) {
             return 'N' . 'Valor para "Situação" é inválido';
         } else {
@@ -112,7 +110,6 @@ class TiposSistemasController extends BaseController {
         $vo->setDescricao($this->getParametroTela('descricao'));
         $vo->setNomeMenu($this->getParametroTela('nomeMenu'));
         $vo->setEnderecoListar($this->getParametroTela('enderecoListar'));
-        $vo->setEnderecoManter($this->getParametroTela('enderecoManter'));
         $vo->setSituacao($this->getParametroTela('situacao'));
 
         $mensagem = $this->validarFormulario($vo);

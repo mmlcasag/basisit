@@ -391,4 +391,200 @@ class ChamadosModel {
         return $registros;
     }
     
+    public function loadRelatorioAtendimentosSintetico($connection, $periodoInicial, $periodoFinal, $empresa, $situacao, $categoria, $tipoAmbiente, $tipoProduto, $modulo) {
+        $registros = array();
+        
+        $query = "  SELECT ch.cha_cdichamado, ch.cha_dtdcriacao
+                    ,      us.usu_dssnome, ep.emp_dssempresa
+                    ,      st.sit_dsssituacao, cg.cat_dsscategoria
+                    ,      ta.tpa_dsstipoambiente, tp.tpp_dsstipoproduto
+                    ,      md.mod_dssmodulo, ch.cha_dssassunto
+                    FROM   chamados            ch
+                    LEFT   JOIN usuarios       us ON us.usu_cdiusuario      = ch.cha_cdiusuario
+                    LEFT   JOIN empresas       ep ON ep.emp_cdiempresa      = us.usu_cdiempresa
+                    LEFT   JOIN situacoes      st ON st.sit_cdisituacao     = ch.cha_cdisituacao
+                    LEFT   JOIN categorias     cg ON cg.cat_cdicategoria    = ch.cha_cdicategoria
+                    LEFT   JOIN tiposambientes ta ON ta.tpa_cditipoambiente = ch.cha_cditipoambiente
+                    LEFT   JOIN tiposprodutos  tp ON tp.tpp_cditipoproduto  = ch.cha_cditipoproduto
+                    LEFT   JOIN modulos        md ON md.mod_cdimodulo       = ch.cha_cdimodulo
+                    WHERE  1 = 1 ";
+        
+        if (!Functions::isEmpty($periodoInicial)) {
+            $query .= " AND date_format(ch.cha_dtdcriacao, '%Y-%m-%d') >= :periodoInicial ";
+        }
+        if (!Functions::isEmpty($periodoFinal)) {
+            $query .= " AND date_format(ch.cha_dtdcriacao, '%Y-%m-%d') <= :periodoFinal ";
+        }
+        if (!Functions::isEmpty($empresa)) {
+            $query .= " AND ep.emp_cdiempresa = :empresa ";
+        }
+        if (!Functions::isEmpty($situacao)) {
+            $query .= " AND st.sit_cdisituacao = :situacao ";
+        }
+        if (!Functions::isEmpty($categoria)) {
+            $query .= " AND cg.cat_cdicategoria = :categoria ";
+        }
+        if (!Functions::isEmpty($tipoAmbiente)) {
+            $query .= " AND ta.tpa_cditipoambiente = :tipoAmbiente ";
+        }
+        if (!Functions::isEmpty($tipoProduto)) {
+            $query .= " AND tp.tpp_cditipoproduto = :tipoProduto ";
+        }
+        if (!Functions::isEmpty($modulo)) {
+            $query .= " AND md.mod_cdimodulo = :modulo ";
+        }
+        
+        $query .= " ORDER BY ch.cha_cdichamado ";
+        
+        $stmt = $connection->prepare($query);
+        
+        if (!Functions::isEmpty($periodoInicial)) {
+            $stmt->bindParam(':periodoInicial', Functions::toDateToSql($periodoInicial));
+        }
+        if (!Functions::isEmpty($periodoFinal)) {
+            $stmt->bindParam(':periodoFinal', Functions::toDateToSql($periodoFinal));
+        }
+        if (!Functions::isEmpty($empresa)) {
+            $stmt->bindParam(':empresa', $empresa);
+        }
+        if (!Functions::isEmpty($situacao)) {
+            $stmt->bindParam(':situacao', $situacao);
+        }
+        if (!Functions::isEmpty($categoria)) {
+            $stmt->bindParam(':categoria', $categoria);
+        }
+        if (!Functions::isEmpty($tipoAmbiente)) {
+            $stmt->bindParam(':tipoAmbiente', $tipoAmbiente);
+        }
+        if (!Functions::isEmpty($tipoProduto)) {
+            $stmt->bindParam(':tipoProduto', $tipoProduto);
+        }
+        if (!Functions::isEmpty($modulo)) {
+            $stmt->bindParam(':modulo', $modulo);
+        }
+        
+        $stmt->execute();
+        
+        $rows = $stmt->fetchAll();
+        
+        foreach ($rows as $row) {
+            $registro = array( 'chamadoCodigo' => $row->cha_cdichamado
+                             , 'chamadoData' => Functions::toDate($row->cha_dtdcriacao)
+                             , 'usuarioNome' => $row->usu_dssnome
+                             , 'empresaDescricao' => $row->emp_dssempresa
+                             , 'situacaoDescricao' => $row->sit_dsssituacao
+                             , 'categoriaDescricao' => $row->cat_dsscategoria
+                             , 'tipoAmbienteDescricao' => $row->tpa_dsstipoambiente
+                             , 'tipoProdutoDescricao' => $row->tpp_dsstipoproduto
+                             , 'moduloDescricao' => $row->mod_dssmodulo
+                             , 'chamadoAssunto' => $row->cha_dssassunto
+                             ) ;
+            
+            array_push($registros, $registro);
+        }
+        
+        return $registros;
+        
+    }
+    
+    public function loadRelatorioAtendimentosAnalitico($connection, $periodoInicial, $periodoFinal, $empresa, $situacao, $categoria, $tipoAmbiente, $tipoProduto, $modulo) {
+        $registros = array();
+        
+        $query = "  SELECT ch.cha_cdichamado, ch.cha_dtdcriacao
+                    ,      us.usu_dssnome, ep.emp_dssempresa
+                    ,      st.sit_dsssituacao, cg.cat_dsscategoria
+                    ,      ta.tpa_dsstipoambiente, tp.tpp_dsstipoproduto
+                    ,      md.mod_dssmodulo, ch.cha_dssassunto
+                    FROM   chamados            ch
+                    LEFT   JOIN usuarios       us ON us.usu_cdiusuario      = ch.cha_cdiusuario
+                    LEFT   JOIN empresas       ep ON ep.emp_cdiempresa      = us.usu_cdiempresa
+                    LEFT   JOIN situacoes      st ON st.sit_cdisituacao     = ch.cha_cdisituacao
+                    LEFT   JOIN categorias     cg ON cg.cat_cdicategoria    = ch.cha_cdicategoria
+                    LEFT   JOIN tiposambientes ta ON ta.tpa_cditipoambiente = ch.cha_cditipoambiente
+                    LEFT   JOIN tiposprodutos  tp ON tp.tpp_cditipoproduto  = ch.cha_cditipoproduto
+                    LEFT   JOIN modulos        md ON md.mod_cdimodulo       = ch.cha_cdimodulo
+                    WHERE  1 = 1 ";
+        
+        if (!Functions::isEmpty($periodoInicial)) {
+            $query .= " AND date_format(ch.cha_dtdcriacao, '%Y-%m-%d') >= :periodoInicial ";
+        }
+        if (!Functions::isEmpty($periodoFinal)) {
+            $query .= " AND date_format(ch.cha_dtdcriacao, '%Y-%m-%d') <= :periodoFinal ";
+        }
+        if (!Functions::isEmpty($empresa)) {
+            $query .= " AND ep.emp_cdiempresa = :empresa ";
+        }
+        if (!Functions::isEmpty($situacao)) {
+            $query .= " AND st.sit_cdisituacao = :situacao ";
+        }
+        if (!Functions::isEmpty($categoria)) {
+            $query .= " AND cg.cat_cdicategoria = :categoria ";
+        }
+        if (!Functions::isEmpty($tipoAmbiente)) {
+            $query .= " AND ta.tpa_cditipoambiente = :tipoAmbiente ";
+        }
+        if (!Functions::isEmpty($tipoProduto)) {
+            $query .= " AND tp.tpp_cditipoproduto = :tipoProduto ";
+        }
+        if (!Functions::isEmpty($modulo)) {
+            $query .= " AND md.mod_cdimodulo = :modulo ";
+        }
+        
+        $query .= " ORDER BY ch.cha_cdichamado ";
+        
+        $stmt = $connection->prepare($query);
+        
+        if (!Functions::isEmpty($periodoInicial)) {
+            $stmt->bindParam(':periodoInicial', Functions::toDateToSql($periodoInicial));
+        }
+        if (!Functions::isEmpty($periodoFinal)) {
+            $stmt->bindParam(':periodoFinal', Functions::toDateToSql($periodoFinal));
+        }
+        if (!Functions::isEmpty($empresa)) {
+            $stmt->bindParam(':empresa', $empresa);
+        }
+        if (!Functions::isEmpty($situacao)) {
+            $stmt->bindParam(':situacao', $situacao);
+        }
+        if (!Functions::isEmpty($categoria)) {
+            $stmt->bindParam(':categoria', $categoria);
+        }
+        if (!Functions::isEmpty($tipoAmbiente)) {
+            $stmt->bindParam(':tipoAmbiente', $tipoAmbiente);
+        }
+        if (!Functions::isEmpty($tipoProduto)) {
+            $stmt->bindParam(':tipoProduto', $tipoProduto);
+        }
+        if (!Functions::isEmpty($modulo)) {
+            $stmt->bindParam(':modulo', $modulo);
+        }
+        
+        $stmt->execute();
+        
+        $rows = $stmt->fetchAll();
+        
+        foreach ($rows as $row) {
+            $chamadosHistoricosModel = new ChamadosHistoricosModel();
+            $chamadosHistoricosArray = $chamadosHistoricosModel->loadByChamado($connection, $row->cha_cdichamado);
+            
+            $registro = array( 'chamadoCodigo' => $row->cha_cdichamado
+                             , 'chamadoData' => Functions::toDate($row->cha_dtdcriacao)
+                             , 'usuarioNome' => $row->usu_dssnome
+                             , 'empresaDescricao' => $row->emp_dssempresa
+                             , 'situacaoDescricao' => $row->sit_dsssituacao
+                             , 'categoriaDescricao' => $row->cat_dsscategoria
+                             , 'tipoAmbienteDescricao' => $row->tpa_dsstipoambiente
+                             , 'tipoProdutoDescricao' => $row->tpp_dsstipoproduto
+                             , 'moduloDescricao' => $row->mod_dssmodulo
+                             , 'chamadoAssunto' => $row->cha_dssassunto
+                             , 'chamadoHistoricoArray' => $chamadosHistoricosArray
+                             ) ;
+            
+            array_push($registros, $registro);
+        }
+        
+        return $registros;
+        
+    }
+    
 }

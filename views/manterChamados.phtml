@@ -88,6 +88,7 @@
         if ($_SESSION['perfilCliente'] == 1) {
             $exibeRequisitante = false;
             $exibeRequisitanteAtivado = false;
+            $requisitanteIgualUsuario = true;
             $exibeAtendente = false;
             $exibeAtendenteAtivado = false;
             $exibeModulo = false;
@@ -95,6 +96,7 @@
         } else {
             $exibeRequisitante = true;
             $exibeRequisitanteAtivado = true;
+            $requisitanteIgualUsuario = false;
             $exibeAtendente = true;
             $exibeAtendenteAtivado = true;
             $exibeModulo = true;
@@ -109,6 +111,7 @@
         if ($_SESSION['perfilCliente'] == 1) {
             $exibeRequisitante = true;
             $exibeRequisitanteAtivado = false;
+            $requisitanteIgualUsuario = false;
             $exibeAtendente = true;
             $exibeAtendenteAtivado = false;
             $exibeModulo = true;
@@ -116,6 +119,7 @@
         } else {
             $exibeRequisitante = true;
             $exibeRequisitanteAtivado = true;
+            $requisitanteIgualUsuario = false;
             $exibeAtendente = true;
             $exibeAtendenteAtivado = true;
             $exibeModulo = true;
@@ -366,6 +370,39 @@
         echo '<input type="hidden" name="data" value="' . $data . '" />';
         ?>
         
+        <!-- Empresa -------------------------------------------------------------------------->
+        
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="empresa">Empresa:</label>
+            <div class="col-sm-10">
+                <select class="form-control" id="empresa" name="empresa">
+                    <option value="">Selecione</option>
+                    <?php
+                    foreach($empresas as $empresa) {
+                        echo '<option value="' . $empresa->getId() . '">' . $empresa->getDescricao() . '</option>';
+                    }
+                    ?>
+                </select>
+            </div>
+        </div>
+        
+        <?php
+        if ($chamado->getEmpresa() != "") {
+            $empresa = $chamado->getEmpresa()->getId();
+        } else {
+            $empresa = $_SESSION['empresaCodigo'];
+        }
+        
+        echo '<script>document.form.empresa.value = "' . $empresa . '";</script>';
+        
+        if (($exibeEmpresaAberta) && ($exibeControlesAbertos)) {
+            echo '';
+        } else {
+            echo '<script>document.form.empresa.disabled = true;</script>';
+            echo '<input type="hidden" name="empresa" value="' . $empresa . '" />';
+        }
+        ?>
+        
         <!-- Usuário -------------------------------------------------------------------------->
         
         <div class="form-group">
@@ -409,6 +446,8 @@
         <?php
         if ($chamado->getRequisitante() != "") {
             $requisitante = $chamado->getRequisitante()->getId();
+        } else if ($requisitanteIgualUsuario) {
+            $requisitante = $usuarioCodigo;
         } else {
             $requisitante = "";
         }
@@ -506,39 +545,6 @@
         } else {
             echo '<script>document.form.situacao.disabled = true;</script>';
             echo '<input type="hidden" name="situacao" value="' . $situacao . '" />';
-        }
-        ?>
-        
-        <!-- Empresa -------------------------------------------------------------------------->
-        
-        <div class="form-group">
-            <label class="control-label col-sm-2" for="empresa">Empresa:</label>
-            <div class="col-sm-10">
-                <select class="form-control" id="empresa" name="empresa">
-                    <option value="">Selecione</option>
-                    <?php
-                    foreach($empresas as $empresa) {
-                        echo '<option value="' . $empresa->getId() . '">' . $empresa->getDescricao() . '</option>';
-                    }
-                    ?>
-                </select>
-            </div>
-        </div>
-        
-        <?php
-        if ($chamado->getEmpresa() != "") {
-            $empresa = $chamado->getEmpresa()->getId();
-        } else {
-            $empresa = $_SESSION['empresaCodigo'];
-        }
-        
-        echo '<script>document.form.empresa.value = "' . $empresa . '";</script>';
-        
-        if (($exibeEmpresaAberta) && ($exibeControlesAbertos)) {
-            echo '';
-        } else {
-            echo '<script>document.form.empresa.disabled = true;</script>';
-            echo '<input type="hidden" name="empresa" value="' . $empresa . '" />';
         }
         ?>
         

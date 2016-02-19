@@ -6,7 +6,6 @@ class TiposSistemasVo {
     private $descricao;
     private $nomeMenu;
     private $enderecoListar;
-    private $enderecoManter;
     private $situacao;
     
     function __construct() {
@@ -45,14 +44,6 @@ class TiposSistemasVo {
         return $this->enderecoListar;
     }
     
-    public function setEnderecoManter($enderecoManter) {
-        $this->enderecoManter = $enderecoManter;
-    }
-    
-    public function getEnderecoManter() {
-        return $this->enderecoManter;
-    }
-    
     public function setSituacao($situacao) {
         $this->situacao = $situacao;
     }
@@ -63,7 +54,7 @@ class TiposSistemasVo {
     
     public function getSituacaoExtenso() {
         switch ($this->situacao) {
-            case 0: return "Ativo";
+            case 0: return "Ativado";
             case 1: return "Desativado";
             default: return "";
         }
@@ -71,7 +62,7 @@ class TiposSistemasVo {
     
     public function getSituacaoExtensoParam($situacao) {
         switch ($situacao) {
-            case 0: return "Ativo";
+            case 0: return "Ativado";
             case 1: return "Desativado";
             default: return "";
         }

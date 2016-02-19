@@ -66,25 +66,19 @@
     <form class="form-horizontal" role="form" method="post">
         
         <input type='hidden' name='controle' value='Apontamentos'>
-        <input type='hidden' name='acao' value='listarFaturamentoPorEmpresa'>
+        <input type='hidden' name='acao' value='relatorioFaturamentoPorEmpresa'>
         
         <div class="form-group">
-            <label class="control-label col-sm-2" for="periodoInicial">Período Inicial:</label>
-            <div class="col-sm-10">
+            <label class="control-label col-sm-1" for="periodoInicial">Início:</label>
+            <div class="col-sm-2">
                 <input type="text" class="form-control datepicker" id="periodoInicial" name="periodoInicial" value="<?php echo $periodoInicial;?>" />
             </div>
-        </div>
-        
-        <div class="form-group">
-            <label class="control-label col-sm-2" for="periodoFinal">Período Final:</label>
-            <div class="col-sm-10">
+            <label class="control-label col-sm-1" for="periodoFinal">Término:</label>
+            <div class="col-sm-2">
                 <input type="text" class="form-control datepicker" id="periodoFinal" name="periodoFinal" value="<?php echo $periodoFinal;?>" />
             </div>
-        </div>
-        
-        <div class="form-group">
-            <label class="control-label col-sm-2" for="empresaCodigo">Empresa:</label>
-            <div class="col-sm-10">
+            <label class="control-label col-sm-1" for="empresaCodigo">Empresa:</label>
+            <div class="col-sm-3">
                 <select class="form-control" id="empresaCodigo" name="empresaCodigo">
                     <option value="">Selecione</option>
                     <?php
@@ -98,11 +92,7 @@
                     ?>
                 </select>
             </div>
-        </div>
-        
-        <div class="form-group">
-            <label class="control-label col-sm-2" for="submit"><br /></label>
-            <div class="col-sm-10">
+            <div class="col-sm-1">
                 <button type="submit" class="btn btn-default">
                     <span class="glyphicon glyphicon-search"></span>&nbsp;&nbsp;Consultar
                 </button>
@@ -145,7 +135,7 @@
 
 <script type="text/javascript">
     function detalhar(empresaCodigo) {
-        postViaJS('', {controle: 'Apontamentos', acao: 'listarApontamentosParaAvaliacao', periodoInicial: document.forms[0].periodoInicial.value, periodoFinal: document.forms[0].periodoFinal.value, empresaCodigo: empresaCodigo, caller: 'listarFaturamentoPorEmpresa'}, "post", "_blank");
+        postViaJS('', {controle: 'Apontamentos', acao: 'relatorioApontamentosParaAvaliacao', periodoInicial: document.forms[0].periodoInicial.value, periodoFinal: document.forms[0].periodoFinal.value, empresaCodigo: empresaCodigo, caller: 'relatorioFaturamentoPorEmpresa'}, "post", "_blank");
     }
 </script>
 
