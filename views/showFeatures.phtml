@@ -32,7 +32,31 @@
     
     <p><br /></p>
     
-    <?php if ($_SESSION['perfilCliente'] == 0) { ?>
+    <?php if ($_SESSION['perfilCliente'] == 1) { ?>
+        <table class="table table-striped">
+
+            <thead>
+                <tr>
+                    <th class="col-sm-3">Descrição</th>
+                    <th class="col-sm-1">Ações</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <?php foreach($registros AS $tipoSistema) { ?>
+                <tr>
+                    <td><?php echo $tipoSistema->getDescricao()?></td>
+                    <td>
+                        <button type="button" class="btn btn-default btn-xs" onclick="post('<?php echo $tipoSistema->getNomeMenu();?>','<?php echo $tipoSistema->getEnderecoListar();?>');">
+                            <span class="glyphicon glyphicon-share-alt"></span>&nbsp;Acessar
+                        </button>
+                    </td>
+                </tr>
+                <?php } ?>
+            </tbody>
+
+        </table>
+    <?php } else { ?>
         <table class="table table-striped">
 
             <thead>
@@ -50,7 +74,7 @@
                     <td><?php echo '<a href="javascript:;" onclick="listarChamadosNaoClassificados();">' . $naoClassificados . '</a>'; ?></td>
                 </tr>
             </tbody>
-
+            
         </table>
 
         <br />
@@ -93,8 +117,8 @@
                 <?php foreach($resumoGeral AS $resumo) { ?>
                 <tr>
                     <td><?php echo $resumo['usuarioNome']; ?></td>
-                    <td><?php echo '<a href="javascript:;" onclick="listarAtividades(' . $resumo['usuarioCodigo'] . ',' . $_SESSION['situacaoEmAndamento'] . ');">' . $resumo['usuarioQuantidadeAtividades'] . '</a>'; ?></td>
-                    <td><?php echo '<a href="javascript:;" onclick="listarChamados(' . $resumo['usuarioCodigo'] . ',' . $_SESSION['situacaoEmAndamento'] . ');">' . $resumo['usuarioQuantidadeChamados'] . '</a>'; ?></td>
+                    <td><?php echo '<a href="javascript:;" onclick="listarAtividadesEspecial(' . $resumo['usuarioCodigo'] . ', 1);">' . $resumo['usuarioQuantidadeAtividades'] . '</a>'; ?></td>
+                    <td><?php echo '<a href="javascript:;" onclick="listarChamadosEspecial(' . $resumo['usuarioCodigo'] . ', 1);">' . $resumo['usuarioQuantidadeChamados'] . '</a>'; ?></td>
                 </tr>
                 <?php } ?>
             </tbody>
@@ -102,30 +126,6 @@
         </table>
 
         <br />
-    <?php } else { ?>
-        <table class="table table-striped">
-
-            <thead>
-                <tr>
-                    <th class="col-sm-3">Descrição</th>
-                    <th class="col-sm-1">Ações</th>
-                </tr>
-            </thead>
-
-            <tbody>
-                <?php foreach($registros AS $tipoSistema) { ?>
-                <tr>
-                    <td><?php echo $tipoSistema->getDescricao()?></td>
-                    <td>
-                        <button type="button" class="btn btn-default btn-xs" onclick="post('<?php echo $tipoSistema->getNomeMenu();?>','<?php echo $tipoSistema->getEnderecoListar();?>');">
-                            <span class="glyphicon glyphicon-share-alt"></span>&nbsp;Acessar
-                        </button>
-                    </td>
-                </tr>
-                <?php } ?>
-            </tbody>
-
-        </table>
     <?php } ?>
     
 </div>
@@ -139,6 +139,12 @@
     }
     function listarAtividades(usuarioCodigo, situacaoCodigo) {
         postViaJS('', {controle: 'Atividades', acao: 'listar', usuario: usuarioCodigo, situacao: situacaoCodigo}, "post", "_blank");
+    }
+    function listarChamadosEspecial(usuarioCodigo, especial) {
+        postViaJS('', {controle: 'Chamados', acao: 'listar', atendente: usuarioCodigo, especial: especial}, "post", "_blank");
+    }
+    function listarAtividadesEspecial(usuarioCodigo, especial) {
+        postViaJS('', {controle: 'Atividades', acao: 'listar', usuario: usuarioCodigo, especial: especial}, "post", "_blank");
     }
     function listarChamadosNaoClassificados() {
         postViaJS('', {controle: 'Chamados', acao: 'listarNaoClassificados'}, "post", "_blank");

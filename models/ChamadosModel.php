@@ -401,7 +401,7 @@ class ChamadosModel {
                     ,      md.mod_dssmodulo, ch.cha_dssassunto
                     FROM   chamados            ch
                     LEFT   JOIN usuarios       us ON us.usu_cdiusuario      = ch.cha_cdiusuario
-                    LEFT   JOIN empresas       ep ON ep.emp_cdiempresa      = us.usu_cdiempresa
+                    LEFT   JOIN empresas       ep ON ep.emp_cdiempresa      = ch.cha_cdiempresa
                     LEFT   JOIN situacoes      st ON st.sit_cdisituacao     = ch.cha_cdisituacao
                     LEFT   JOIN categorias     cg ON cg.cat_cdicategoria    = ch.cha_cdicategoria
                     LEFT   JOIN tiposambientes ta ON ta.tpa_cditipoambiente = ch.cha_cditipoambiente
@@ -497,7 +497,7 @@ class ChamadosModel {
                     ,      md.mod_dssmodulo, ch.cha_dssassunto
                     FROM   chamados            ch
                     LEFT   JOIN usuarios       us ON us.usu_cdiusuario      = ch.cha_cdiusuario
-                    LEFT   JOIN empresas       ep ON ep.emp_cdiempresa      = us.usu_cdiempresa
+                    LEFT   JOIN empresas       ep ON ep.emp_cdiempresa      = ch.cha_cdiempresa
                     LEFT   JOIN situacoes      st ON st.sit_cdisituacao     = ch.cha_cdisituacao
                     LEFT   JOIN categorias     cg ON cg.cat_cdicategoria    = ch.cha_cdicategoria
                     LEFT   JOIN tiposambientes ta ON ta.tpa_cditipoambiente = ch.cha_cditipoambiente

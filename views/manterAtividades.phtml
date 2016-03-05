@@ -69,8 +69,8 @@
     if (Functions::isEmpty($atividade->getId())) {
         $inclusao = true;
         $atividadeData = date("d/m/Y");
-        $situacaoCodigo = $_SESSION['situacaoPendente'];
-        $situacaoDescricao = "Pendente";
+        $situacaoCodigo = $_SESSION['situacaoEmAndamento'];
+        $situacaoDescricao = "Em Andamento";
     } else {
         $inclusao = false;
         $atividadeData = "";

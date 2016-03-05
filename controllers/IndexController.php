@@ -119,7 +119,6 @@ class IndexController {
         $_SESSION['perfilFuncionario']   = $usuario->getPerfil()->getFuncionario();
         $_SESSION['perfilCliente']       = $usuario->getPerfil()->getCliente();
         
-        $_SESSION['situacaoPendente']    = 1;
         $_SESSION['situacaoEmAndamento'] = 2;
         $_SESSION['situacaoFinalizada']  = 3;
         $_SESSION['situacaoCancelada']   = 9;

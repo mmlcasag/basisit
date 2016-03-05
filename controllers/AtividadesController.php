@@ -90,9 +90,10 @@ class AtividadesController extends BaseController {
         $tipoAtividade = $this->getParametroTela('tipoAtividade');
         $situacao      = $this->getParametroTela('situacao');
         $observacao    = $this->getParametroTela('observacao');
+        $especial      = $this->getParametroTela('especial');
         
         $model = new AtividadesModel();
-        $registros = $model->loadByCriteria($connection, $codigo, $usuario, $dataIni, $dataFim, $empresa, $tipoAtividade, $situacao, $observacao);
+        $registros = $model->loadByCriteria($connection, $codigo, $usuario, $dataIni, $dataFim, $empresa, $tipoAtividade, $situacao, $observacao, $especial);
         
         return $this->trabalharDadosListar($registros, $mensagem);
     }

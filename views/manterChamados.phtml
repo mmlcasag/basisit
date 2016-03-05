@@ -82,8 +82,8 @@
     if (Functions::isEmpty($chamado->getId())) {
         $inclusao = true;
         $chamadoData = date("d/m/Y");
-        $situacaoCodigo = $_SESSION['situacaoPendente'];
-        $situacaoDescricao = "Pendente";
+        $situacaoCodigo = $_SESSION['situacaoEmAndamento'];
+        $situacaoDescricao = "Em Andamento";
         
         if ($_SESSION['perfilCliente'] == 1) {
             $exibeRequisitante = false;

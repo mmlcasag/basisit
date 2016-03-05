@@ -51,7 +51,7 @@ class AtividadesModel {
         return $registros;
     }
     
-    public function loadByCriteria($connection, $codigo = "", $usuario = "", $dataIni = "", $dataFim = "", $empresa = "", $tipoAtividade = "", $situacao = "", $observacao = "") {
+    public function loadByCriteria($connection, $codigo = "", $usuario = "", $dataIni = "", $dataFim = "", $empresa = "", $tipoAtividade = "", $situacao = "", $observacao = "", $especial = "") {
         $registros = array();
         
         $query = " SELECT *
@@ -81,6 +81,9 @@ class AtividadesModel {
         }
         if (!Functions::isEmpty($observacao)) {
             $query = $query . " AND LOWER(ati_dsbobservacao) LIKE :ati_dsbobservacao ";
+        }
+        if (!Functions::isEmpty($especial)) {
+            $query = $query . " AND ati_cdisituacao NOT IN (" . $_SESSION['situacaoFinalizada'] . "," . $_SESSION['situacaoCancelada'] . ") ";
         }
         
         $query = $query . " ORDER  BY ati_cdiatividade ";
