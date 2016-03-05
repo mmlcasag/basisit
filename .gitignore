@@ -5,3 +5,5 @@ nbproject/*
 
 #ignore these files
 lib/jquery-ui-1.11.4.custom/images/Thumbs.db
+models/Database.php
+index.php
