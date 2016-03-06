@@ -97,6 +97,8 @@
         $registros = $v_params['registros'];
     }
     
+    $horasFaturadasTotal = '00:00:00';
+    
 ?>
 
 <!DOCTYPE html>
@@ -120,78 +122,70 @@
             <td align="center"><b><?php echo "Relatório de Atendimentos - Analítico" ?></b></td>
             <td align="right"><?php echo "Impresso em: " . date("d/m/Y") ?></td>
         </tr>
-        <tr>
-            <td align="left" colspan="3">
-                <?php
-                if (!Functions::isEmpty($mensagem)) {
-                    if (substr($mensagem,0,1) == "N") {
-                        echo '<div class="alert alert-danger"><strong>ERRO!</strong>&nbsp;&nbsp;&nbsp;' . substr($mensagem,1,999) . '</div>';
-                    }
-                    if (substr($mensagem,0,1) == "S") {
-                        echo '<div class="alert alert-success"><strong>SUCESSO!</strong>&nbsp;&nbsp;&nbsp;' . substr($mensagem,1,999) . '</div>';
-                    }
-                } else {
-                    echo '<br />';
-                }
-                ?>
-            </td>
-        </tr>
+        <?php
+        if (!Functions::isEmpty($mensagem)) {
+            if (substr($mensagem,0,1) == "N") {
+                echo '<tr><td align="left" colspan="3"><div class="alert alert-danger"><strong>ERRO!</strong>&nbsp;&nbsp;&nbsp;' . substr($mensagem,1,999) . '</div></td></tr>';
+            }
+            if (substr($mensagem,0,1) == "S") {
+                echo '<tr><td align="left" colspan="3"><div class="alert alert-success"><strong>SUCESSO!</strong>&nbsp;&nbsp;&nbsp;' . substr($mensagem,1,999) . '</div></td></tr>';
+            }
+        }
+        ?>
         <tr>
             <td align="left" colspan="3">
             <?php foreach($registros AS $registro) { ?>
+            <?php $horasFaturadasTotal = Functions::sumTimes($horasFaturadasTotal, Functions::toTime($registro['horasFaturadas']));?>
+            <br />
             <table align="center" border="1" cellspacing="1" cellpadding="1" width="100%">
                 <tr>
-                    <td align="left" colspan="4" bgcolor="#DEDEDE"><b><?php echo 'Chamado: ' . $registro['chamadoCodigo'] . ' - ' . $registro['situacaoDescricao']?></b></td>
+                    <td align="left" colspan="4" bgcolor="#DEDEDE"><b><?php echo 'Chamado: ' . $registro['chamadoCodigo'] . ' - ' . $registro['chamadoAssunto']?></b></td>
                 </tr>
                 <tr>
                     <td align="left" colspan="4"><br /></td>
                 </tr>
                 <tr>
-                    <td align="left"><b>Data:</b></td>
-                    <td align="left"><?php echo $registro['chamadoData']?></td>
-                    <td align="left"><b>Assunto:</b></td>
-                    <td align="left"><?php echo $registro['chamadoAssunto']?></td>
+                    <td align="left" colspan="2" width="50%"><b>Data: </b><?php echo $registro['chamadoData']?></td>
+                    <td align="left" colspan="2" width="50%"><b>Situação: </b><?php echo $registro['situacaoDescricao']?></td>
                 </tr>
                 <tr>
-                    <td align="left"><b>Empresa:</b></td>
-                    <td align="left"><?php echo $registro['empresaDescricao']?></td>
-                    <td align="left"><b>Cliente:</b></td>
-                    <td align="left"><?php echo $registro['usuarioNome']?></td>
+                    <td align="left" colspan="2"><b>Empresa: </b><?php echo $registro['empresaDescricao']?></td>
+                    <td align="left" colspan="2"><b>Cliente: </b><?php echo $registro['usuarioNome']?></td>
                 </tr>
                 <tr>
-                    <td align="left"><b>Categoria:</b></td>
-                    <td align="left"><?php echo $registro['categoriaDescricao']?></td>
-                    <td align="left"><b>Ambiente:</b></td>
-                    <td align="left"><?php echo $registro['tipoAmbienteDescricao']?></td>
+                    <td align="left" colspan="2"><b>Categoria: </b><?php echo $registro['categoriaDescricao']?></td>
+                    <td align="left" colspan="2"><b>Ambiente: </b><?php echo $registro['tipoAmbienteDescricao']?></td>
                 </tr>
                 <tr>
-                    <td align="left"><b>Produto:</b></td>
-                    <td align="left"><?php echo $registro['tipoProdutoDescricao']?></td>
-                    <td align="left"><b>Módulo:</b></td>
-                    <td align="left"><?php echo $registro['moduloDescricao']?></td>
+                    <td align="left" colspan="2"><b>Produto: </b><?php echo $registro['tipoProdutoDescricao']?></td>
+                    <td align="left" colspan="2"><b>Módulo: </b><?php echo $registro['moduloDescricao']?></td>
                 </tr>
                 <tr>
-                    <td align="left" colspan="4"><br /></td>
+                    <td align="left" colspan="2"><br /></td>
+                    <td align="left" colspan="2"><b>Horas Faturadas: </b><?php echo $registro['horasFaturadas']?></td>
                 </tr>
+            </table>
+            <table align="center" border="1" cellspacing="1" cellpadding="1" width="100%">    
                 <tr>
-                    <th align="left">Data</th>
+                    <th align="left" width="150px">Data</th>
                     <th align="left" colspan="3">Descrição</th>
                 </tr>
                 <?php foreach($registro['chamadoHistoricoArray'] AS $historico) { ?>
                 <tr>
-                    <td align="left"><?php echo $historico->getData()?></td>
+                    <td align="left" width="130px"><?php echo $historico->getData()?></td>
                     <td align="left" colspan="3"><?php echo $historico->getObservacao()?></td>
                 </tr>
                 <?php } ?>
-                <tr>
-                    <td align="left" colspan="4"><br /></td>
-                </tr>
             </table>
             <?php } ?>
             </td>
         </tr>
         <tr>
             <td align="center" colspan="3"><br /></td>
+        </tr>
+        <tr>
+            <td align="left">Total Faturado:</td>
+            <td align="left" colspan="2"><?php echo $horasFaturadasTotal?></td>
         </tr>
     </table>
     <script>

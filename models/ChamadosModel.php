@@ -399,7 +399,9 @@ class ChamadosModel {
                     ,      st.sit_dsssituacao, cg.cat_dsscategoria
                     ,      ta.tpa_dsstipoambiente, tp.tpp_dsstipoproduto
                     ,      md.mod_dssmodulo, ch.cha_dssassunto
+                    ,      SEC_TO_TIME(SUM(TIME_TO_SEC(ap.apo_hrsfaturadas))) apo_hrsfaturadas
                     FROM   chamados            ch
+                    LEFT   JOIN apontamentos   ap ON ap.apo_cdichamado      = ch.cha_cdichamado
                     LEFT   JOIN usuarios       us ON us.usu_cdiusuario      = ch.cha_cdiusuario
                     LEFT   JOIN empresas       ep ON ep.emp_cdiempresa      = ch.cha_cdiempresa
                     LEFT   JOIN situacoes      st ON st.sit_cdisituacao     = ch.cha_cdisituacao
@@ -434,7 +436,12 @@ class ChamadosModel {
             $query .= " AND md.mod_cdimodulo = :modulo ";
         }
         
-        $query .= " ORDER BY ch.cha_cdichamado ";
+        $query .= " GROUP BY ch.cha_cdichamado, ch.cha_dtdcriacao
+                    ,        us.usu_dssnome, ep.emp_dssempresa
+                    ,        st.sit_dsssituacao, cg.cat_dsscategoria
+                    ,        ta.tpa_dsstipoambiente, tp.tpp_dsstipoproduto
+                    ,        md.mod_dssmodulo, ch.cha_dssassunto
+                    ORDER BY ch.cha_cdichamado ";
         
         $stmt = $connection->prepare($query);
         
@@ -468,6 +475,12 @@ class ChamadosModel {
         $rows = $stmt->fetchAll();
         
         foreach ($rows as $row) {
+            if (Functions::isEmpty($row->apo_hrsfaturadas)) {
+                $horasFaturadas = '00:00:00';
+            } else {
+                $horasFaturadas = $row->apo_hrsfaturadas;
+            }
+            
             $registro = array( 'chamadoCodigo' => $row->cha_cdichamado
                              , 'chamadoData' => Functions::toDate($row->cha_dtdcriacao)
                              , 'usuarioNome' => $row->usu_dssnome
@@ -478,6 +491,7 @@ class ChamadosModel {
                              , 'tipoProdutoDescricao' => $row->tpp_dsstipoproduto
                              , 'moduloDescricao' => $row->mod_dssmodulo
                              , 'chamadoAssunto' => $row->cha_dssassunto
+                             , 'horasFaturadas' => $horasFaturadas
                              ) ;
             
             array_push($registros, $registro);
@@ -495,7 +509,9 @@ class ChamadosModel {
                     ,      st.sit_dsssituacao, cg.cat_dsscategoria
                     ,      ta.tpa_dsstipoambiente, tp.tpp_dsstipoproduto
                     ,      md.mod_dssmodulo, ch.cha_dssassunto
+                    ,      SEC_TO_TIME(SUM(TIME_TO_SEC(ap.apo_hrsfaturadas))) apo_hrsfaturadas
                     FROM   chamados            ch
+                    LEFT   JOIN apontamentos   ap ON ap.apo_cdichamado      = ch.cha_cdichamado
                     LEFT   JOIN usuarios       us ON us.usu_cdiusuario      = ch.cha_cdiusuario
                     LEFT   JOIN empresas       ep ON ep.emp_cdiempresa      = ch.cha_cdiempresa
                     LEFT   JOIN situacoes      st ON st.sit_cdisituacao     = ch.cha_cdisituacao
@@ -530,7 +546,12 @@ class ChamadosModel {
             $query .= " AND md.mod_cdimodulo = :modulo ";
         }
         
-        $query .= " ORDER BY ch.cha_cdichamado ";
+        $query .= " GROUP BY ch.cha_cdichamado, ch.cha_dtdcriacao
+                    ,        us.usu_dssnome, ep.emp_dssempresa
+                    ,        st.sit_dsssituacao, cg.cat_dsscategoria
+                    ,        ta.tpa_dsstipoambiente, tp.tpp_dsstipoproduto
+                    ,        md.mod_dssmodulo, ch.cha_dssassunto
+                    ORDER BY ch.cha_cdichamado ";
         
         $stmt = $connection->prepare($query);
         
@@ -567,6 +588,12 @@ class ChamadosModel {
             $chamadosHistoricosModel = new ChamadosHistoricosModel();
             $chamadosHistoricosArray = $chamadosHistoricosModel->loadByChamado($connection, $row->cha_cdichamado);
             
+            if (Functions::isEmpty($row->apo_hrsfaturadas)) {
+                $horasFaturadas = '00:00:00';
+            } else {
+                $horasFaturadas = $row->apo_hrsfaturadas;
+            }
+            
             $registro = array( 'chamadoCodigo' => $row->cha_cdichamado
                              , 'chamadoData' => Functions::toDate($row->cha_dtdcriacao)
                              , 'usuarioNome' => $row->usu_dssnome
@@ -577,6 +604,7 @@ class ChamadosModel {
                              , 'tipoProdutoDescricao' => $row->tpp_dsstipoproduto
                              , 'moduloDescricao' => $row->mod_dssmodulo
                              , 'chamadoAssunto' => $row->cha_dssassunto
+                             , 'horasFaturadas' => $horasFaturadas
                              , 'chamadoHistoricoArray' => $chamadosHistoricosArray
                              ) ;
             

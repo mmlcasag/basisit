@@ -214,22 +214,28 @@ class ApontamentosController extends BaseController {
             $usuarioModel = new UsuariosModel();
             $usuario = $usuarioModel->loadById($connection, $this->getParametroTela('usuarioCodigo'));
         }
-
+        
+        $submit = $this->getParametroTela('submit');
+        
         $mensagem = $this->validarRelatorio($periodoInicial, $periodoFinal);
 
         if (substr($mensagem, 0, 1) == 'S') {
             $mensagem = "";
         }
 
-        $registros = $this->carregarFaturamentoPorFuncionario($connection, $periodoInicial, $periodoFinal, $usuario, $mensagem);
+        $registros = $this->carregarFaturamentoPorFuncionario($connection, $periodoInicial, $periodoFinal, $usuario, $mensagem, $submit);
         Databases::disconnect($connection);
 
         $this->exibirFaturamentoPorFuncionario($registros);
     }
     
-    private function carregarFaturamentoPorFuncionario($connection, $periodoInicial, $periodoFinal, $usuario, $mensagem = "") {
-        $model = new ApontamentosModel();
-        $registros = $model->loadFaturamentoPorFuncionario($connection, $periodoInicial, $periodoFinal, $usuario->getId());
+    private function carregarFaturamentoPorFuncionario($connection, $periodoInicial, $periodoFinal, $usuario, $mensagem = "", $submit = "") {
+        if ($submit == "Consultar") {
+            $model = new ApontamentosModel();
+            $registros = $model->loadFaturamentoPorFuncionario($connection, $periodoInicial, $periodoFinal, $usuario->getId());
+        } else {
+            $registros = array();
+        }
         
         $usuariosModel = new UsuariosModel();
         $usuarios = $usuariosModel->loadNaoClientes($connection,0);
@@ -273,22 +279,28 @@ class ApontamentosController extends BaseController {
             $empresaModel = new EmpresasModel();
             $empresa = $empresaModel->loadById($connection, $this->getParametroTela('empresaCodigo'));
         }
-
+        
+        $submit = $this->getParametroTela('submit');
+        
         $mensagem = $this->validarRelatorio($periodoInicial, $periodoFinal);
 
         if (substr($mensagem, 0, 1) == 'S') {
             $mensagem = "";
         }
 
-        $registros = $this->carregarFaturamentoPorEmpresa($connection, $periodoInicial, $periodoFinal, $empresa, $mensagem);
+        $registros = $this->carregarFaturamentoPorEmpresa($connection, $periodoInicial, $periodoFinal, $empresa, $mensagem, $submit);
         Databases::disconnect($connection);
 
         $this->exibirFaturamentoPorEmpresa($registros);
     }
     
-    private function carregarFaturamentoPorEmpresa($connection, $periodoInicial, $periodoFinal, $empresa, $mensagem = "") {
-        $model = new ApontamentosModel();
-        $registros = $model->loadFaturamentoPorEmpresa($connection, $periodoInicial, $periodoFinal, $empresa->getId());
+    private function carregarFaturamentoPorEmpresa($connection, $periodoInicial, $periodoFinal, $empresa, $mensagem = "", $submit = "") {
+        if ($submit == "Consultar") {
+            $model = new ApontamentosModel();
+            $registros = $model->loadFaturamentoPorEmpresa($connection, $periodoInicial, $periodoFinal, $empresa->getId());
+        } else {
+            $registros = array();
+        }
         
         $empresasModel = new EmpresasModel();
         $empresas = $empresasModel->load($connection);
@@ -347,22 +359,29 @@ class ApontamentosController extends BaseController {
         } else {
             $apontamentoTipo = $this->getParametroTela('apontamentoTipo');
         }
-
+        
+        $submit = $this->getParametroTela('submit');
+        
         $mensagem = $this->validarRelatorio($periodoInicial, $periodoFinal);
 
         if (substr($mensagem, 0, 1) == 'S') {
             $mensagem = "";
         }
-
-        $registros = $this->carregarApontamentosParaAvaliacao($connection, $periodoInicial, $periodoFinal, $usuario, $empresa, $apontamentoAvaliacao, $apontamentoTipo, $mensagem);
+        
+        $registros = $this->carregarApontamentosParaAvaliacao($connection, $periodoInicial, $periodoFinal, $usuario, $empresa, $apontamentoAvaliacao, $apontamentoTipo, $mensagem, $submit);
+        
         Databases::disconnect($connection);
 
         $this->exibirApontamentosParaAvaliacao($registros);
     }
     
-    private function carregarApontamentosParaAvaliacao($connection, $periodoInicial, $periodoFinal, $usuario, $empresa, $apontamentoAvaliacao, $apontamentoTipo, $mensagem = "") {
-        $model = new ApontamentosModel();
-        $registros = $model->loadApontamentosParaAvaliacao($connection, $periodoInicial, $periodoFinal, $usuario->getId(), $empresa->getId(), $apontamentoAvaliacao, $apontamentoTipo);
+    private function carregarApontamentosParaAvaliacao($connection, $periodoInicial, $periodoFinal, $usuario, $empresa, $apontamentoAvaliacao, $apontamentoTipo, $mensagem = "", $submit = "") {
+        if ($submit == "Consultar") {
+            $model = new ApontamentosModel();
+            $registros = $model->loadApontamentosParaAvaliacao($connection, $periodoInicial, $periodoFinal, $usuario->getId(), $empresa->getId(), $apontamentoAvaliacao, $apontamentoTipo);
+        } else {
+            $registros = array();
+        }
         
         $usuariosModel = new UsuariosModel();
         $usuarios = $usuariosModel->loadNaoClientes($connection, 0);
@@ -419,26 +438,26 @@ class ApontamentosController extends BaseController {
     
     public function salvarApontamentoParaAvaliacaoAction() {
         $connection = Databases::connect();
-
+        
         if (Functions::isEmpty($this->getParametroTela('periodoInicial'))) {
             $periodoInicial = date('d/m/Y');
         } else {
             $periodoInicial = $this->getParametroTela('periodoInicial');
         }
-
+        
         if (Functions::isEmpty($this->getParametroTela('periodoFinal'))) {
             $periodoFinal = date('d/m/Y');
         } else {
             $periodoFinal = $this->getParametroTela('periodoFinal');
         }
-
+        
         if (Functions::isEmpty($this->getParametroTela('usuarioCodigo'))) {
             $usuario = new UsuariosVo();
         } else {
             $usuarioModel = new UsuariosModel();
             $usuario = $usuarioModel->loadById($connection, $this->getParametroTela('usuarioCodigo'));
         }
-
+        
         if (Functions::isEmpty($this->getParametroTela('empresaCodigo'))) {
             $empresa = new EmpresasVo();
         } else {

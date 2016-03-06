@@ -97,6 +97,8 @@
         $registros = $v_params['registros'];
     }
     
+    $horasFaturadasTotal = '00:00:00';
+    
 ?>
 
 <!DOCTYPE html>
@@ -144,26 +146,26 @@
                         <th align="center">Data</th>
                         <th align="left">Empresa</th>
                         <th align="left">Situação</th>
-                        <th align="left">Categoria</th>
-                        <th align="left">Ambiente</th>
-                        <th align="left">Produto</th>
-                        <th align="left">Módulo</th>
                         <th align="left">Assunto</th>
+                        <th align="left">Horas Faturadas</th>
                     </tr>
-
+                    
                     <?php foreach($registros AS $registro) { ?>
+                    <?php $horasFaturadasTotal = Functions::sumTimes($horasFaturadasTotal, Functions::toTime($registro['horasFaturadas']));?>
                     <tr>
                         <td align="right"><?php echo $registro['chamadoCodigo']?></td>
                         <td align="center"><?php echo $registro['chamadoData']?></td>
                         <td align="left"><?php echo $registro['empresaDescricao']?></td>
                         <td align="left"><?php echo $registro['situacaoDescricao']?></td>
-                        <td align="left"><?php echo $registro['categoriaDescricao']?></td>
-                        <td align="left"><?php echo $registro['tipoAmbienteDescricao']?></td>
-                        <td align="left"><?php echo $registro['tipoProdutoDescricao']?></td>
-                        <td align="left"><?php echo $registro['moduloDescricao']?></td>
                         <td align="left"><?php echo $registro['chamadoAssunto']?></td>
+                        <td align="center"><?php echo $registro['horasFaturadas']?></td>
                     </tr>
                     <?php } ?>
+                    
+                    <tr>
+                        <th align="left" colspan="5">Total:</th>
+                        <th align="center"><?php echo $horasFaturadasTotal;?></th>
+                    </tr>
                 </table>
             </td>
         </tr>

@@ -829,6 +829,7 @@ class ChamadosController extends BaseController {
         $tipoProduto = $this->getParametroTela('tipoProduto');
         $modulo = $this->getParametroTela('modulo');
         $imprimir = $this->getParametroTela('imprimir');
+        $submit = $this->getParametroTela('submit');
         
         // Define valores padrão
         if (Functions::isEmpty($periodoInicial)) {
@@ -893,7 +894,11 @@ class ChamadosController extends BaseController {
                 $view = 'views/relatorioAtendimentosSintetico.phtml';
             }
             $chamadosModel = new ChamadosModel();
-            $registrosArray = $chamadosModel->loadRelatorioAtendimentosSintetico($connection, $periodoInicial, $periodoFinal, $empresa, $situacao, $categoria, $tipoAmbiente, $tipoProduto, $modulo);
+            if (($submit == "Consultar") || ($imprimir == 1)) {
+                $registrosArray = $chamadosModel->loadRelatorioAtendimentosSintetico($connection, $periodoInicial, $periodoFinal, $empresa, $situacao, $categoria, $tipoAmbiente, $tipoProduto, $modulo);
+            } else {
+                $registrosArray = array();
+            }
             $parametros['registros'] = $registrosArray;
         // Se relatório analítico
         } else if ($tipoRelatorio == 'A') {
@@ -903,7 +908,11 @@ class ChamadosController extends BaseController {
                 $view = 'views/relatorioAtendimentosAnalitico.phtml';
             }
             $chamadosModel = new ChamadosModel();
-            $registrosArray = $chamadosModel->loadRelatorioAtendimentosAnalitico($connection, $periodoInicial, $periodoFinal, $empresa, $situacao, $categoria, $tipoAmbiente, $tipoProduto, $modulo);
+            if (($submit == "Consultar") || ($imprimir == 1)) {
+                $registrosArray = $chamadosModel->loadRelatorioAtendimentosAnalitico($connection, $periodoInicial, $periodoFinal, $empresa, $situacao, $categoria, $tipoAmbiente, $tipoProduto, $modulo);
+            } else {
+                $registrosArray = array();
+            }
             $parametros['registros'] = $registrosArray;
         }
         

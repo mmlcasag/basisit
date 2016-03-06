@@ -97,6 +97,8 @@
         $registros = $v_params['registros'];
     }
     
+    $horasFaturadasTotal = '00:00:00';
+    
 ?>
 
 <?php include 'pageopen.php' ?>
@@ -256,7 +258,7 @@
         <div class="form-group">
             <label class="control-label col-sm-2" for="submit"><br /></label>
             <div class="col-sm-10">
-                <button type="submit" class="btn btn-default">
+                <button type="submit" name="submit" value="Consultar" class="btn btn-default">
                     <span class="glyphicon glyphicon-search"></span>&nbsp;&nbsp;Consultar
                 </button>
             </div>
@@ -267,36 +269,37 @@
     <p><br /></p>
     
     <?php foreach($registros AS $registro) { ?>
+    <?php $horasFaturadasTotal = Functions::sumTimes($horasFaturadasTotal, Functions::toTime($registro['horasFaturadas']));?>
     <div class="panel panel-default">
-        <div class="panel-heading"><?php echo '<b>' . 'Chamado: ' . $registro['chamadoCodigo'] . ' - ' . $registro['situacaoDescricao'] . '</b>'?></div>
+        <div class="panel-heading"><?php echo '<b>' . 'Chamado: ' . $registro['chamadoCodigo'] . ' - ' . $registro['chamadoAssunto'] . '</b>'?></div>
         <div class="panel-body">
             <div class="row">
                 <div class="col-sm-1" style="height:26px;"><b>Data:</b></div>
                 <div class="col-sm-3" style="height:26px;"><?php echo $registro['chamadoData']?></div>
-                <div class="col-sm-1" style="height:26px;"><b>Assunto:</b></div>
-                <div class="col-sm-7" style="height:26px;"><?php echo $registro['chamadoAssunto']?></div>
-            </div>
-            <div class="row">
+                <div class="col-sm-1" style="height:26px;"><b>Situação:</b></div>
+                <div class="col-sm-3" style="height:26px;"><?php echo $registro['situacaoDescricao']?></div>
                 <div class="col-sm-1" style="height:26px;"><b>Empresa:</b></div>
                 <div class="col-sm-3" style="height:26px;"><?php echo $registro['empresaDescricao']?></div>
-                <div class="col-sm-1" style="height:26px;"><b>Cliente:</b></div>
-                <div class="col-sm-7" style="height:26px;"><?php echo $registro['usuarioNome']?></div>
             </div>
             <div class="row">
+                <div class="col-sm-1" style="height:26px;"><b>Cliente:</b></div>
+                <div class="col-sm-3" style="height:26px;"><?php echo $registro['usuarioNome']?></div>
                 <div class="col-sm-1" style="height:26px;"><b>Categoria:</b></div>
                 <div class="col-sm-3" style="height:26px;"><?php echo $registro['categoriaDescricao']?></div>
                 <div class="col-sm-1" style="height:26px;"><b>Ambiente:</b></div>
-                <div class="col-sm-7" style="height:26px;"><?php echo $registro['tipoAmbienteDescricao']?></div>
+                <div class="col-sm-3" style="height:26px;"><?php echo $registro['tipoAmbienteDescricao']?></div>
             </div>
             <div class="row">
                 <div class="col-sm-1" style="height:26px;"><b>Produto:</b></div>
                 <div class="col-sm-3" style="height:26px;"><?php echo $registro['tipoProdutoDescricao']?></div>
                 <div class="col-sm-1" style="height:26px;"><b>Módulo:</b></div>
-                <div class="col-sm-7" style="height:26px;"><?php echo $registro['moduloDescricao']?></div>
+                <div class="col-sm-3" style="height:26px;"><?php echo $registro['moduloDescricao']?></div>
+                <div class="col-sm-1" style="height:26px;"><b>Faturado:</b></div>
+                <div class="col-sm-3" style="height:26px;"><?php echo $registro['horasFaturadas']?></div>
             </div>
-
+            
             <br />
-
+            
             <table class="table">
                 <thead>
                     <tr>
@@ -319,6 +322,15 @@
     <br />
     
     <?php } ?>
+    
+    <div class="panel panel-default">
+        <div class="panel-body">
+        <div class="row">
+            <div class="col-sm-2" style="height:26px;"><b>Total Faturado:</b></div>
+            <div class="col-sm-10" style="height:26px;"><?php echo $horasFaturadasTotal?></div>
+        </div>
+        </div>
+    </div>
     
     <button type="button" class="btn btn-default" onclick="javascript:imprimir();">
         <span class="glyphicon glyphicon-print"></span>&nbsp;&nbsp;Imprimir
