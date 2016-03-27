@@ -362,21 +362,23 @@ class ApontamentosController extends BaseController {
         
         $submit = $this->getParametroTela('submit');
         
+        $caller = $this->getParametroTela('caller');
+        
         $mensagem = $this->validarRelatorio($periodoInicial, $periodoFinal);
 
         if (substr($mensagem, 0, 1) == 'S') {
             $mensagem = "";
         }
         
-        $registros = $this->carregarApontamentosParaAvaliacao($connection, $periodoInicial, $periodoFinal, $usuario, $empresa, $apontamentoAvaliacao, $apontamentoTipo, $mensagem, $submit);
+        $registros = $this->carregarApontamentosParaAvaliacao($connection, $periodoInicial, $periodoFinal, $usuario, $empresa, $apontamentoAvaliacao, $apontamentoTipo, $mensagem, $submit, $caller);
         
         Databases::disconnect($connection);
 
         $this->exibirApontamentosParaAvaliacao($registros);
     }
     
-    private function carregarApontamentosParaAvaliacao($connection, $periodoInicial, $periodoFinal, $usuario, $empresa, $apontamentoAvaliacao, $apontamentoTipo, $mensagem = "", $submit = "") {
-        if ($submit == "Consultar") {
+    private function carregarApontamentosParaAvaliacao($connection, $periodoInicial, $periodoFinal, $usuario, $empresa, $apontamentoAvaliacao, $apontamentoTipo, $mensagem = "", $submit = "", $caller = "") {
+        if (($submit == "Consultar") || (!Functions::isEmpty($caller))) {
             $model = new ApontamentosModel();
             $registros = $model->loadApontamentosParaAvaliacao($connection, $periodoInicial, $periodoFinal, $usuario->getId(), $empresa->getId(), $apontamentoAvaliacao, $apontamentoTipo);
         } else {

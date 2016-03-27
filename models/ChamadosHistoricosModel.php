@@ -162,12 +162,13 @@ class ChamadosHistoricosModel {
     }
     
     public function uploadFile($vo) {
-        $nome = "uploads/" . "CHA" . str_pad($vo->getChamado()->getId(), 11, "0", STR_PAD_LEFT) . "." . str_pad($vo->getId(), 11, "0", STR_PAD_LEFT);
+        $arquivo = $vo->getAnexo();
+        
+        $nome = "uploads/" . "CHA" . str_pad($vo->getChamado()->getId(), 11, "0", STR_PAD_LEFT) . "." . str_pad($vo->getId(), 11, "0", STR_PAD_LEFT) . "." . $arquivo['name'];
         if (file_exists($nome)) {
             $this->deleteUploadedFile($nome);
         }
         
-        $arquivo = $vo->getAnexo();
         if (!move_uploaded_file($arquivo["tmp_name"], $nome)) {
             throw new Exception("Erro não tratado tentando fazer o upload do arquivo");
         }

@@ -65,7 +65,7 @@
             <label class="control-label col-sm-2" for="id">Código:</label>
             <div class="col-sm-2">
                 <input type="hidden" id="id" name="id" value="<?php echo $registro->getId() ?>">
-                <input type="text" class="form-control" id="id" name="id" placeholder="Será gerado automaticamente pelo sistema" value="<?php echo $registro->getId()?>" disabled="disabled">
+                <input type="text" class="form-control" id="id" name="id" value="<?php echo $registro->getId()?>" disabled="disabled">
             </div>
         </div>
         
@@ -74,7 +74,7 @@
                 <label class="control-label col-sm-2" for="perfil">Perfil:</label>
                 <div class="col-sm-4">
                     <input type="hidden" id="perfil" name="perfil" value="<?php echo $perfil->getId() ?>">
-                    <input type="text" class="form-control" id="perfil" name="perfil" placeholder="" value="<?php echo $perfil->getDescricao()?>" disabled="disabled">
+                    <input type="text" class="form-control" id="perfil" name="perfil" value="<?php echo $perfil->getDescricao()?>" disabled="disabled">
                 </div>
             </div>
         <?php } else { ?>

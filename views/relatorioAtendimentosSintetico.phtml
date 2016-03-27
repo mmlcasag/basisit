@@ -272,8 +272,7 @@
         <thead>
             <tr>
                 <th class="col-sm-1">Chamado</th>
-                <th class="col-sm-1">Data</th>
-                <th class="col-sm-1">Empresa</th>
+                <th class="col-sm-2">Empresa</th>
                 <th class="col-sm-2">Situação</th>
                 <th class="col-sm-6">Assunto</th>
                 <th class="col-sm-1">Horas Faturadas</th>
@@ -284,8 +283,7 @@
             <?php foreach($registros AS $registro) { ?>
             <?php $horasFaturadasTotal = Functions::sumTimes($horasFaturadasTotal, Functions::toTime($registro['horasFaturadas']));?>
             <tr>
-                <td><?php echo $registro['chamadoCodigo']?></td>
-                <td><?php echo $registro['chamadoData']?></td>
+                <td><?php echo '<a href="javascript:detalharChamado(' . $registro['chamadoCodigo'] . ');">' . $registro['chamadoCodigo'] . '</a>'?></td>
                 <td><?php echo $registro['empresaDescricao']?></td>
                 <td><?php echo $registro['situacaoDescricao']?></td>
                 <td><?php echo $registro['chamadoAssunto']?></td>
@@ -294,7 +292,7 @@
             <?php } ?>
             
             <tr>
-                <th align="left" colspan="5">Total:</th>
+                <th align="left" colspan="4">Total:</th>
                 <th><?php echo $horasFaturadasTotal;?></th>
             </tr>
         </tbody>
@@ -344,6 +342,9 @@
         , "post"
         , "_blank"
         ) ;
+    }
+    function detalharChamado(chamadoCodigo) {
+        postViaJS('', {controle: 'Chamados', acao: 'cadastrar', id: chamadoCodigo}, "post", "_blank");
     }
 </script>
 

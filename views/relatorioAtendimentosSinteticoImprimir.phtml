@@ -143,7 +143,6 @@
                 <table align="center" border="1" cellspacing="1" cellpadding="1" width="100%">
                     <tr>
                         <th align="right">Chamado</th>
-                        <th align="center">Data</th>
                         <th align="left">Empresa</th>
                         <th align="left">Situação</th>
                         <th align="left">Assunto</th>
@@ -154,7 +153,6 @@
                     <?php $horasFaturadasTotal = Functions::sumTimes($horasFaturadasTotal, Functions::toTime($registro['horasFaturadas']));?>
                     <tr>
                         <td align="right"><?php echo $registro['chamadoCodigo']?></td>
-                        <td align="center"><?php echo $registro['chamadoData']?></td>
                         <td align="left"><?php echo $registro['empresaDescricao']?></td>
                         <td align="left"><?php echo $registro['situacaoDescricao']?></td>
                         <td align="left"><?php echo $registro['chamadoAssunto']?></td>
@@ -163,7 +161,7 @@
                     <?php } ?>
                     
                     <tr>
-                        <th align="left" colspan="5">Total:</th>
+                        <th align="left" colspan="4">Total:</th>
                         <th align="center"><?php echo $horasFaturadasTotal;?></th>
                     </tr>
                 </table>

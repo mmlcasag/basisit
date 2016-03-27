@@ -271,7 +271,7 @@
     <?php foreach($registros AS $registro) { ?>
     <?php $horasFaturadasTotal = Functions::sumTimes($horasFaturadasTotal, Functions::toTime($registro['horasFaturadas']));?>
     <div class="panel panel-default">
-        <div class="panel-heading"><?php echo '<b>' . 'Chamado: ' . $registro['chamadoCodigo'] . ' - ' . $registro['chamadoAssunto'] . '</b>'?></div>
+        <div class="panel-heading"><?php echo '<b>' . 'Chamado: <a href="javascript:detalharChamado(' . $registro['chamadoCodigo'] . ');">' . $registro['chamadoCodigo'] . '</a>' . ' - ' . $registro['chamadoAssunto'] . '</b>'?></div>
         <div class="panel-body">
             <div class="row">
                 <div class="col-sm-1" style="height:26px;"><b>Data:</b></div>
@@ -376,6 +376,9 @@
         , "post"
         , "_blank"
         ) ;
+    }
+    function detalharChamado(chamadoCodigo) {
+        postViaJS('', {controle: 'Chamados', acao: 'cadastrar', id: chamadoCodigo}, "post", "_blank");
     }
 </script>
 

@@ -64,8 +64,6 @@
         $exibeTipoProduto = false;
         $exibeModulo = false;
         $exibePrioridade = false;
-        $exibeImpacto = false;
-        $exibePrevisoesTermino = false;
         $exibeAssunto = false;
         $exibeObservacao = false;
         $exibeAcoesEmbaixo = false;
@@ -80,8 +78,6 @@
         $exibeTipoProduto = true;
         $exibeModulo = true;
         $exibePrioridade = true;
-        $exibeImpacto = true;
-        $exibePrevisoesTermino = true;
         $exibeAssunto = true;
         $exibeObservacao = true;
         $exibeAcoesEmbaixo = true;
@@ -147,47 +143,50 @@
         
         <div class="form-group">
             <label class="control-label col-sm-2" for="id">Código:</label>
-            <div class="col-sm-10">
-                <input type="text" class="form-control" id="id" name="id" placeholder="" value="">
+            <div class="col-sm-3">
+                <input type="text" class="form-control" id="id" name="id" value="">
             </div>
         </div>
         
         <div class="form-group">
             <label class="control-label col-sm-2" for="dataIni">Data Abertura (de):</label>
-            <div class="col-sm-10">
+            <div class="col-sm-3">
                 <input type="text" class="form-control datepicker" id="dataIni" name="dataIni" value="<?php echo $dataIni?>" />
             </div>
-        </div>
-        
-        <div class="form-group">
             <label class="control-label col-sm-2" for="dataFim">Data Abertura (até):</label>
-            <div class="col-sm-10">
+            <div class="col-sm-3">
                 <input type="text" class="form-control datepicker" id="dataFim" name="dataFim" value="<?php echo $dataFim?>" />
             </div>
         </div>
         
         <div class="form-group">
-            <label class="control-label col-sm-2" for="empresa">Empresa:</label>
-            <div class="col-sm-10">
-                <?php 
-                if ($exibeEmpresaAberta) {
-                    echo '<select class="form-control" id="empresa" name="empresa">';
-                    echo '<option value="">Selecione</option>';
-                    foreach($empresas as $empresa) {
-                        echo '<option value="' . $empresa->getId() . '">' . $empresa->getDescricao() . '</option>';
+            <label class="control-label col-sm-2" for="atendente">Analista:</label>
+            <div class="col-sm-3">
+                <select class="form-control" id="atendente" name="atendente">
+                    <option value="">Selecione</option>
+                    <?php
+                    foreach($atendentes as $atendente) {
+                        echo '<option value="' . $atendente->getId() . '">' . $atendente->getNome() . '</option>';
                     }
-                    echo '</select>';
-                } else {
-                    echo '<input type="hidden" name="empresa" value="' . $empresaCodigo . '" />';
-                    echo '<input type="text" class="form-control" id="empresa" name="empresa" value="' . $empresaDescricao . '" disabled="disabled" />';
-                }
-                ?>
+                    ?>
+                </select>
+            </div>
+            <label class="control-label col-sm-2" for="situacao">Situação:</label>
+            <div class="col-sm-3">
+                <select class="form-control" id="situacao" name="situacao">
+                    <option value="">Selecione</option>
+                    <?php
+                    foreach($situacoes as $situacao) {
+                        echo '<option value="' . $situacao->getId() . '">' . $situacao->getDescricao() . '</option>';
+                    }
+                    ?>
+                </select>
             </div>
         </div>
         
         <div class="form-group">
             <label class="control-label col-sm-2" for="usuario">Usuário:</label>
-            <div class="col-sm-10">
+            <div class="col-sm-3">
                 <?php 
                 if ($exibeUsuarioAberto) {
                     echo '<select class="form-control" id="usuario" name="usuario">';
@@ -206,12 +205,29 @@
                 }
                 ?>
             </div>
+            <label class="control-label col-sm-2" for="empresa">Empresa:</label>
+            <div class="col-sm-3">
+                <?php 
+                if ($exibeEmpresaAberta) {
+                    echo '<select class="form-control" id="empresa" name="empresa">';
+                    echo '<option value="">Selecione</option>';
+                    foreach($empresas as $empresa) {
+                        echo '<option value="' . $empresa->getId() . '">' . $empresa->getDescricao() . '</option>';
+                    }
+                    echo '</select>';
+                } else {
+                    echo '<input type="hidden" name="empresa" value="' . $empresaCodigo . '" />';
+                    echo '<input type="text" class="form-control" id="empresa" name="empresa" value="' . $empresaDescricao . '" disabled="disabled" />';
+                }
+                ?>
+            </div>
         </div>
         
-        <?php if ($exibeRequisitante) { ?>
+        <?php if (($exibeRequisitante) || ($exibeCategoria)) { ?>
         <div class="form-group">
+            <?php if ($exibeRequisitante) { ?>
             <label class="control-label col-sm-2" for="requisitante">Requisitante:</label>
-            <div class="col-sm-10">
+            <div class="col-sm-3">
                 <select class="form-control" id="requisitante" name="requisitante">
                     <option value="">Selecione</option>
                     <?php
@@ -221,41 +237,10 @@
                     ?>
                 </select>
             </div>
-        </div>
-        <?php } ?>
-        
-        <div class="form-group">
-            <label class="control-label col-sm-2" for="atendente">Analista:</label>
-            <div class="col-sm-10">
-                <select class="form-control" id="atendente" name="atendente">
-                    <option value="">Selecione</option>
-                    <?php
-                    foreach($atendentes as $atendente) {
-                        echo '<option value="' . $atendente->getId() . '">' . $atendente->getNome() . '</option>';
-                    }
-                    ?>
-                </select>
-            </div>
-        </div>
-        
-        <div class="form-group">
-            <label class="control-label col-sm-2" for="situacao">Situação:</label>
-            <div class="col-sm-10">
-                <select class="form-control" id="situacao" name="situacao">
-                    <option value="">Selecione</option>
-                    <?php
-                    foreach($situacoes as $situacao) {
-                        echo '<option value="' . $situacao->getId() . '">' . $situacao->getDescricao() . '</option>';
-                    }
-                    ?>
-                </select>
-            </div>
-        </div>
-        
-        <?php if ($exibeCategoria) { ?>
-        <div class="form-group">
+            <?php } ?>
+            <?php if ($exibeCategoria) { ?>
             <label class="control-label col-sm-2" for="categoria">Categoria:</label>
-            <div class="col-sm-10">
+            <div class="col-sm-3">
                 <select class="form-control" id="categoria" name="categoria">
                     <option value="">Selecione</option>
                     <?php
@@ -265,13 +250,15 @@
                     ?>
                 </select>
             </div>
+            <?php } ?>
         </div>
         <?php } ?>
         
-        <?php if ($exibeTipoAmbiente) { ?>
+        <?php if (($exibeTipoAmbiente) || ($exibeTipoProduto)) { ?>
         <div class="form-group">
+            <?php if ($exibeTipoAmbiente) { ?>
             <label class="control-label col-sm-2" for="tipoAmbiente">Tipo de Ambiente:</label>
-            <div class="col-sm-10">
+            <div class="col-sm-3">
                 <select class="form-control" id="tipoAmbiente" name="tipoAmbiente">
                     <option value="">Selecione</option>
                     <?php
@@ -281,13 +268,10 @@
                     ?>
                 </select>
             </div>
-        </div>
-        <?php } ?>
-        
-        <?php if ($exibeTipoProduto) { ?>
-        <div class="form-group">
+            <?php } ?>
+            <?php if ($exibeTipoProduto) { ?>
             <label class="control-label col-sm-2" for="tipoProduto">Tipo de Produto:</label>
-            <div class="col-sm-10">
+            <div class="col-sm-3">
                 <select class="form-control" id="tipoProduto" name="tipoProduto">
                     <option value="">Selecione</option>
                     <?php
@@ -297,13 +281,15 @@
                     ?>
                 </select>
             </div>
+            <?php } ?>
         </div>
         <?php } ?>
         
-        <?php if ($exibeModulo) { ?>
+        <?php if (($exibeModulo) || ($exibePrioridade)) { ?>
         <div class="form-group">
+            <?php if ($exibeModulo) { ?>
             <label class="control-label col-sm-2" for="modulo">Módulo:</label>
-            <div class="col-sm-10">
+            <div class="col-sm-3">
                 <select class="form-control" id="modulo" name="modulo">
                     <option value="">Selecione</option>
                     <?php
@@ -313,13 +299,10 @@
                     ?>
                 </select>
             </div>
-        </div>
-        <?php } ?>
-        
-        <?php if ($exibePrioridade) { ?>
-        <div class="form-group">
+            <?php } ?>
+            <?php if ($exibePrioridade) { ?>
             <label class="control-label col-sm-2" for="prioridade">Prioridade:</label>
-            <div class="col-sm-10">
+            <div class="col-sm-3">
                 <select class="form-control" id="prioridade" name="prioridade">
                     <option value="">Selecione</option>
                     <?php
@@ -329,42 +312,15 @@
                     ?>
                 </select>
             </div>
-        </div>
-        <?php } ?>
-        
-        <?php if ($exibeImpacto) { ?>
-        <div class="form-group">
-            <label class="control-label col-sm-2" for="impacto">Impacto:</label>
-            <div class="col-sm-10">
-                <label class="radio-inline"><input type="radio" name="impacto" value="0"><?php echo $vo->getImpactoExtensoParam(0)?></label>
-                <label class="radio-inline"><input type="radio" name="impacto" value="1"><?php echo $vo->getImpactoExtensoParam(1)?></label>
-            </div>
-        </div>
-        <?php } ?>
-        
-        <?php if ($exibePrevisoesTermino) { ?>
-        <div class="form-group">
-            <label class="control-label col-sm-2" for="previsaoTerminoIni">Previsão Término (de):</label>
-            <div class="col-sm-10">
-                <input type="text" class="form-control datepicker" id="previsaoTerminoIni" name="previsaoTerminoIni" value="" />
-            </div>
-        </div>
-        <?php } ?>
-        
-        <?php if ($exibePrevisoesTermino) { ?>
-        <div class="form-group">
-            <label class="control-label col-sm-2" for="previsaoTerminoFim">Previsão Término (até):</label>
-            <div class="col-sm-10">
-                <input type="text" class="form-control datepicker" id="previsaoTerminoFim" name="previsaoTerminoFim" value="" />
-            </div>
+            <?php } ?>
         </div>
         <?php } ?>
         
         <?php if ($exibeAssunto) { ?>
         <div class="form-group">
             <label class="control-label col-sm-2" for="assunto">Assunto:</label>
-            <div class="col-sm-10">
-                <input type="text" class="form-control" id="assunto" name="assunto" placeholder="" value="">
+            <div class="col-sm-8">
+                <input type="text" class="form-control" id="assunto" name="assunto" value="">
             </div>
         </div>
         <?php } ?>
@@ -372,8 +328,8 @@
         <?php if ($exibeObservacao) { ?>
         <div class="form-group">
             <label class="control-label col-sm-2" for="observacao">Descrição:</label>
-            <div class="col-sm-10">
-                <textarea class="form-control" rows="5" id="observacao" name="observacao" placeholder=""></textarea>
+            <div class="col-sm-8">
+                <textarea class="form-control" rows="5" id="observacao" name="observacao"></textarea>
             </div>
         </div>
         <?php } ?>

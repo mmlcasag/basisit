@@ -153,12 +153,10 @@ class PrioridadesController extends BaseController {
         Databases::disconnect($connection);
 
         if ($prioridadeVo->getExibeImpacto() == 1) {
-            echo '<div class="form-group">
-                    <label class="control-label col-sm-2" for="impacto">Impacto:</label>
-                    <div class="col-sm-10">
-                        <label class="radio-inline"><input type="radio" id="impactoNao" name="impacto" value="0"' . ( ($exibeAberto == 1) ? '' : ' disabled="disabled" ' ) . (( $impacto == 0 ) ? ' checked="checked" ' : '' ) . ' onchange="alteraImpacto(' . $exibeAberto . ',' . $usuariosAfetados . ',' . $areasAfetadas . ');">' . $prioridadeVo->getExibeImpactoExtensoParam(0) . '</label>
-                        <label class="radio-inline"><input type="radio" id="impactoSim" name="impacto" value="1"' . ( ($exibeAberto == 1) ? '' : ' disabled="disabled" ' ) . (( $impacto == 1 ) ? ' checked="checked" ' : '' ) . ' onchange="alteraImpacto(' . $exibeAberto . ',' . $usuariosAfetados . ',' . $areasAfetadas . ');">' . $prioridadeVo->getExibeImpactoExtensoParam(1) . '</label>
-                    </div>
+            echo '<label class="control-label col-sm-2" for="impacto">Impacto:</label>
+                  <div class="col-sm-3">
+                    <label class="radio-inline"><input type="radio" id="impactoNao" name="impacto" value="0"' . ( ($exibeAberto == 1) ? '' : ' disabled="disabled" ' ) . (( $impacto == 0 ) ? ' checked="checked" ' : '' ) . ' onchange="alteraImpacto(' . $exibeAberto . ',' . $usuariosAfetados . ',' . $areasAfetadas . ');">' . $prioridadeVo->getExibeImpactoExtensoParam(0) . '</label>
+                    <label class="radio-inline"><input type="radio" id="impactoSim" name="impacto" value="1"' . ( ($exibeAberto == 1) ? '' : ' disabled="disabled" ' ) . (( $impacto == 1 ) ? ' checked="checked" ' : '' ) . ' onchange="alteraImpacto(' . $exibeAberto . ',' . $usuariosAfetados . ',' . $areasAfetadas . ');">' . $prioridadeVo->getExibeImpactoExtensoParam(1) . '</label>
                   </div>';
         } else {
             echo '<input type="hidden" id="impacto" name="impacto" value="0" />';

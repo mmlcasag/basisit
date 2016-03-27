@@ -50,21 +50,21 @@
             <label class="control-label col-sm-2" for="id">Código:</label>
             <div class="col-sm-2">
                 <input type="hidden" id="id" name="id" value="<?php echo $registro->getId() ?>">
-                <input type="text" class="form-control" id="id" name="id" placeholder="Será gerado automaticamente pelo sistema" value="<?php echo $registro->getId()?>" disabled="disabled">
+                <input type="text" class="form-control" id="id" name="id" value="<?php echo $registro->getId()?>" disabled="disabled">
             </div>
         </div>
         
         <div class="form-group">
             <label class="control-label col-sm-2" for="nome">Nome do Parâmetro:</label>
             <div class="col-sm-4">
-                <input type="text" class="form-control" id="nome" name="nome" placeholder="" value="<?php echo $registro->getNome()?>">
+                <input type="text" class="form-control" id="nome" name="nome" value="<?php echo $registro->getNome()?>">
             </div>
         </div>
         
         <div class="form-group">
             <label class="control-label col-sm-2" for="valor">Valor do Parâmetro:</label>
             <div class="col-sm-6">
-                <input type="text" class="form-control" id="valor" name="valor" placeholder="" value="<?php echo $registro->getValor()?>">
+                <input type="text" class="form-control" id="valor" name="valor" value="<?php echo $registro->getValor()?>">
             </div>
         </div>
         

@@ -50,28 +50,28 @@
             <label class="control-label col-sm-2" for="id">Código:</label>
             <div class="col-sm-2">
                 <input type="hidden" id="id" name="id" value="<?php echo $tipoSistema->getId() ?>">
-                <input type="text" class="form-control" id="id" name="id" placeholder="Será gerado automaticamente pelo sistema" value="<?php echo $tipoSistema->getId()?>" disabled="disabled">
+                <input type="text" class="form-control" id="id" name="id" value="<?php echo $tipoSistema->getId()?>" disabled="disabled">
             </div>
         </div>
         
         <div class="form-group">
             <label class="control-label col-sm-2" for="descricao">Descrição:</label>
             <div class="col-sm-4">
-                <input type="text" class="form-control" id="descricao" name="descricao" placeholder="Informe a descrição" value="<?php echo $tipoSistema->getDescricao()?>">
+                <input type="text" class="form-control" id="descricao" name="descricao" value="<?php echo $tipoSistema->getDescricao()?>">
             </div>
         </div>
         
         <div class="form-group">
             <label class="control-label col-sm-2" for="nomeMenu">Classe:</label>
             <div class="col-sm-4">
-                <input type="text" class="form-control" id="nomeMenu" name="nomeMenu" placeholder="Valor a ser passado no parâmetro controle do redirect" value="<?php echo $tipoSistema->getNomeMenu()?>">
+                <input type="text" class="form-control" id="nomeMenu" name="nomeMenu" value="<?php echo $tipoSistema->getNomeMenu()?>">
             </div>
         </div>
         
         <div class="form-group">
             <label class="control-label col-sm-2" for="enderecoListar">Método:</label>
             <div class="col-sm-4">
-                <input type="text" class="form-control" id="enderecoListar" name="enderecoListar" placeholder="Valor a ser passado no parâmetro acao do redirect para telas de listagem" value="<?php echo $tipoSistema->getEnderecoListar()?>">
+                <input type="text" class="form-control" id="enderecoListar" name="enderecoListar" value="<?php echo $tipoSistema->getEnderecoListar()?>">
             </div>
         </div>
         

@@ -335,46 +335,66 @@
         
         <p><br /></p>
         
+        <div class="well well-sm"><b>Principal</b></div>
+        
         <input type='hidden' name='controle' value='chamados'>
         <input type='hidden' name='acao' value='salvarCadastrar'>
         
         <input type="hidden" id="id" name="id" value="<?php echo $chamado->getId() ?>">
         <input type='hidden' id='impactoHidden' name='impactoHidden' value='<?php echo $chamado->getImpacto() ?>'>
         
-        <!-- Código --------------------------------------------------------------------------->
-        
         <div class="form-group">
+            <!-- Código --------------------------------------------------------------------------->
+            
             <label class="control-label col-sm-2" for="id">Código:</label>
-            <div class="col-sm-10">
-                <input type="text" class="form-control" id="id" name="id" placeholder="Será gerado automaticamente pelo sistema" value="<?php echo $chamado->getId()?>" disabled="disabled">
+            <div class="col-sm-3">
+                <input type="text" class="form-control" id="id" name="id" value="<?php echo $chamado->getId()?>" disabled="disabled">
             </div>
-        </div>
-        
-        <!-- Data de Abertura ----------------------------------------------------------------->
-        
-        <div class="form-group">
+            
+            <!-- Data de Abertura ----------------------------------------------------------------->
+            
             <label class="control-label col-sm-2" for="data">Data Abertura:</label>
-            <div class="col-sm-10">
+            <div class="col-sm-3">
                 <input type="text" class="form-control datepicker" id="data" name="data" value="" disabled="disabled" />                
             </div>
+            
+            <?php
+            if ($inclusao) {
+                $data = $chamadoData;
+            } else {
+                $data = $chamado->getData();
+            }
+
+            echo '<script>document.form.data.value = "' . $data . '";</script>';
+            echo '<input type="hidden" name="data" value="' . $data . '" />';
+            ?>
         </div>
         
-        <?php
-        if ($inclusao) {
-            $data = $chamadoData;
-        } else {
-            $data = $chamado->getData();
-        }
-        
-        echo '<script>document.form.data.value = "' . $data . '";</script>';
-        echo '<input type="hidden" name="data" value="' . $data . '" />';
-        ?>
-        
-        <!-- Empresa -------------------------------------------------------------------------->
-        
         <div class="form-group">
+            <!-- Usuário -------------------------------------------------------------------------->
+            
+            <label class="control-label col-sm-2" for="usuario">Usuário:</label>
+            <div class="col-sm-3">
+                <input type="text" class="form-control" id="usuario" name="usuario" value="" disabled="disabled" />
+            </div>
+            
+            <?php
+            if ($inclusao) {
+                $usuarioCodigo = $usuarioCodigo;
+                $usuarioNome = $usuarioNome;
+            } else {
+                $usuarioCodigo = $chamado->getUsuario()->getId();
+                $usuarioNome = $chamado->getUsuario()->getNome();
+            }
+
+            echo '<script>document.form.usuario.value = "' . $usuarioNome . '";</script>';
+            echo '<input type="hidden" name="usuario" value="' . $usuarioCodigo . '" />';
+            ?>
+            
+            <!-- Empresa -------------------------------------------------------------------------->
+            
             <label class="control-label col-sm-2" for="empresa">Empresa:</label>
-            <div class="col-sm-10">
+            <div class="col-sm-3">
                 <select class="form-control" id="empresa" name="empresa">
                     <option value="">Selecione</option>
                     <?php
@@ -384,53 +404,32 @@
                     ?>
                 </select>
             </div>
+            
+            <?php
+            if ($chamado->getEmpresa() != "") {
+                $empresa = $chamado->getEmpresa()->getId();
+            } else {
+                $empresa = $_SESSION['empresaCodigo'];
+            }
+
+            echo '<script>document.form.empresa.value = "' . $empresa . '";</script>';
+
+            if (($exibeEmpresaAberta) && ($exibeControlesAbertos)) {
+                echo '';
+            } else {
+                echo '<script>document.form.empresa.disabled = true;</script>';
+                echo '<input type="hidden" name="empresa" value="' . $empresa . '" />';
+            }
+            ?>
         </div>
         
-        <?php
-        if ($chamado->getEmpresa() != "") {
-            $empresa = $chamado->getEmpresa()->getId();
-        } else {
-            $empresa = $_SESSION['empresaCodigo'];
-        }
-        
-        echo '<script>document.form.empresa.value = "' . $empresa . '";</script>';
-        
-        if (($exibeEmpresaAberta) && ($exibeControlesAbertos)) {
-            echo '';
-        } else {
-            echo '<script>document.form.empresa.disabled = true;</script>';
-            echo '<input type="hidden" name="empresa" value="' . $empresa . '" />';
-        }
-        ?>
-        
-        <!-- Usuário -------------------------------------------------------------------------->
-        
+        <?php if (($exibeRequisitante) || ($exibeAtendente)) { ?>
         <div class="form-group">
-            <label class="control-label col-sm-2" for="usuario">Usuário:</label>
-            <div class="col-sm-10">
-                <input type="text" class="form-control" id="usuario" name="usuario" value="" disabled="disabled" />
-            </div>
-        </div>
+            <!-- Requisitante --------------------------------------------------------------------->
         
-        <?php
-        if ($inclusao) {
-            $usuarioCodigo = $usuarioCodigo;
-            $usuarioNome = $usuarioNome;
-        } else {
-            $usuarioCodigo = $chamado->getUsuario()->getId();
-            $usuarioNome = $chamado->getUsuario()->getNome();
-        }
-        
-        echo '<script>document.form.usuario.value = "' . $usuarioNome . '";</script>';
-        echo '<input type="hidden" name="usuario" value="' . $usuarioCodigo . '" />';
-        ?>
-        
-        <!-- Requisitante --------------------------------------------------------------------->
-        
-        <?php if ($exibeRequisitante) { ?>
-        <div class="form-group">
+            <?php if ($exibeRequisitante) { ?>
             <label class="control-label col-sm-2" for="requisitante">Requisitante:</label>
-            <div class="col-sm-10">
+            <div class="col-sm-3">
                 <select class="form-control" id="requisitante" name="requisitante" onchange="atualizaEmpresa();">
                     <option value="">Selecione</option>
                     <?php
@@ -440,38 +439,36 @@
                     ?>
                 </select>
             </div>
-        </div>
-        <?php } ?>
-        
-        <?php
-        if ($chamado->getRequisitante() != "") {
-            $requisitante = $chamado->getRequisitante()->getId();
-        } else if ($requisitanteIgualUsuario) {
-            $requisitante = $usuarioCodigo;
-        } else {
-            $requisitante = "";
-        }
-        
-        if ($exibeRequisitante) {
-            echo '<script>document.form.requisitante.value = "' . $requisitante . '";</script>';
             
-            if (($exibeRequisitanteAtivado) && ($exibeControlesAbertos)) {
-                echo '';
+            <?php
+            if ($chamado->getRequisitante() != "") {
+                $requisitante = $chamado->getRequisitante()->getId();
+            } else if ($requisitanteIgualUsuario) {
+                $requisitante = $usuarioCodigo;
             } else {
-                echo '<script>document.form.requisitante.disabled = true;</script>';
+                $requisitante = "";
+            }
+
+            if ($exibeRequisitante) {
+                echo '<script>document.form.requisitante.value = "' . $requisitante . '";</script>';
+
+                if (($exibeRequisitanteAtivado) && ($exibeControlesAbertos)) {
+                    echo '';
+                } else {
+                    echo '<script>document.form.requisitante.disabled = true;</script>';
+                    echo '<input type="hidden" name="requisitante" value="' . $requisitante . '" />';
+                }
+            } else {
                 echo '<input type="hidden" name="requisitante" value="' . $requisitante . '" />';
             }
-        } else {
-            echo '<input type="hidden" name="requisitante" value="' . $requisitante . '" />';
-        }
-        ?>
-        
-        <!-- Atendente ------------------------------------------------------------------------>
-        
-        <?php if ($exibeAtendente) { ?>
-        <div class="form-group">
+            ?>
+            <?php } ?>
+            
+            <!-- Atendente ------------------------------------------------------------------------>
+            
+            <?php if ($exibeAtendente) { ?>
             <label class="control-label col-sm-2" for="atendente">Analista:</label>
-            <div class="col-sm-10">
+            <div class="col-sm-3">
                 <select class="form-control" id="atendente" name="atendente">
                     <option value="">Selecione</option>
                     <?php
@@ -481,35 +478,36 @@
                     ?>
                 </select>
             </div>
+            
+            <?php
+            if ($chamado->getAtendente() != "") {
+                $atendente = $chamado->getAtendente()->getId();
+            } else {
+                $atendente = "";
+            }
+
+            if ($exibeAtendente) {
+                echo '<script>document.form.atendente.value = "' . $atendente . '";</script>';
+
+                if (($exibeAtendenteAtivado) && ($exibeControlesAbertos)) { 
+                    echo '';
+                } else {
+                    echo '<script>document.form.atendente.disabled = true;</script>';
+                    echo '<input type="hidden" name="atendente" value="' . $atendente . '" />';
+                }
+            } else {
+                echo '<input type="hidden" name="atendente" value="' . $atendente . '" />';
+            }
+            ?>
+            <?php } ?>
         </div>
         <?php } ?>
         
-        <?php
-        if ($chamado->getAtendente() != "") {
-            $atendente = $chamado->getAtendente()->getId();
-        } else {
-            $atendente = "";
-        }
-        
-        if ($exibeAtendente) {
-            echo '<script>document.form.atendente.value = "' . $atendente . '";</script>';
-            
-            if (($exibeAtendenteAtivado) && ($exibeControlesAbertos)) { 
-                echo '';
-            } else {
-                echo '<script>document.form.atendente.disabled = true;</script>';
-                echo '<input type="hidden" name="atendente" value="' . $atendente . '" />';
-            }
-        } else {
-            echo '<input type="hidden" name="atendente" value="' . $atendente . '" />';
-        }
-        ?>
-        
-        <!-- Situação ------------------------------------------------------------------------->
-        
         <div class="form-group">
+            <!-- Situação ------------------------------------------------------------------------->
+            
             <label class="control-label col-sm-2" for="situacao">Situação:</label>
-            <div class="col-sm-10">
+            <div class="col-sm-3">
                 <select class="form-control" id="situacao" name="situacao">
                     <option value="">Selecione</option>
                     <?php
@@ -519,40 +517,38 @@
                     ?>
                 </select>
             </div>
-        </div>
-        
-        <?php
-        if ($inclusao) {
-            $situacao = $situacaoCodigo;
-        } else {
-            if ($chamado->getSituacao() != "") {
-                $situacao = $chamado->getSituacao()->getId();
+            
+            <?php
+            if ($inclusao) {
+                $situacao = $situacaoCodigo;
             } else {
-                $situacao = "";
+                if ($chamado->getSituacao() != "") {
+                    $situacao = $chamado->getSituacao()->getId();
+                } else {
+                    $situacao = "";
+                }
             }
-        }
-        
-        if ($_SESSION['perfilCliente'] == 1) {
-            $exibeSituacaoAtivado = false;
-        } else {
-            $exibeSituacaoAtivado = true;
-        }
-        
-        echo '<script>document.form.situacao.value = "' . $situacao . '";</script>';
-        
-        if (($exibeSituacaoAtivado) && ($exibeControlesAbertos)) {
-            echo '';
-        } else {
-            echo '<script>document.form.situacao.disabled = true;</script>';
-            echo '<input type="hidden" name="situacao" value="' . $situacao . '" />';
-        }
-        ?>
-        
-        <!-- Categoria ------------------------------------------------------------------------>
-        
-        <div class="form-group">
+
+            if ($_SESSION['perfilCliente'] == 1) {
+                $exibeSituacaoAtivado = false;
+            } else {
+                $exibeSituacaoAtivado = true;
+            }
+
+            echo '<script>document.form.situacao.value = "' . $situacao . '";</script>';
+
+            if (($exibeSituacaoAtivado) && ($exibeControlesAbertos)) {
+                echo '';
+            } else {
+                echo '<script>document.form.situacao.disabled = true;</script>';
+                echo '<input type="hidden" name="situacao" value="' . $situacao . '" />';
+            }
+            ?>
+            
+            <!-- Categoria ------------------------------------------------------------------------>
+            
             <label class="control-label col-sm-2" for="categoria">Categoria:</label>
-            <div class="col-sm-10">
+            <div class="col-sm-3">
                 <select class="form-control" id="categoria" name="categoria">
                     <option value="">Selecione</option>
                     <?php
@@ -562,30 +558,30 @@
                     ?>
                 </select>
             </div>
+            
+            <?php
+            if ($chamado->getCategoria() != "") {
+                $categoria = $chamado->getCategoria()->getId();
+            } else {
+                $categoria = "";
+            }
+
+            echo '<script>document.form.categoria.value = "' . $categoria . '";</script>';
+
+            if ($exibeControlesAbertos) {
+                echo '';
+            } else {
+                echo '<script>document.form.categoria.disabled = true;</script>';
+                echo '<input type="hidden" name="categoria" value="' . $categoria . '" />';
+            }
+            ?>
         </div>
         
-        <?php
-        if ($chamado->getCategoria() != "") {
-            $categoria = $chamado->getCategoria()->getId();
-        } else {
-            $categoria = "";
-        }
-        
-        echo '<script>document.form.categoria.value = "' . $categoria . '";</script>';
-        
-        if ($exibeControlesAbertos) {
-            echo '';
-        } else {
-            echo '<script>document.form.categoria.disabled = true;</script>';
-            echo '<input type="hidden" name="categoria" value="' . $categoria . '" />';
-        }
-        ?>
-        
-        <!-- Tipo de Ambiente ----------------------------------------------------------------->
-        
         <div class="form-group">
+            <!-- Tipo de Ambiente ----------------------------------------------------------------->
+            
             <label class="control-label col-sm-2" for="tipoAmbiente">Tipo de Ambiente:</label>
-            <div class="col-sm-10">
+            <div class="col-sm-3">
                 <select class="form-control" id="tipoAmbiente" name="tipoAmbiente">
                     <option value="">Selecione</option>
                     <?php
@@ -595,30 +591,28 @@
                     ?>
                 </select>
             </div>
-        </div>
-        
-        <?php
-        if ($chamado->getTipoAmbiente() != "") {
-            $tipoAmbiente = $chamado->getTipoAmbiente()->getId();
-        } else {
-            $tipoAmbiente = "";
-        }
-        
-        echo '<script>document.form.tipoAmbiente.value = "' . $tipoAmbiente . '";</script>';
-        
-        if ($exibeControlesAbertos) {
-            echo '';
-        } else {
-            echo '<script>document.form.tipoAmbiente.disabled = true;</script>';
-            echo '<input type="hidden" name="tipoAmbiente" value="' . $tipoAmbiente . '" />';
-        }
-        ?>
-        
-        <!-- Tipo de Produto ------------------------------------------------------------------>
-        
-        <div class="form-group">
+            
+            <?php
+            if ($chamado->getTipoAmbiente() != "") {
+                $tipoAmbiente = $chamado->getTipoAmbiente()->getId();
+            } else {
+                $tipoAmbiente = "";
+            }
+
+            echo '<script>document.form.tipoAmbiente.value = "' . $tipoAmbiente . '";</script>';
+
+            if ($exibeControlesAbertos) {
+                echo '';
+            } else {
+                echo '<script>document.form.tipoAmbiente.disabled = true;</script>';
+                echo '<input type="hidden" name="tipoAmbiente" value="' . $tipoAmbiente . '" />';
+            }
+            ?>
+            
+            <!-- Tipo de Produto ------------------------------------------------------------------>
+            
             <label class="control-label col-sm-2" for="tipoProduto">Tipo de Produto:</label>
-            <div class="col-sm-10">
+            <div class="col-sm-3">
                 <select class="form-control" id="tipoProduto" name="tipoProduto">
                     <option value="">Selecione</option>
                     <?php
@@ -628,31 +622,30 @@
                     ?>
                 </select>
             </div>
+            
+            <?php
+            if ($chamado->getTipoProduto() != "") {
+                $tipoProduto = $chamado->getTipoProduto()->getId();
+            } else {
+                $tipoProduto = "";
+            }
+
+            echo '<script>document.form.tipoProduto.value = "' . $tipoProduto . '";</script>';
+
+            if ($exibeControlesAbertos) {
+                echo '';
+            } else {
+                echo '<script>document.form.tipoProduto.disabled = true;</script>';
+                echo '<input type="hidden" name="tipoProduto" value="' . $tipoProduto . '" />';
+            }
+            ?>
         </div>
         
-        <?php
-        if ($chamado->getTipoProduto() != "") {
-            $tipoProduto = $chamado->getTipoProduto()->getId();
-        } else {
-            $tipoProduto = "";
-        }
-        
-        echo '<script>document.form.tipoProduto.value = "' . $tipoProduto . '";</script>';
-        
-        if ($exibeControlesAbertos) {
-            echo '';
-        } else {
-            echo '<script>document.form.tipoProduto.disabled = true;</script>';
-            echo '<input type="hidden" name="tipoProduto" value="' . $tipoProduto . '" />';
-        }
-        ?>
-        
-        <!-- Módulo --------------------------------------------------------------------------->
-        
-        <?php if ($exibeModulo) { ?>
         <div class="form-group">
+            <!-- Módulo --------------------------------------------------------------------------->
+            <?php if ($exibeModulo) { ?>
             <label class="control-label col-sm-2" for="modulo">Módulo:</label>
-            <div class="col-sm-10">
+            <div class="col-sm-3">
                 <select class="form-control" id="modulo" name="modulo">
                     <option value="">Selecione</option>
                     <?php 
@@ -662,35 +655,59 @@
                     ?>
                 </select>
             </div>
-        </div>
-        <?php } ?>
-        
-        <?php
-        if ($chamado->getModulo() != "") {
-            $modulo = $chamado->getModulo()->getId();
-        } else {
-            $modulo = "";
-        }
-        
-        if ($exibeModulo) {
-            echo '<script>document.form.modulo.value = "' . $modulo . '";</script>';
             
-            if (($exibeModuloAtivado) && ($exibeControlesAbertos)) {
-                echo '';
+            <?php
+            if ($chamado->getModulo() != "") {
+                $modulo = $chamado->getModulo()->getId();
             } else {
-                echo '<script>document.form.modulo.disabled = true;</script>';
+                $modulo = "";
+            }
+
+            if ($exibeModulo) {
+                echo '<script>document.form.modulo.value = "' . $modulo . '";</script>';
+
+                if (($exibeModuloAtivado) && ($exibeControlesAbertos)) {
+                    echo '';
+                } else {
+                    echo '<script>document.form.modulo.disabled = true;</script>';
+                    echo '<input type="hidden" name="modulo" value="' . $modulo . '" />';
+                }
+            } else {
                 echo '<input type="hidden" name="modulo" value="' . $modulo . '" />';
             }
-        } else {
-            echo '<input type="hidden" name="modulo" value="' . $modulo . '" />';
-        }
-        ?>
-        
-        <!-- Prioridade ----------------------------------------------------------------------->
+            ?>
+            <?php } ?>
+            
+            <!-- Previsão Término ----------------------------------------------------------------->
+            
+            <label class="control-label col-sm-2" for="previsaoTermino">Previsão Término:</label>
+            <div class="col-sm-3">
+                <input type="text" class="form-control datepicker" id="previsaoTermino" name="previsaoTermino" value="" />
+            </div>
+            
+            <?php
+            if ($chamado->getPrevisaoTermino() != "") {
+                $previsaoTermino = $chamado->getPrevisaoTermino();
+            } else {
+                $previsaoTermino = "";
+            }
+
+            echo '<script>document.form.previsaoTermino.value = "' . $previsaoTermino . '";</script>';
+
+            if (($exibePrevisaoTermino) && ($exibeControlesAbertos)) {
+                echo '';
+            } else {
+                echo '<script>document.form.previsaoTermino.disabled = true;</script>';
+                echo '<input type="hidden" name="previsaoTermino" value="' . $previsaoTermino . '" />';
+            }
+            ?>
+        </div>
         
         <div class="form-group">
+            <!-- Prioridade ----------------------------------------------------------------------->
+            
             <label class="control-label col-sm-2" for="prioridade">Prioridade:</label>
-            <div class="col-sm-10">
+            <div class="col-sm-3">
                 <?php echo '<select class="form-control" id="prioridade" name="prioridade" onchange="alteraPrioridade(' . ( Functions::isEmpty($chamado->getImpacto()) ? 0 : $chamado->getImpacto() ) . ',' . ( ($exibeControlesAbertos) ? '1' : '0' ) . ',' . ( ($inclusao) ? '1' : '0' ) . ',' . ( Functions::isEmpty($chamado->getUsuariosAfetados()) ? 0 : $chamado->getUsuariosAfetados() ) . ',' . ( Functions::isEmpty($chamado->getAreasAfetadas()) ? 0 : $chamado->getAreasAfetadas() ) . ');">'; ?>
                     <option value="">Selecione</option>
                     <?php
@@ -700,143 +717,119 @@
                     ?>
                 </select>
             </div>
-        </div>
-        
-        <?php
-        if ($chamado->getPrioridade() != "") {
-            $prioridade = $chamado->getPrioridade()->getId();
-        } else {
-            $prioridade = "";
-        }
-        
-        echo '<script>document.form.prioridade.value = "' . $prioridade . '";</script>';
-        
-        if ($exibeControlesAbertos) {
-            echo '';
-        } else {
-            echo '<script>document.form.prioridade.disabled = true;</script>';
-            echo '<input type="hidden" name="prioridade" value="' . $prioridade . '" />';
-        }
-        ?>
-        
-        <!-- Impacto -------------------------------------------------------------------------->
-        
-        <div id="divImpacto">
             
-        </div>
-        
-        <!-- Usuários Afetados ---------------------------------------------------------------->
-        
-        <div id="divUsuariosAfetados">
+            <?php
+            if ($chamado->getPrioridade() != "") {
+                $prioridade = $chamado->getPrioridade()->getId();
+            } else {
+                $prioridade = "";
+            }
+
+            echo '<script>document.form.prioridade.value = "' . $prioridade . '";</script>';
+
+            if ($exibeControlesAbertos) {
+                echo '';
+            } else {
+                echo '<script>document.form.prioridade.disabled = true;</script>';
+                echo '<input type="hidden" name="prioridade" value="' . $prioridade . '" />';
+            }
+            ?>
             
-        </div>
-        
-        <!-- Todas Áreas Afetadas? ------------------------------------------------------------>
-        
-        <div id="divAreasAfetadas">
+            <!-- Impacto -------------------------------------------------------------------------->
             
-        </div>
-        
-        <!-- Previsão Término ----------------------------------------------------------------->
-        
-        <div class="form-group">
-            <label class="control-label col-sm-2" for="previsaoTermino">Previsão Término:</label>
-            <div class="col-sm-10">
-                <input type="text" class="form-control datepicker" id="previsaoTermino" name="previsaoTermino" value="" />
+            <div id="divImpacto">
+
             </div>
         </div>
         
-        <?php
-        if ($chamado->getPrevisaoTermino() != "") {
-            $previsaoTermino = $chamado->getPrevisaoTermino();
-        } else {
-            $previsaoTermino = "";
-        }
-        
-        echo '<script>document.form.previsaoTermino.value = "' . $previsaoTermino . '";</script>';
-        
-        if (($exibePrevisaoTermino) && ($exibeControlesAbertos)) {
-            echo '';
-        } else {
-            echo '<script>document.form.previsaoTermino.disabled = true;</script>';
-            echo '<input type="hidden" name="previsaoTermino" value="' . $previsaoTermino . '" />';
-        }
-        ?>
-        
-        <!-- Assunto -------------------------------------------------------------------------->
+        <div class="form-group">
+            <!-- Usuários Afetados ---------------------------------------------------------------->
+
+            <div id="divUsuariosAfetados">
+
+            </div>
+            
+            <!-- Todas Áreas Afetadas? ------------------------------------------------------------>
+
+            <div id="divAreasAfetadas">
+
+            </div>
+        </div>
         
         <div class="form-group">
+            <!-- Assunto -------------------------------------------------------------------------->
+            
             <label class="control-label col-sm-2" for="assunto">Assunto:</label>
-            <div class="col-sm-10">
+            <div class="col-sm-8">
                 <input type="text" class="form-control" id="assunto" name="assunto" value="" />
             </div>
+            
+                <?php
+            if ($chamado->getAssunto() != "") {
+                $assunto = $chamado->getAssunto();
+            } else {
+                $assunto = "";
+            }
+
+            echo '<script>document.form.assunto.value = "' . $assunto . '";</script>';
+
+            if ($exibeControlesAbertos) {
+                echo '';
+            } else {
+                echo '<script>document.form.assunto.disabled = true;</script>';
+                echo '<input type="hidden" name="assunto" value="' . $assunto . '" />';
+            }
+            ?>
         </div>
         
-        <?php
-        if ($chamado->getAssunto() != "") {
-            $assunto = $chamado->getAssunto();
-        } else {
-            $assunto = "";
-        }
-        
-        echo '<script>document.form.assunto.value = "' . $assunto . '";</script>';
-        
-        if ($exibeControlesAbertos) {
-            echo '';
-        } else {
-            echo '<script>document.form.assunto.disabled = true;</script>';
-            echo '<input type="hidden" name="assunto" value="' . $assunto . '" />';
-        }
-        ?>
-        
-        <!-- Descrição ------------------------------------------------------------------------>
-        
         <div class="form-group">
+            <!-- Descrição ------------------------------------------------------------------------>
+            
             <label class="control-label col-sm-2" for="observacao">Descrição:</label>
-            <div class="col-sm-10">
-                <textarea class="form-control" rows="5" id="observacao" name="observacao" placeholder=""></textarea>
+            <div class="col-sm-8">
+                <textarea class="form-control" rows="5" id="observacao" name="observacao"></textarea>
             </div>
+            
+            <?php
+            if (!Functions::isEmpty($chamado->getObservacao())) {
+                $observacao = $chamado->getObservacao();
+            } else {
+                $observacao = "";
+            }
+            
+            echo '<script>document.form.observacao.value = "' . $observacao . '";</script>';
+            
+            if ($exibeControlesAbertos) {
+                echo '';
+            } else {
+                echo '<script>document.form.observacao.disabled = true;</script>';
+                echo '<input type="hidden" name="observacao" value="' . $observacao . '" />';
+            }
+            ?>
         </div>
         
-        <?php
-        if (!Functions::isEmpty($chamado->getObservacao())) {
-            $observacao = $chamado->getObservacao();
-        } else {
-            $observacao = "";
-        }
-        
-        echo '<script>document.form.observacao.value = "' . $observacao . '";</script>';
-        
-        if ($exibeControlesAbertos) {
-            echo '';
-        } else {
-            echo '<script>document.form.observacao.disabled = true;</script>';
-            echo '<input type="hidden" name="observacao" value="' . $observacao . '" />';
-        }
-        ?>
-        
-        <!-- Anexo ---------------------------------------------------------------------------->
-        
         <div class="form-group">
+            <!-- Anexo ---------------------------------------------------------------------------->
+            
             <label class="control-label col-sm-2" for="anexo">Anexo:</label>
-            <div class="col-sm-10">
+            <div class="col-sm-8">
                 <input type="file" class="form-control" id="anexo" name="anexo" />
             </div>
+            
+            <?php
+            if ($exibeControlesAbertos) {
+                echo '';
+            } else {
+                echo '<script>document.form.anexo.disabled = true;</script>';
+            }
+            ?>
         </div>
         
-        <?php
-        if ($exibeControlesAbertos) {
-            echo '';
-        } else {
-            echo '<script>document.form.anexo.disabled = true;</script>';
-        }
-        ?>
-        
-        <!-- Ações ---------------------------------------------------------------------------->
-        
         <div class="form-group">
+            <!-- Ações ---------------------------------------------------------------------------->
+            
             <label class="control-label col-sm-2" for="anexo">Ações:</label>
-            <div class="col-sm-10">
+            <div class="col-sm-8">
                 <button type="button" class="btn btn-default" onclick="javascript:voltar();">
                     <span class="glyphicon glyphicon-arrow-left"></span>&nbsp;&nbsp;Voltar
                 </button>
@@ -883,7 +876,7 @@
                     <td><?php echo $historico->getUsuario()->getNome()?></td>
                     <td><?php echo $historico->getData()?></td>
                     <td><?php echo $historico->getObservacao()?></td>
-                    <td><a target="_blank" href="<?php echo "uploads/CHA" . str_pad($historico->getChamado()->getId(), 11, "0", STR_PAD_LEFT) . "." . str_pad($historico->getId(), 11, "0", STR_PAD_LEFT)?>"><?php echo $historico->getAnexo(); ?></a></td>
+                    <td><a target="_blank" href="<?php echo "uploads/CHA" . str_pad($historico->getChamado()->getId(), 11, "0", STR_PAD_LEFT) . "." . str_pad($historico->getId(), 11, "0", STR_PAD_LEFT) . "." . $historico->getAnexo()?>"><?php echo $historico->getAnexo(); ?></a></td>
                 </tr>
             <?php } ?>
             </tbody>

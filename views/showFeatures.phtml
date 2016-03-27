@@ -20,6 +20,16 @@
     if (array_key_exists('resumoGeral', $v_params)) {
         $resumoGeral = $v_params['resumoGeral'];
     }
+    
+    $totalMeusRegistros = 0;
+    foreach($meusRegistros AS $meuRegistro) {
+        $totalMeusRegistros = $totalMeusRegistros + $meuRegistro['situacaoQuantidadeAtividades'] + $meuRegistro['situacaoQuantidadeChamados'];
+    }
+    
+    $totalResumoGeral = 0;
+    foreach($resumoGeral AS $resumo) {
+        $totalResumoGeral = $totalResumoGeral + $resumo['usuarioQuantidadeAtividades'] + $resumo['usuarioQuantidadeChamados'];
+    }
 ?>
 
 <?php include 'pageopen.php' ?>
@@ -29,8 +39,6 @@
     <div class="page-header">
         <h3>Funcionalidades<small> / Tela de Listagem</small></h3>
     </div>
-    
-    <p><br /></p>
     
     <?php if ($_SESSION['perfilCliente'] == 1) { ?>
         <table class="table table-striped">
@@ -57,75 +65,119 @@
 
         </table>
     <?php } else { ?>
-        <table class="table table-striped">
+        <table width="100%">
+            <tr>
+                <td align="center" valign="top" style="padding: 5px 5px 5px 5px">
+                    
+                    <div class="panel panel-danger">
+                        <div class="panel-heading">
+                            <table width="100%">
+                                <tr>
+                                    <td align="left"><h1><span class="glyphicon glyphicon-comment"></h1></td>
+                                    <td align="right"><b><h2><?php echo $naoClassificados ?></h2>Não Classificados</b></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="panel-body">
+                            <table class="table table-striped">
 
-            <thead>
-                <tr>
-                    <th class="col-sm-2">Não Classificados</th>
-                    <th class="col-sm-1">Atividades</th>
-                    <th class="col-sm-1">Chamados</th>
-                </tr>
-            </thead>
+                                <thead>
+                                    <tr>
+                                        <th class="col-sm-1"><br /></th>
+                                        <th class="col-sm-1">Atividades</th>
+                                        <th class="col-sm-1">Chamados</th>
+                                    </tr>
+                                </thead>
 
-            <tbody>
-                <tr>
-                    <td><br /></td>
-                    <td><?php echo '<a href="javascript:;" onclick="listarAtividades(9999,9999);">0</a>'; ?></td>
-                    <td><?php echo '<a href="javascript:;" onclick="listarChamadosNaoClassificados();">' . $naoClassificados . '</a>'; ?></td>
-                </tr>
-            </tbody>
-            
+                                <tbody>
+                                    <tr>
+                                        <td>Quantidade</td>
+                                        <td><?php echo '<a href="javascript:;" onclick="listarAtividades(9999,9999);">0</a>'; ?></td>
+                                        <td><?php echo '<a href="javascript:;" onclick="listarChamadosNaoClassificados();">' . $naoClassificados . '</a>'; ?></td>
+                                    </tr>
+                                </tbody>
+
+                            </table>
+                        </div>
+                    </div>
+                    
+                </td>
+                <td align="center" valign="top" style="padding: 5px 5px 5px 5px">
+                    
+                    <div class="panel panel-success">
+                        <div class="panel-heading">
+                            <table width="100%">
+                                <tr>
+                                    <td align="left"><h1><span class="glyphicon glyphicon-tasks"></h1></td>
+                                    <td align="right"><b><h2><?php echo $totalMeusRegistros ?></h2>Meus Registros</b></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="panel-body">
+                        <table class="table table-striped">
+
+                            <thead>
+                                <tr>
+                                    <th class="col-sm-1"><br /></th>
+                                    <th class="col-sm-1">Atividades</th>
+                                    <th class="col-sm-1">Chamados</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <?php foreach($meusRegistros AS $meuRegistro) { ?>
+                                <tr>
+                                    <td><?php echo $meuRegistro['situacaoDescricao']; ?></td>
+                                    <td><?php echo '<a href="javascript:;" onclick="listarAtividades(' . $_SESSION['usuarioCodigo'] . ',' . $meuRegistro['situacaoCodigo'] . ');">' . $meuRegistro['situacaoQuantidadeAtividades'] . '</a>'; ?></td>
+                                    <td><?php echo '<a href="javascript:;" onclick="listarChamados(' . $_SESSION['usuarioCodigo'] . ',' . $meuRegistro['situacaoCodigo'] . ');">' . $meuRegistro['situacaoQuantidadeChamados'] . '</a>'; ?></td>
+                                </tr>
+                                <?php } ?>
+                            </tbody>
+
+                        </table>
+                        </div>
+                    </div>
+                    
+                </td>
+                <td align="center" valign="top" style="padding: 5px 5px 5px 5px">
+                    
+                    <div class="panel panel-warning">
+                        <div class="panel-heading">
+                            <table width="100%">
+                                <tr>
+                                    <td align="left"><h1><span class="glyphicon glyphicon-globe"></h1></td>
+                                    <td align="right"><b><h2><?php echo $totalResumoGeral ?></h2>Resumo Geral</b></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="panel-body">
+                        <table class="table table-striped">
+
+                            <thead>
+                                <tr>
+                                    <th class="col-sm-1"><br /></th>
+                                    <th class="col-sm-1">Atividades</th>
+                                    <th class="col-sm-1">Chamados</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <?php foreach($resumoGeral AS $resumo) { ?>
+                                <tr>
+                                    <td><?php echo $resumo['usuarioNome']; ?></td>
+                                    <td><?php echo '<a href="javascript:;" onclick="listarAtividadesEspecial(' . $resumo['usuarioCodigo'] . ', 1);">' . $resumo['usuarioQuantidadeAtividades'] . '</a>'; ?></td>
+                                    <td><?php echo '<a href="javascript:;" onclick="listarChamadosEspecial(' . $resumo['usuarioCodigo'] . ', 1);">' . $resumo['usuarioQuantidadeChamados'] . '</a>'; ?></td>
+                                </tr>
+                                <?php } ?>
+                            </tbody>
+
+                        </table>
+                        </div>
+                    </div>
+                    
+                </td>
+            </tr>
         </table>
-
-        <br />
-
-        <table class="table table-striped">
-
-            <thead>
-                <tr>
-                    <th class="col-sm-2">Meus Registros</th>
-                    <th class="col-sm-1">Atividades</th>
-                    <th class="col-sm-1">Chamados</th>
-                </tr>
-            </thead>
-
-            <tbody>
-                <?php foreach($meusRegistros AS $meuRegistro) { ?>
-                <tr>
-                    <td><?php echo $meuRegistro['situacaoDescricao']; ?></td>
-                    <td><?php echo '<a href="javascript:;" onclick="listarAtividades(' . $_SESSION['usuarioCodigo'] . ',' . $meuRegistro['situacaoCodigo'] . ');">' . $meuRegistro['situacaoQuantidadeAtividades'] . '</a>'; ?></td>
-                    <td><?php echo '<a href="javascript:;" onclick="listarChamados(' . $_SESSION['usuarioCodigo'] . ',' . $meuRegistro['situacaoCodigo'] . ');">' . $meuRegistro['situacaoQuantidadeChamados'] . '</a>'; ?></td>
-                </tr>
-                <?php } ?>
-            </tbody>
-
-        </table>
-
-        <br />
-
-        <table class="table table-striped">
-
-            <thead>
-                <tr>
-                    <th class="col-sm-2">Resumo Geral</th>
-                    <th class="col-sm-1">Atividades</th>
-                    <th class="col-sm-1">Chamados</th>
-                </tr>
-            </thead>
-
-            <tbody>
-                <?php foreach($resumoGeral AS $resumo) { ?>
-                <tr>
-                    <td><?php echo $resumo['usuarioNome']; ?></td>
-                    <td><?php echo '<a href="javascript:;" onclick="listarAtividadesEspecial(' . $resumo['usuarioCodigo'] . ', 1);">' . $resumo['usuarioQuantidadeAtividades'] . '</a>'; ?></td>
-                    <td><?php echo '<a href="javascript:;" onclick="listarChamadosEspecial(' . $resumo['usuarioCodigo'] . ', 1);">' . $resumo['usuarioQuantidadeChamados'] . '</a>'; ?></td>
-                </tr>
-                <?php } ?>
-            </tbody>
-
-        </table>
-
-        <br />
     <?php } ?>
     
 </div>

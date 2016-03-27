@@ -152,17 +152,16 @@
         <input type='hidden' name='controle' value='atividades'>
         <input type='hidden' name='acao' value='salvarCadastrar'>
         
-        <div class="form-group">
-            <label class="control-label col-sm-2" for="id">Código:</label>
-            <div class="col-sm-10">
-                <input type="hidden" id="id" name="id" value="<?php echo $atividade->getId() ?>">
-                <input type="text" class="form-control" id="id" name="id" placeholder="Será gerado automaticamente pelo sistema" value="<?php echo $atividade->getId()?>" disabled="disabled">
-            </div>
-        </div>
+        <div class="well well-sm"><b>Principal</b></div>
         
         <div class="form-group">
+            <label class="control-label col-sm-2" for="id">Código:</label>
+            <div class="col-sm-3">
+                <input type="hidden" id="id" name="id" value="<?php echo $atividade->getId() ?>">
+                <input type="text" class="form-control" id="id" name="id" value="<?php echo $atividade->getId()?>" disabled="disabled">
+            </div>
             <label class="control-label col-sm-2" for="data">Data Abertura:</label>
-            <div class="col-sm-10">
+            <div class="col-sm-3">
                 <?php 
                 if ($inclusao) {
                     echo '<input type="hidden" name="data" value="' . $atividadeData . '" />';
@@ -180,7 +179,7 @@
         
         <div class="form-group">
             <label class="control-label col-sm-2" for="situacao">Situação:</label>
-            <div class="col-sm-10">
+            <div class="col-sm-3">
                 <?php
                 if ($inclusao) {
                     echo '<input type="hidden" name="situacao" value="' . $situacaoCodigo . '" />';
@@ -203,11 +202,8 @@
                 }
                 ?>
             </div>
-        </div>
-        
-        <div class="form-group">
             <label class="control-label col-sm-2" for="usuario">Analista:</label>
-            <div class="col-sm-10">
+            <div class="col-sm-3">
                 <?php 
                 if ($exibeUsuarioAberto) {
                     if ($exibeControlesAbertos) {
@@ -234,7 +230,7 @@
         
         <div class="form-group">
             <label class="control-label col-sm-2" for="empresa">Empresa:</label>
-            <div class="col-sm-10">
+            <div class="col-sm-3">
                 <?php 
                 if ($exibeEmpresaAberta) {
                     if ($exibeControlesAbertos) {
@@ -257,11 +253,8 @@
                 }
                 ?>
             </div>
-        </div>
-        
-        <div class="form-group">
             <label class="control-label col-sm-2" for="tipoAtividade">Tipo de Atividade:</label>
-            <div class="col-sm-10">
+            <div class="col-sm-3">
                 <?php
                 if ($exibeControlesAbertos) {
                     echo '<select class="form-control" id="tipoAtividade" name="tipoAtividade">';
@@ -283,12 +276,12 @@
         
         <div class="form-group">
             <label class="control-label col-sm-2" for="observacao">Descrição:</label>
-            <div class="col-sm-10">
+            <div class="col-sm-8">
                 <?php
                 if ($exibeControlesAbertos) {
-                    echo '<textarea class="form-control" rows="5" id="observacao" name="observacao" placeholder="">' . $atividade->getObservacao() . '</textarea>';
+                    echo '<textarea class="form-control" rows="5" id="observacao" name="observacao">' . $atividade->getObservacao() . '</textarea>';
                 } else {
-                    echo '<textarea class="form-control" rows="5" id="observacao" name="observacao" placeholder="" disabled="disabled">' . $atividade->getObservacao() . '</textarea>';
+                    echo '<textarea class="form-control" rows="5" id="observacao" name="observacao" disabled="disabled">' . $atividade->getObservacao() . '</textarea>';
                 }
                 ?>
             </div>
@@ -297,8 +290,6 @@
     </form>
     
     <?php if (!$inclusao) { ?>
-        <p><br /></p>
-        
         <div class="well well-sm"><b>Apontamentos</b></div>
         
         <?php if ($exibeControlesAbertos) { ?>
@@ -323,13 +314,13 @@
 
             <thead>
                 <tr>
-                    <th class="col-sm-1">Funcionário</th>
+                    <th class="col-sm-3">Funcionário</th>
                     <th class="col-sm-1">Início</th>
                     <th class="col-sm-1">Fim</th>
                     <th class="col-sm-1">Duração</th>
-                    <th class="col-sm-2">Observação</th>
+                    <th class="col-sm-4">Observação</th>
                     <?php if (($exibeControlesAbertos) && ($exibeAcoesApontamentos)) { ?>
-                        <th class="col-sm-1">Ações</th>
+                        <th class="col-sm-2">Ações</th>
                     <?php } ?>
                 </tr>
             </thead>

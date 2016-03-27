@@ -452,41 +452,56 @@ class ChamadosController extends BaseController {
             
             // Disparo de E-mail Comunicando
             if (!Functions::isEmpty($alteracoes)) {
+                $recipients = array();
+                
                 if ($modo == "I") {
                     $subject = "BasisIT :: Inclusão de Chamado :: Número " . $vo->getId() . " :: " . $vo->getEmpresa()->getDescricao();
-                    $txt = "Informamos que o chamado " . $vo->getId() . " foi aberto com sucesso.<br /><br />Solicitamos que aguarde até que o mesmo seja verificado.<br /><br />Você receberá um aviso a cada nova interação feita.";
+                    $txt = "<b>" . $vo->getUsuario()->getNome() . "</b> da empresa <b>" . $vo->getEmpresa()->getDescricao() . "</b> criou o chamado <b>" . $vo->getId() . " - " . $vo->getAssunto() . "</b> na categoria <b>" . $vo->getCategoria()->getDescricao() . "</b>:";
                 } else {
                     $subject = "BasisIT :: Nova Interação no Chamado :: Número " . $vo->getId() . " :: " . $vo->getEmpresa()->getDescricao();
                     $txt = "Informamos que houve uma nova interação no chamado " . $vo->getId() . ".";
                 }
                 
                 $txt = $txt . '<br /><br />';
+                $txt = $txt . 'Você receberá um aviso a cada notificação feita.';
+                $txt = $txt . '<br /><br />';
                 $txt = $txt . '<fieldset><legend><b>Descrição da Interação:</b></legend>'. $alteracoes . '</fieldset>';
                 $txt = $txt . '<br />';
-                $txt = $txt . '<font color="red"><b>OBS: Este e-mail foi gerado automaticamente. Favor não responder para este endereço.</b></font>';
+                $txt = $txt . '<font color="red"><b>Atenção: Esta é uma mensagem automática.</b></font>';
+                $txt = $txt . '<br /><br />';
+                $txt = $txt . '<font color="red"><b>Para responder ou consultar o histórico deste atendimento, acesse: <a href="https://www.basisit.com.br/basisit">https://www.basisit.com.br/basisit</a></b></font>';
                 
-                // E-mail para o usuário que abriu o chamado vai sempre
-                if (!Functions::isEmpty($vo->getUsuario()->getEmail())) {
-                    $to = $vo->getUsuario()->getEmail();
-                    Functions::email($to, $subject, $txt);
-                }
-                
-                // Se for inclusão de chamado, vai para os usuários definidos no parâmetro
+                // Se for inclusão de chamado
                 if ($modo == "I") {
+                    // Manda E-mail para o usuário que abriu o chamado
+                    if (!Functions::isEmpty($vo->getUsuario()->getEmail())) {
+                        $to = $vo->getUsuario()->getEmail();
+                        Functions::email($to, $subject, $txt);                   
+                    }
+                    // Manda E-mail para todos os destinatários definidos no cadastro de parâmetros
                     $destinatarios = explode(';', Functions::getParametro('destinatários'));
-                    foreach ($destinatarios as $destinatario) {
-                        Functions::email($destinatario, $subject, $txt);
+                    foreach ($destinatarios as $to) {
+                        array_push($recipients, $to);
                     }
-                // Se for alteração de chamado, vai para os envolvidos que estiverem envolvidos no chamado (analista e requisitante)
+                    Functions::email($recipients, $subject, $txt);
+                // Se for alteração de chamado, vai para os envolvidos que estiverem envolvidos no chamado (usuário, analista e requisitante)
                 } else {
-                    if (!Functions::isEmpty($vo->getRequisitante()->getEmail())) {
+                    // Usuário
+                    if (!Functions::isEmpty($vo->getUsuario()->getEmail())) {
+                        $to = $vo->getUsuario()->getEmail();
+                        array_push($recipients, $to);
+                    }
+                    // Requisitante
+                    if ((!Functions::isEmpty($vo->getRequisitante()->getEmail())) && ($vo->getRequisitante()->getEmail() != $vo->getUsuario()->getEmail())) {
                         $to = $vo->getRequisitante()->getEmail();
-                        Functions::email($to, $subject, $txt);
+                        array_push($recipients, $to);
                     }
-                    if (!Functions::isEmpty($vo->getAtendente()->getEmail())) {
+                    // Atendente
+                    if ((!Functions::isEmpty($vo->getAtendente()->getEmail())) && ($vo->getAtendente()->getEmail() != $vo->getUsuario()->getEmail())) {
                         $to = $vo->getAtendente()->getEmail();
-                        Functions::email($to, $subject, $txt);
+                        array_push($recipients, $to);
                     }
+                    Functions::email($recipients, $subject, $txt);
                 }
             }
             
@@ -631,6 +646,7 @@ class ChamadosController extends BaseController {
             $chamadoHistoricoModel->save($connection, $chamadoHistoricoVo);
             
             // Disparo de E-mail Comunicando
+            $recipients = array();
             $subject = "BasisIT :: Finalização de Chamado :: Número " . $chamadoVo->getId() . " :: " . $chamadoVo->getEmpresa()->getDescricao();
             $txt = "Informamos que houve uma nova interação no chamado " . $chamadoVo->getId() . ".";
             
@@ -642,16 +658,18 @@ class ChamadosController extends BaseController {
             // E-mail para o usuário que abriu o chamado vai sempre
             if (!Functions::isEmpty($chamadoVo->getUsuario()->getEmail())) {
                 $to = $chamadoVo->getUsuario()->getEmail();
-                Functions::email($to, $subject, $txt);
+                array_push($recipients, $to);
             }
-            if (!Functions::isEmpty($chamadoVo->getRequisitante()->getEmail())) {
+            if ((!Functions::isEmpty($chamadoVo->getRequisitante()->getEmail())) && ($chamadoVo->getRequisitante()->getEmail() != $chamadoVo->getUsuario()->getEmail())) {
                 $to = $chamadoVo->getRequisitante()->getEmail();
-                Functions::email($to, $subject, $txt);
+                array_push($recipients, $to);
             }
-            if (!Functions::isEmpty($chamadoVo->getAtendente()->getEmail())) {
+            if ((!Functions::isEmpty($chamadoVo->getAtendente()->getEmail())) && ($chamadoVo->getAtendente()->getEmail() != $chamadoVo->getUsuario()->getEmail())) {
                 $to = $chamadoVo->getAtendente()->getEmail();
-                Functions::email($to, $subject, $txt);
+                array_push($recipients, $to);
             }
+            
+            Functions::email($recipients, $subject, $txt);
         }
         
         $dados = $this->carregarDadosManter($connection, $id, $mensagem);
@@ -695,6 +713,7 @@ class ChamadosController extends BaseController {
             $chamadoHistoricoModel->save($connection, $chamadoHistoricoVo);
             
             // Disparo de E-mail Comunicando
+            $recipients = array();
             $subject = "BasisIT :: Cancelamento de Chamado :: Número " . $chamadoVo->getId() . " :: " . $chamadoVo->getEmpresa()->getDescricao();
             $txt = "Informamos que houve uma nova interação no chamado " . $chamadoVo->getId() . ".";
             
@@ -706,16 +725,18 @@ class ChamadosController extends BaseController {
             // E-mail para o usuário que abriu o chamado vai sempre
             if (!Functions::isEmpty($chamadoVo->getUsuario()->getEmail())) {
                 $to = $chamadoVo->getUsuario()->getEmail();
-                Functions::email($to, $subject, $txt);
+                array_push($recipients, $to);
             }
-            if (!Functions::isEmpty($chamadoVo->getRequisitante()->getEmail())) {
+            if ((!Functions::isEmpty($chamadoVo->getRequisitante()->getEmail())) && ($chamadoVo->getRequisitante()->getEmail() != $chamadoVo->getUsuario()->getEmail())) {
                 $to = $chamadoVo->getRequisitante()->getEmail();
-                Functions::email($to, $subject, $txt);
+                array_push($recipients, $to);
             }
-            if (!Functions::isEmpty($chamadoVo->getAtendente()->getEmail())) {
+            if ((!Functions::isEmpty($chamadoVo->getAtendente()->getEmail())) && ($chamadoVo->getAtendente()->getEmail() != $chamadoVo->getUsuario()->getEmail())) {
                 $to = $chamadoVo->getAtendente()->getEmail();
-                Functions::email($to, $subject, $txt);
+                array_push($recipients, $to);
             }
+            
+            Functions::email($recipients, $subject, $txt);
         }
         
         $dados = $this->carregarDadosManter($connection, $id, $mensagem);
@@ -744,17 +765,15 @@ class ChamadosController extends BaseController {
         $chamadoVo = new ChamadosVo();
 
         if ($impacto == 1) {
-            echo '<div class="form-group">
-                    <label class="control-label col-sm-2" for="usuariosAfetados">Usuários Afetados:</label>
-                    <div class="col-sm-10">
-                        <select class="form-control" id="usuariosAfetados" name="usuariosAfetados" ' . ( ($exibeAberto == 1) ? '' : ' disabled="disabled" ' ) . '>
-                            <option value="0" ' . ( ($usuariosAfetados == 0) ? ' selected ' : '' ) . '>' . $chamadoVo->getUsuariosAfetadosExtensoParam(0) . '</option>
-                            <option value="1" ' . ( ($usuariosAfetados == 1) ? ' selected ' : '' ) . '>' . $chamadoVo->getUsuariosAfetadosExtensoParam(1) . '</option>
-                            <option value="2" ' . ( ($usuariosAfetados == 2) ? ' selected ' : '' ) . '>' . $chamadoVo->getUsuariosAfetadosExtensoParam(2) . '</option>
-                            <option value="3" ' . ( ($usuariosAfetados == 3) ? ' selected ' : '' ) . '>' . $chamadoVo->getUsuariosAfetadosExtensoParam(3) . '</option>
-                            <option value="4" ' . ( ($usuariosAfetados == 4) ? ' selected ' : '' ) . '>' . $chamadoVo->getUsuariosAfetadosExtensoParam(4) . '</option>
-                        </select>
-                    </div>
+            echo '<label class="control-label col-sm-2" for="usuariosAfetados">Usuários Afetados:</label>
+                  <div class="col-sm-3">
+                    <select class="form-control" id="usuariosAfetados" name="usuariosAfetados" ' . ( ($exibeAberto == 1) ? '' : ' disabled="disabled" ' ) . '>
+                      <option value="0" ' . ( ($usuariosAfetados == 0) ? ' selected ' : '' ) . '>' . $chamadoVo->getUsuariosAfetadosExtensoParam(0) . '</option>
+                      <option value="1" ' . ( ($usuariosAfetados == 1) ? ' selected ' : '' ) . '>' . $chamadoVo->getUsuariosAfetadosExtensoParam(1) . '</option>
+                      <option value="2" ' . ( ($usuariosAfetados == 2) ? ' selected ' : '' ) . '>' . $chamadoVo->getUsuariosAfetadosExtensoParam(2) . '</option>
+                      <option value="3" ' . ( ($usuariosAfetados == 3) ? ' selected ' : '' ) . '>' . $chamadoVo->getUsuariosAfetadosExtensoParam(3) . '</option>
+                      <option value="4" ' . ( ($usuariosAfetados == 4) ? ' selected ' : '' ) . '>' . $chamadoVo->getUsuariosAfetadosExtensoParam(4) . '</option>
+                    </select>
                   </div>';
         } else {
             echo '<input type="hidden" id="usuariosAfetados" name="usuariosAfetados" value="0" />';
@@ -769,12 +788,10 @@ class ChamadosController extends BaseController {
         $chamadoVo = new ChamadosVo();
         
         if ($impacto == 1) {
-            echo '<div class="form-group">
-                    <label class="control-label col-sm-2" for="areasAfetadas">Todas áreas afetadas?</label>
-                    <div class="col-sm-10">
-                        <label class="radio-inline"><input type="radio" id="areasAfetadas" name="areasAfetadas" value="0"' . ( ($exibeAberto == 1) ? '' : ' disabled="disabled" ' ) . ( ( $areasAfetadas == 0 ) ? ' checked="checked" ' : '' ) . '>' . $chamadoVo->getAreasAfetadasExtensoParam(0) . '</label>
-                        <label class="radio-inline"><input type="radio" id="areasAfetadas" name="areasAfetadas" value="1"' . ( ($exibeAberto == 1) ? '' : ' disabled="disabled" ' ) . ( ( $areasAfetadas == 1 ) ? ' checked="checked" ' : '' ) . '>' . $chamadoVo->getAreasAfetadasExtensoParam(1) . '</label>
-                    </div>
+            echo '<label class="control-label col-sm-2" for="areasAfetadas">Todas áreas afetadas?</label>
+                  <div class="col-sm-3">
+                    <label class="radio-inline"><input type="radio" id="areasAfetadas" name="areasAfetadas" value="0"' . ( ($exibeAberto == 1) ? '' : ' disabled="disabled" ' ) . ( ( $areasAfetadas == 0 ) ? ' checked="checked" ' : '' ) . '>' . $chamadoVo->getAreasAfetadasExtensoParam(0) . '</label>
+                    <label class="radio-inline"><input type="radio" id="areasAfetadas" name="areasAfetadas" value="1"' . ( ($exibeAberto == 1) ? '' : ' disabled="disabled" ' ) . ( ( $areasAfetadas == 1 ) ? ' checked="checked" ' : '' ) . '>' . $chamadoVo->getAreasAfetadasExtensoParam(1) . '</label>
                   </div>';
         } else {
             echo '<input type="hidden" id="areasAfetadas" name="areasAfetadas" value="0" />';
