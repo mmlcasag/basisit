@@ -46,14 +46,10 @@
         <thead>
             <tr>
                 <th class="col-sm-1">Código</th>
-                <th class="col-sm-1">Abertura</th>
-                <th class="col-sm-1">Situação</th>
-                <th class="col-sm-1">Categoria</th>
-                <th class="col-sm-2">Ambiente</th>
+                <th class="col-sm-5">Assunto</th>
                 <th class="col-sm-2">Empresa</th>
-                <th class="col-sm-1">Produto</th>
-                <th class="col-sm-1">Impacto</th>
-                <th class="col-sm-1">Prioridade</th>
+                <th class="col-sm-2">Situação</th>
+                <th class="col-sm-1">Abertura</th>
                 <th class="col-sm-1">Previsão</th>
             </tr>
         </thead>
@@ -62,14 +58,10 @@
             <?php foreach($registros AS $registro) { ?>
             <tr>
                 <td><?php echo '<a href="javascript:editar(' . $registro->getId() . ');">' . $registro->getId() . '</a>'?></td>
-                <td><?php echo $registro->getData()?></td>
-                <td><?php echo $registro->getSituacao()->getDescricao()?></td>
-                <td><?php echo $registro->getCategoria()->getDescricao()?></td>
-                <td><?php echo $registro->getTipoAmbiente()->getDescricao()?></td>
+                <td><?php echo $registro->getAssunto()?></td>
                 <td><?php echo $registro->getEmpresa()->getDescricao()?></td>
-                <td><?php echo $registro->getTipoProduto()->getDescricao()?></td>
-                <td><?php echo $registro->getImpactoExtenso()?></td>
-                <td><?php echo $registro->getPrioridade()->getDescricao()?></td>
+                <td><?php echo $registro->getSituacao()->getDescricao()?></td>
+                <td><?php echo $registro->getData()?></td>
                 <td><?php echo $registro->getPrevisaoTermino()?></td>
             </tr>
             <?php } ?>
