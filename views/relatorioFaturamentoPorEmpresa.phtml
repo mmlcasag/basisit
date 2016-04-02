@@ -115,18 +115,37 @@
         </thead>
         
         <tbody>
-        <?php foreach ($registros AS $registro) { ?>
-            <tr>
-                <td><?php echo $registro['empresaDescricao']; ?></td>
-                <td><?php echo $registro['apontamentoDuracao']; ?></td>
-                <td><?php echo $registro['apontamentoFaturado']; ?></td>
-                <td>
-                    <button type="button" class="btn btn-default btn-xs" onclick="javascript:detalhar(<?php echo $registro['empresaCodigo']?>);">
-                        <span class="glyphicon glyphicon-time"></span>&nbsp;Ver Apontamentos
-                    </button>
-                </td>
-            </tr>
-        <?php } ?>
+            
+        <?php 
+        $totalApontado = '00:00:00';
+        $totalFaturado = '00:00:00';
+        
+        echo '';
+        
+        foreach ($registros AS $registro) {
+            $totalApontado = Functions::sumTimes($totalApontado, Functions::toTime($registro['apontamentoDuracao']));
+            $totalFaturado = Functions::sumTimes($totalFaturado, Functions::toTime($registro['apontamentoFaturado']));
+            
+            echo '<tr>';
+            echo '   <td>' . $registro['empresaDescricao'] . '</td>';
+            echo '   <td>' . $registro['apontamentoDuracao'] . '</td>';
+            echo '   <td>' . $registro['apontamentoFaturado'] . '</td>';
+            echo '   <td>' ;
+            echo '     <button type="button" class="btn btn-default btn-xs" onclick="javascript:detalhar(' . $registro['empresaCodigo'] . ');">';
+            echo '       <span class="glyphicon glyphicon-time"></span>&nbsp;Ver Apontamentos';
+            echo '     </button>';
+            echo '   </td>';
+            echo '</tr>';
+        }
+        ?>
+        
+        <tr>
+            <td><br /></td>
+            <td><?php echo '<b>' . $totalApontado . '</b>' ?></td>
+            <td><?php echo '<b>' . $totalFaturado . '</b>' ?></td>
+            <td><br /></td>
+        </tr>
+        
         </tbody>
         
     </table>
