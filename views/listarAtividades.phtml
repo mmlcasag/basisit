@@ -46,12 +46,12 @@
         <thead>
 	    <tr>
                 <th class="col-sm-1">Código</th>
-                <th class="col-sm-1">Abertura</th>
-                <th class="col-sm-1">Situação</th>
-                <th class="col-sm-2">Analista</th>
-                <th class="col-sm-2">Empresa</th>
+                <th class="col-sm-3">Assunto</th>
                 <th class="col-sm-2">Tipo de Atividade</th>
-                <th class="col-sm-3" nowrap>Descrição</th>
+                <th class="col-sm-2">Empresa</th>
+                <th class="col-sm-2">Analista</th>
+                <th class="col-sm-1">Situação</th>
+                <th class="col-sm-1">Abertura</th>
             </tr>
         </thead>
 	
@@ -59,12 +59,12 @@
             <?php foreach($registros AS $registro) { ?>
             <tr>
                 <td><?php echo '<a href="javascript:editar(' . $registro->getId() . ');">' . $registro->getId() . '</a>'?></td>
-                <td><?php echo $registro->getData()?></td>
-                <td><?php echo $registro->getSituacao()->getDescricao()?></td>
-                <td><?php echo $registro->getUsuario()->getNome()?></td>
-                <td><?php echo $registro->getEmpresa()->getDescricao()?></td>
+                <td><?php echo $registro->getAssunto()?></td>
                 <td><?php echo $registro->getTipoAtividade()->getDescricao()?></td>
-                <td><?php echo $registro->getObservacao()?></td>
+                <td><?php echo $registro->getEmpresa()->getDescricao()?></td>
+                <td><?php echo $registro->getUsuario()->getNome()?></td>
+                <td><?php echo $registro->getSituacao()->getDescricao()?></td>
+                <td><?php echo $registro->getData()?></td>
             </tr>
             <?php } ?>
         </tbody>

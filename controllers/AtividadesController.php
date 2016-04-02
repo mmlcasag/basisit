@@ -23,6 +23,8 @@ class AtividadesController extends BaseController {
             return 'N' . 'Informe o campo "Empresa"';
         } else if (Functions::isEmpty($vo->getTipoAtividade()->getId())) {
             return 'N' . 'Informe o campo "Tipo de Atividade"';
+        } else if (Functions::isEmpty($vo->getAssunto())) {
+            return 'N' . 'Informe o campo "Assunto"';
         } else if (Functions::isEmpty($vo->getObservacao())) {
             return 'N' . 'Informe o campo "Observação"';
         } else {
@@ -89,11 +91,11 @@ class AtividadesController extends BaseController {
         $empresa       = $this->getParametroTela('empresa');
         $tipoAtividade = $this->getParametroTela('tipoAtividade');
         $situacao      = $this->getParametroTela('situacao');
-        $observacao    = $this->getParametroTela('observacao');
+        $assunto       = $this->getParametroTela('assunto');
         $especial      = $this->getParametroTela('especial');
         
         $model = new AtividadesModel();
-        $registros = $model->loadByCriteria($connection, $codigo, $usuario, $dataIni, $dataFim, $empresa, $tipoAtividade, $situacao, $observacao, $especial);
+        $registros = $model->loadByCriteria($connection, $codigo, $usuario, $dataIni, $dataFim, $empresa, $tipoAtividade, $situacao, $assunto, $especial);
         
         return $this->trabalharDadosListar($registros, $mensagem);
     }
@@ -203,6 +205,7 @@ class AtividadesController extends BaseController {
         $vo->setUsuario($usuarioVo);
         $vo->setEmpresa($empresaVo);
         $vo->setTipoAtividade($tipoAtividadeVo);
+        $vo->setAssunto($this->getParametroTela('assunto'));
         $vo->setObservacao($this->getParametroTela('observacao'));
 
         $mensagem = $this->validarFormulario($vo);
@@ -267,10 +270,10 @@ class AtividadesController extends BaseController {
 
         $apontamentoModel = new ApontamentosModel();
         $apontamento = $apontamentoModel->verificaSeAberto($connection, "A", $id);
-
+        
         $apontamentoController = new ApontamentosController();
         $mensagem = $apontamentoController->validarIniciarApontamento($atividadeVo, new ChamadosVo(), $apontamento, "A", $id);
-
+        
         if (substr($mensagem, 0, 1) == 'S') {
             $situacaoModel = new SituacoesModel();
             $situacaoVo = $situacaoModel->loadById($connection, $_SESSION['situacaoCancelada']); // Cancelado

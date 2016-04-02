@@ -274,6 +274,19 @@
             </div>
         </div>
         
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="id">Assunto:</label>
+            <div class="col-sm-8">
+                <?php
+                if ($exibeControlesAbertos) {
+                    echo '<input type="text" class="form-control" id="assunto" name="assunto" value="' . $atividade->getAssunto() . '">';
+                } else {
+                    echo '<input type="text" class="form-control" id="assunto" name="assunto" value="' . $atividade->getAssunto() . '" disabled="disabled">';
+                }
+                ?>
+            </div>
+        </div>
+        
         <!-- include summernote css/js-->
         <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.1/summernote.css" rel="stylesheet">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.1/summernote.js"></script>

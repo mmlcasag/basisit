@@ -23,6 +23,7 @@ class AtividadesModel {
         $vo->setUsuario($usuarioVo);
         $vo->setEmpresa($empresaVo);
         $vo->setTipoAtividade($tipoAtividadeVo);
+        $vo->setAssunto($row->ati_dssassunto);
         $vo->setObservacao($row->ati_dsbobservacao);
         
         return $vo;
@@ -51,7 +52,7 @@ class AtividadesModel {
         return $registros;
     }
     
-    public function loadByCriteria($connection, $codigo = "", $usuario = "", $dataIni = "", $dataFim = "", $empresa = "", $tipoAtividade = "", $situacao = "", $observacao = "", $especial = "") {
+    public function loadByCriteria($connection, $codigo = "", $usuario = "", $dataIni = "", $dataFim = "", $empresa = "", $tipoAtividade = "", $situacao = "", $assunto = "", $especial = "") {
         $registros = array();
         
         $query = " SELECT *
@@ -79,8 +80,8 @@ class AtividadesModel {
         if (!Functions::isEmpty($situacao)) {
             $query = $query . " AND ati_cdisituacao = :ati_cdisituacao ";
         }
-        if (!Functions::isEmpty($observacao)) {
-            $query = $query . " AND LOWER(ati_dsbobservacao) LIKE :ati_dsbobservacao ";
+        if (!Functions::isEmpty($assunto)) {
+            $query = $query . " AND LOWER(ati_dssassunto) LIKE :ati_dssassunto ";
         }
         if (!Functions::isEmpty($especial)) {
             $query = $query . " AND ati_cdisituacao NOT IN (" . $_SESSION['situacaoFinalizada'] . "," . $_SESSION['situacaoCancelada'] . ") ";
@@ -111,9 +112,9 @@ class AtividadesModel {
         if (!Functions::isEmpty($situacao)) {
             $stmt->bindParam(':ati_cdisituacao', $situacao);
         }
-        if (!Functions::isEmpty($observacao)) {
-            $observacao = "%" . strtolower($observacao) . "%";
-            $stmt->bindParam(':ati_dsbobservacao', $observacao);
+        if (!Functions::isEmpty($assunto)) {
+            $assunto = "%" . strtolower($assunto) . "%";
+            $stmt->bindParam(':ati_dssassunto', $assunto);
         }
         
         $stmt->execute();
@@ -164,6 +165,7 @@ class AtividadesModel {
                       , ati_cdiusuario
                       , ati_cdiempresa
                       , ati_cditipoatividade
+                      , ati_dssassunto
                       , ati_dsbobservacao
                       )
                    VALUES
@@ -172,6 +174,7 @@ class AtividadesModel {
                       , :ati_cdiusuario
                       , :ati_cdiempresa
                       , :ati_cditipoatividade
+                      , :ati_dssassunto
                       , :ati_dsbobservacao
                    ) ";
         
@@ -182,6 +185,7 @@ class AtividadesModel {
         $stmt->bindParam(':ati_cdiusuario', $vo->getUsuario()->getId());
         $stmt->bindParam(':ati_cdiempresa', $vo->getEmpresa()->getId());
         $stmt->bindParam(':ati_cditipoatividade', $vo->getTipoAtividade()->getId());
+        $stmt->bindParam(':ati_dssassunto', $vo->getAssunto());
         $stmt->bindParam(':ati_dsbobservacao', $vo->getObservacao());
         
         $stmt->execute();
@@ -200,6 +204,7 @@ class AtividadesModel {
                    ,      ati_cdiusuario         = :ati_cdiusuario
                    ,  	  ati_cdiempresa         = :ati_cdiempresa
                    ,  	  ati_cditipoatividade   = :ati_cditipoatividade
+                   ,      ati_dssassunto         = :ati_dssassunto
                    ,  	  ati_dsbobservacao      = :ati_dsbobservacao
                    WHERE  ati_cdiatividade       = :ati_cdiatividade ";
         
@@ -210,6 +215,7 @@ class AtividadesModel {
         $stmt->bindParam(':ati_cdiusuario', $vo->getUsuario()->getId());
         $stmt->bindParam(':ati_cdiempresa', $vo->getEmpresa()->getId());
         $stmt->bindParam(':ati_cditipoatividade', $vo->getTipoAtividade()->getId());
+        $stmt->bindParam(':ati_dssassunto', $vo->getAssunto());
         $stmt->bindParam(':ati_dsbobservacao', $vo->getObservacao());
         $stmt->bindParam(':ati_cdiatividade', $vo->getId());
         

@@ -8,6 +8,7 @@ class AtividadesVo {
     private $empresa;
     private $tipoAtividade;
     private $situacao;
+    private $assunto;
     private $observacao;
     
     function __construct() {
@@ -60,6 +61,14 @@ class AtividadesVo {
     
     public function getTipoAtividade() {
         return $this->tipoAtividade;
+    }
+    
+    public function setAssunto($assunto) {
+        $this->assunto = $assunto;
+    }
+    
+    public function getAssunto($assunto) {
+        return $this->assunto;
     }
     
     public function setObservacao($observacao) {
