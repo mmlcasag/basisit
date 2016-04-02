@@ -65,7 +65,6 @@
         $exibeModulo = false;
         $exibePrioridade = false;
         $exibeAssunto = false;
-        $exibeObservacao = false;
         $exibeAcoesEmbaixo = false;
     } else {
         $dataIni = "";
@@ -79,7 +78,6 @@
         $exibeModulo = true;
         $exibePrioridade = true;
         $exibeAssunto = true;
-        $exibeObservacao = true;
         $exibeAcoesEmbaixo = true;
     }
     
@@ -99,9 +97,9 @@
 
 <?php include 'pageopen.php' ?>
 
-<link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
 
 <script>
     $(document).ready(function() {
@@ -126,7 +124,7 @@
     }
     ?>
     
-    <form class="form-horizontal" role="form" method="post">
+    <form class="form-horizontal" role="form" method="post" onsubmit="return verifica();">
         
         <button type="button" class="btn btn-default" onclick="javascript:incluir();">
             <span class="glyphicon glyphicon-file"></span>&nbsp;&nbsp;Novo
@@ -325,15 +323,6 @@
         </div>
         <?php } ?>
         
-        <?php if ($exibeObservacao) { ?>
-        <div class="form-group">
-            <label class="control-label col-sm-2" for="observacao">Descrição:</label>
-            <div class="col-sm-8">
-                <textarea class="form-control" rows="5" id="observacao" name="observacao"></textarea>
-            </div>
-        </div>
-        <?php } ?>
-        
         <?php if ($exibeAcoesEmbaixo) { ?>
         <div class="form-group">
             <label class="control-label col-sm-2" for="observacao">Ações:</label>
@@ -356,6 +345,11 @@
 <script>
     function incluir() {
         postViaJS('', {controle: 'Chamados', acao: 'cadastrar'}, "post", "_blank");
+    }
+    function verifica() {
+        var markupStr = $('#summernote').summernote('code');
+        document.getElementById('observacao').value = markupStr;
+        return true;
     }
 </script>
 

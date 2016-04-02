@@ -54,9 +54,9 @@
 
 <?php include 'pageopen.php' ?>
 
-<link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
 
 <script>
     $(document).ready(function() {
@@ -116,11 +116,11 @@
         <input type='hidden' name='acao' value='relatorioApontamentosParaAvaliacao'>
         
         <div class="form-group">
-            <label class="control-label col-sm-2" for="periodoInicial">Período Inicial:</label>
+            <label class="control-label col-sm-2" for="periodoInicial">Data Abertura (de):</label>
             <div class="col-sm-3">
                 <input type="text" class="form-control datepicker" id="periodoInicial" name="periodoInicial" value="<?php echo $periodoInicial;?>" />
             </div>
-            <label class="control-label col-sm-2" for="periodoFinal">Período Final:</label>
+            <label class="control-label col-sm-2" for="periodoFinal">Data Abertura (até):</label>
             <div class="col-sm-3">
                 <input type="text" class="form-control datepicker" id="periodoFinal" name="periodoFinal" value="<?php echo $periodoFinal;?>" />
             </div>

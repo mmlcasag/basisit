@@ -1,11 +1,11 @@
 <?php
-
+/*
 if(!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == ""){
     $redirect = "https://basisit3.websiteseguro.com".$_SERVER['REQUEST_URI'];
     header("HTTP/1.1 301 Moved Permanently");
     header("Location: $redirect");
 }
-
+*/
 require 'models/Databases.php';
 
 require 'lib/Application.php';

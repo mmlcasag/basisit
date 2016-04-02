@@ -157,15 +157,15 @@ class UsuariosController extends BaseController {
     
     public function salvarCadastrarAction() {
         $connection = Databases::connect();
-
+        
         $empresaModel = new EmpresasModel();
         $empresaVo = $empresaModel->loadById($connection, $this->getParametroTela('empresa'));
-
+        
         $perfilModel = new PerfisModel();
         $perfilVo = $perfilModel->loadById($connection, $this->getParametroTela('perfil'));
-
+        
         $vo = new UsuariosVo();
-
+        
         $vo->setId($this->getParametroTela('id'));
         $vo->setNome($this->getParametroTela('nome'));
         $vo->setEmpresa($empresaVo);
@@ -177,7 +177,7 @@ class UsuariosController extends BaseController {
         $vo->setSenha($this->getParametroTela('senha'));
         $vo->setSituacao($this->getParametroTela('situacao'));
         $vo->setObservacao($this->getParametroTela('observacao'));
-
+        
         $mensagem = $this->validarFormulario($vo);
         if (substr($mensagem, 0, 1) == 'S') {
             $this->salvarRegistro($connection, $vo);

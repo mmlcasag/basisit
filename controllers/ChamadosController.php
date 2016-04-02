@@ -592,8 +592,8 @@ class ChamadosController extends BaseController {
             if ($chamadoAntes->getAssunto() != $chamadoDepois->getAssunto()) {
                 $mensagem = $mensagem . '* Assunto alterado de "' . $chamadoAntes->getAssunto() . '" para "' . $chamadoDepois->getAssunto() . '"<br />';
             }
-            if (!Functions::isEmpty(Functions::clean($chamadoDepois->getObservacao()))) {
-                $mensagem = $mensagem . '* Descrição adicionada: "' . Functions::clean($chamadoDepois->getObservacao()) . '"<br />';
+            if (!Functions::isEmpty($chamadoDepois->getObservacao())) {
+                $mensagem = $mensagem . '* Descrição adicionada: ' . $chamadoDepois->getObservacao() . '<br />';
             }
             if ($chamadoAnexoAntes["name"] != $chamadoAnexoDepois["name"]) {
                 $mensagem = $mensagem . '* Anexado o arquivo "' . $chamadoAnexoDepois["name"] . '"<br />';

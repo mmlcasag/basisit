@@ -97,9 +97,9 @@
 
 <?php include 'pageopen.php' ?>
 
-<link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
 
 <script>
     $(document).ready(function() {
@@ -124,7 +124,7 @@
     }
     ?>
     
-    <form class="form-horizontal" role="form" method="post">
+    <form class="form-horizontal" role="form" method="post" onsubmit="return verifica();">
         
         <button type="button" class="btn btn-default" onclick="javascript:voltar();">
             <span class="glyphicon glyphicon-arrow-left"></span>&nbsp;&nbsp;Voltar
@@ -274,17 +274,30 @@
             </div>
         </div>
         
+        <!-- include summernote css/js-->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.1/summernote.css" rel="stylesheet">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.1/summernote.js"></script>
+        
         <div class="form-group">
             <label class="control-label col-sm-2" for="observacao">Descrição:</label>
             <div class="col-sm-8">
-                <?php
-                if ($exibeControlesAbertos) {
-                    echo '<textarea class="form-control" rows="5" id="observacao" name="observacao">' . $atividade->getObservacao() . '</textarea>';
-                } else {
-                    echo '<textarea class="form-control" rows="5" id="observacao" name="observacao" disabled="disabled">' . $atividade->getObservacao() . '</textarea>';
-                }
-                ?>
+                <input type="hidden" id="observacao" name="observacao" value="">
+                <div id="summernote" name="summernote"><p><?php echo $atividade->getObservacao()?></p></div>
             </div>
+            <script>
+                $(document).ready(function() {
+                    $('#summernote').summernote({
+                        height: 200
+                    });
+                });
+            </script>
+            <?php if (!$exibeControlesAbertos) { ?>
+            <script>
+                $(document).ready(function() {
+                    $('#summernote').summernote('disable');
+                });
+            </script>
+            <?php } ?>
         </div>
         
     </form>
@@ -394,6 +407,11 @@
         if (observacao != null) {
             postViaJS('', {controle: 'Apontamentos', acao: 'parar', atividade: atividadeParar, observacao: observacao, visualizar: atividadeVisualizar});
         }
+    }
+    function verifica() {
+        var markupStr = $('#summernote').summernote('code');
+        document.getElementById('observacao').value = markupStr;
+        return true;
     }
 </script>
 

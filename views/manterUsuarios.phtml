@@ -22,7 +22,7 @@
     }
 ?>
 
-<?php include 'pageopen.php' ?>
+<?php include 'pageopen.php'; ?>
 
 <div class="container">
     
@@ -41,7 +41,7 @@
     }
     ?>
     
-    <form class="form-horizontal" role="form" method="post">
+    <form class="form-horizontal" role="form" method="post" onsubmit="return verifica();">
         
         <button type="button" class="btn btn-default" onclick="javascript:voltar();">
             <span class="glyphicon glyphicon-arrow-left"></span>&nbsp;&nbsp;Voltar
@@ -66,28 +66,11 @@
         
         <div class="form-group">
             <label class="control-label col-sm-2" for="nome">Nome:</label>
-            <div class="col-sm-4">
+            <div class="col-sm-3">
                 <input type="text" class="form-control" id="nome" name="nome" value="<?php echo $usuario->getNome()?>">
             </div>
-        </div>
-        
-        <div class="form-group">
-            <label class="control-label col-sm-2" for="email">E-mail:</label>
-            <div class="col-sm-4">
-                <input type="text" class="form-control" id="email" name="email" value="<?php echo $usuario->getEmail()?>">
-            </div>
-        </div>
-        
-        <div class="form-group">
-            <label class="control-label col-sm-2" for="senha">Senha:</label>
-            <div class="col-sm-2">
-                <input type="password" class="form-control" id="senha" name="senha" value="<?php echo $usuario->getSenha()?>">
-            </div>
-        </div>
-        
-        <div class="form-group">
             <label class="control-label col-sm-2" for="perfil">Perfil:</label>
-            <div class="col-sm-4">
+            <div class="col-sm-3">
                 <select class="form-control" id="perfil" name="perfil">
                     <option value="">Selecione</option>
                     <?php
@@ -105,7 +88,7 @@
         
         <div class="form-group">
             <label class="control-label col-sm-2" for="perfil">Empresa:</label>
-            <div class="col-sm-4">
+            <div class="col-sm-3">
                 <select class="form-control" id="empresa" name="empresa">
                     <option value="">Selecione</option>
                     <?php
@@ -119,12 +102,20 @@
                     ?>
                 </select>
             </div>
+            <label class="control-label col-sm-2" for="setor">Setor:</label>
+            <div class="col-sm-3">
+                <input type="text" class="form-control" id="setor" name="setor" value="<?php echo $usuario->getSetor()?>">
+            </div>
         </div>
         
         <div class="form-group">
-            <label class="control-label col-sm-2" for="setor">Setor:</label>
-            <div class="col-sm-4">
-                <input type="text" class="form-control" id="setor" name="setor" value="<?php echo $usuario->getSetor()?>">
+            <label class="control-label col-sm-2" for="email">E-mail:</label>
+            <div class="col-sm-3">
+                <input type="text" class="form-control" id="email" name="email" value="<?php echo $usuario->getEmail()?>">
+            </div>
+            <label class="control-label col-sm-2" for="senha">Senha:</label>
+            <div class="col-sm-2">
+                <input type="password" class="form-control" id="senha" name="senha" value="<?php echo $usuario->getSenha()?>">
             </div>
         </div>
         
@@ -133,19 +124,9 @@
             <div class="col-sm-2">
                 <input type="text" class="form-control" id="foneComercial" name="foneComercial" value="<?php echo $usuario->getFoneComercial()?>">
             </div>
-        </div>
-        
-        <div class="form-group">
-            <label class="control-label col-sm-2" for="email">Fone Celular:</label>
+            <label class="control-label col-sm-3" for="email">Fone Celular:</label>
             <div class="col-sm-2">
                 <input type="text" class="form-control" id="foneCelular" name="foneCelular" value="<?php echo $usuario->getFoneCelular()?>">
-            </div>
-        </div>
-        
-        <div class="form-group">
-            <label class="control-label col-sm-2" for="observacao">Observação:</label>
-            <div class="col-sm-4">
-                <textarea class="form-control" rows="5" id="observacao" name="observacao"><?php echo $usuario->getObservacao()?></textarea>
             </div>
         </div>
         
@@ -157,6 +138,25 @@
             </div>
         </div>
         
+        <!-- include summernote css/js-->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.1/summernote.css" rel="stylesheet">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.1/summernote.js"></script>
+        
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="observacao">Observação:</label>
+            <div class="col-sm-8">
+                <input type="hidden" id="observacao" name="observacao" value="">
+                <div id="summernote" name="summernote"><p><?php echo $usuario->getObservacao()?></p></div>
+            </div>
+            <script>
+                $(document).ready(function() {
+                    $('#summernote').summernote({
+                        height: 200
+                    });
+                });
+            </script>
+        </div>
+        
     </form>
     
 </div>
@@ -164,6 +164,11 @@
 <script type="text/javascript">
     function voltar() {
         postViaJS('', {controle: 'Usuarios', acao: 'listar'});
+    }
+    function verifica() {
+        var markupStr = $('#summernote').summernote('code');
+        document.getElementById('observacao').value = markupStr;
+        return true;
     }
 </script>
 
