@@ -31,9 +31,11 @@
     }
     ?>
     
+    <?php if ($_SESSION['perfilAdministrador'] == 1) { ?>
     <button type="button" class="btn btn-default" onclick="javascript:incluir();">
         <span class="glyphicon glyphicon-file"></span>&nbsp;&nbsp;Novo
     </button>
+    <?php } ?>
     
     <p><br /></p>
     
