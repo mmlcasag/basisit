@@ -469,7 +469,7 @@ class ChamadosController extends BaseController {
                 $txt = $txt . '<br />';
                 $txt = $txt . '<font color="red"><b>Atenção: Esta é uma mensagem automática.</b></font>';
                 $txt = $txt . '<br /><br />';
-                $txt = $txt . '<font color="red"><b>Para responder ou consultar o histórico deste atendimento, acesse: <a href="https://www.basisit.com.br/basisit">https://www.basisit.com.br/basisit</a></b></font>';
+                $txt = $txt . '<font color="red"><b>Para responder ou consultar o histórico deste atendimento, acesse: <a href="http://www.basisit.com.br/basisit">http://www.basisit.com.br/basisit</a></b></font>';
                 
                 // Se for inclusão de chamado
                 if ($modo == "I") {
