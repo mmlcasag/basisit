@@ -334,7 +334,39 @@ class UsuariosModel {
         $stmt->execute();
     }
     
-    public function loadMeusRegistros($connection, $usuarioCodigo) {
+    public function loadMeusRegistrosPerfilCliente($connection, $usuarioCodigo) {
+        $registros = array();
+        
+        $query = " SELECT situacoes.sit_cdisituacao
+                   ,      situacoes.sit_dsssituacao
+                   ,      COUNT(distinct chamados.cha_cdichamado) sit_qtichamados
+                   FROM   situacoes
+                   LEFT   JOIN chamados ON situacoes.sit_cdisituacao = chamados.cha_cdisituacao AND chamados.cha_cdiusuario = :usuarioCodigo
+                   WHERE  situacoes.sit_opldesativado = 0
+                   GROUP  BY situacoes.sit_cdisituacao, situacoes.sit_dsssituacao
+                   ORDER  BY situacoes.sit_cdisituacao, situacoes.sit_dsssituacao ";
+        
+        $stmt = $connection->prepare($query);
+        
+        $stmt->bindParam(':usuarioCodigo', $usuarioCodigo);
+        
+        $stmt->execute();
+        
+        $rows = $stmt->fetchAll();
+        
+        foreach ($rows as $row) {
+            $registro = array('situacaoCodigo' => $row->sit_cdisituacao,
+                              'situacaoDescricao' => $row->sit_dsssituacao,
+                              'situacaoQuantidadeChamados' => $row->sit_qtichamados,
+                              'situacaoQuantidadeAtividades' => 0);
+            
+            array_push($registros, $registro);
+        }
+        
+        return $registros;
+    }
+    
+    public function loadMeusRegistrosDemaisPerfis($connection, $usuarioCodigo) {
         $registros = array();
         
         $query = " SELECT situacoes.sit_cdisituacao
@@ -368,7 +400,42 @@ class UsuariosModel {
         return $registros;
     }
     
-    public function loadResumoGeral($connection) {
+    public function loadResumoGeralPerfilCliente($connection, $usuarioCodigo) {
+        $registros = array();
+        
+        $query = " SELECT at.usu_cdiusuario
+                   ,      at.usu_dssnome
+                   ,      COUNT(distinct ch.cha_cdichamado) sit_qtichamados
+                   FROM   usuarios      us
+                   INNER  JOIN perfis   pf ON pf.prf_cdiperfil  = us.usu_cdiperfil
+                   INNER  JOIN chamados ch ON ch.cha_cdiusuario = us.usu_cdiusuario AND ch.cha_cdisituacao NOT IN (" . $_SESSION['situacaoFinalizada'] . "," . $_SESSION['situacaoCancelada'] . ")
+                   INNER  JOIN usuarios at ON at.usu_cdiusuario = ch.cha_cdiusuario_atendente
+                   WHERE  us.usu_cdiusuario = :usuarioCodigo
+                   AND    pf.prf_oplcliente = 1
+                   GROUP  BY ch.cha_cdiusuario_atendente, at.usu_dssnome
+                   ORDER  BY at.usu_dssnome ";
+        
+        $stmt = $connection->prepare($query);
+        
+        $stmt->bindParam(':usuarioCodigo', $usuarioCodigo);
+        
+        $stmt->execute();
+        
+        $rows = $stmt->fetchAll();
+        
+        foreach ($rows as $row) {
+            $registro = array('usuarioCodigo' => $row->usu_cdiusuario,
+                              'usuarioNome' => $row->usu_dssnome,
+                              'usuarioQuantidadeChamados' => $row->sit_qtichamados,
+                              'usuarioQuantidadeAtividades' => 0);
+            
+            array_push($registros, $registro);
+        }
+        
+        return $registros;
+    }
+    
+    public function loadResumoGeralDemaisPerfis($connection) {
         $registros = array();
         
         $query = " SELECT usuarios.usu_cdiusuario

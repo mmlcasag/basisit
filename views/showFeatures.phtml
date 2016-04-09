@@ -41,28 +41,79 @@
     </div>
     
     <?php if ($_SESSION['perfilCliente'] == 1) { ?>
-        <table class="table table-striped">
+        <table width="100%">
+            <tr>
+                <td align="center" valign="top" style="padding: 5px 5px 5px 5px">
+                    
+                    <div class="panel panel-success">
+                        <div class="panel-heading">
+                            <table width="100%">
+                                <tr>
+                                    <td align="left"><h1><span class="glyphicon glyphicon-tasks"></h1></td>
+                                    <td align="right"><b><h2><?php echo $totalMeusRegistros ?></h2>Meus Registros</b></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="panel-body">
+                        <table class="table table-striped">
 
-            <thead>
-                <tr>
-                    <th class="col-sm-3">Descrição</th>
-                    <th class="col-sm-1">Ações</th>
-                </tr>
-            </thead>
+                            <thead>
+                                <tr>
+                                    <th class="col-sm-1">Situação</th>
+                                    <th class="col-sm-1">Chamados</th>
+                                </tr>
+                            </thead>
 
-            <tbody>
-                <?php foreach($registros AS $tipoSistema) { ?>
-                <tr>
-                    <td><?php echo $tipoSistema->getDescricao()?></td>
-                    <td>
-                        <button type="button" class="btn btn-default btn-xs" onclick="post('<?php echo $tipoSistema->getNomeMenu();?>','<?php echo $tipoSistema->getEnderecoListar();?>');">
-                            <span class="glyphicon glyphicon-share-alt"></span>&nbsp;Acessar
-                        </button>
-                    </td>
-                </tr>
-                <?php } ?>
-            </tbody>
+                            <tbody>
+                                <?php foreach($meusRegistros AS $meuRegistro) { ?>
+                                <tr>
+                                    <td><?php echo $meuRegistro['situacaoDescricao']; ?></td>
+                                    <td><?php echo '<a href="javascript:;" onclick="listarChamadosCliente(' . $_SESSION['usuarioCodigo'] . ',' . $meuRegistro['situacaoCodigo'] . ');">' . $meuRegistro['situacaoQuantidadeChamados'] . '</a>'; ?></td>
+                                </tr>
+                                <?php } ?>
+                            </tbody>
 
+                        </table>
+                        </div>
+                    </div>
+                    
+                </td>
+                <td align="center" valign="top" style="padding: 5px 5px 5px 5px">
+                    
+                    <div class="panel panel-warning">
+                        <div class="panel-heading">
+                            <table width="100%">
+                                <tr>
+                                    <td align="left"><h1><span class="glyphicon glyphicon-globe"></h1></td>
+                                    <td align="right"><b><h2><?php echo $totalResumoGeral ?></h2>Resumo Geral</b></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="panel-body">
+                        <table class="table table-striped">
+
+                            <thead>
+                                <tr>
+                                    <th class="col-sm-1">Analista</th>
+                                    <th class="col-sm-1">Chamados</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <?php foreach($resumoGeral AS $resumo) { ?>
+                                <tr>
+                                    <td><?php echo $resumo['usuarioNome']; ?></td>
+                                    <td><?php echo '<a href="javascript:;" onclick="listarChamadosEspecial(' . $resumo['usuarioCodigo'] . ', 1);">' . $resumo['usuarioQuantidadeChamados'] . '</a>'; ?></td>
+                                </tr>
+                                <?php } ?>
+                            </tbody>
+
+                        </table>
+                        </div>
+                    </div>
+                    
+                </td>
+            </tr>
         </table>
     <?php } else { ?>
         <table width="100%">
@@ -118,7 +169,7 @@
 
                             <thead>
                                 <tr>
-                                    <th class="col-sm-1"><br /></th>
+                                    <th class="col-sm-1">Situação</th>
                                     <th class="col-sm-1">Atividades</th>
                                     <th class="col-sm-1">Chamados</th>
                                 </tr>
@@ -155,7 +206,7 @@
 
                             <thead>
                                 <tr>
-                                    <th class="col-sm-1"><br /></th>
+                                    <th class="col-sm-1">Analista</th>
                                     <th class="col-sm-1">Atividades</th>
                                     <th class="col-sm-1">Chamados</th>
                                 </tr>
@@ -188,6 +239,9 @@
     }
     function listarChamados(usuarioCodigo, situacaoCodigo) {
         postViaJS('', {controle: 'Chamados', acao: 'listar', atendente: usuarioCodigo, situacao: situacaoCodigo}, "post", "_blank");
+    }
+    function listarChamadosCliente(usuarioCodigo, situacaoCodigo) {
+        postViaJS('', {controle: 'Chamados', acao: 'listar', usuario: usuarioCodigo, situacao: situacaoCodigo}, "post", "_blank");
     }
     function listarAtividades(usuarioCodigo, situacaoCodigo) {
         postViaJS('', {controle: 'Atividades', acao: 'listar', usuario: usuarioCodigo, situacao: situacaoCodigo}, "post", "_blank");

@@ -48,12 +48,20 @@ class IndexController {
         $model = new TiposSistemasModel();
         $registros = $model->loadByPerfil($connection, $_SESSION['perfilCodigo']);
         
-        $chamadosModel = new ChamadosModel();
-        $naoClassificados = $chamadosModel->loadNaoClassificados($connection);
-        
-        $usuariosModel = new UsuariosModel();
-        $meusRegistros = $usuariosModel->loadMeusRegistros($connection, $_SESSION['usuarioCodigo']);
-        $resumoGeral = $usuariosModel->loadResumoGeral($connection);
+        if ($_SESSION['perfilCliente'] == 1) {
+            $naoClassificados = array();
+            
+            $usuariosModel = new UsuariosModel();
+            $meusRegistros = $usuariosModel->loadMeusRegistrosPerfilCliente($connection, $_SESSION['usuarioCodigo']);
+            $resumoGeral = $usuariosModel->loadResumoGeralPerfilCliente($connection, $_SESSION['usuarioCodigo']);
+        } else {
+            $chamadosModel = new ChamadosModel();
+            $naoClassificados = $chamadosModel->loadNaoClassificados($connection);
+            
+            $usuariosModel = new UsuariosModel();
+            $meusRegistros = $usuariosModel->loadMeusRegistrosDemaisPerfis($connection, $_SESSION['usuarioCodigo']);
+            $resumoGeral = $usuariosModel->loadResumoGeralDemaisPerfis($connection);
+        }
         
         return $this->trabalharDadosListar($registros, count($naoClassificados), $meusRegistros, $resumoGeral);
     }
