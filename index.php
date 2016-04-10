@@ -1,11 +1,11 @@
 <?php
-/*
+
 if(!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == ""){
     $redirect = "https://basisit3.websiteseguro.com".$_SERVER['REQUEST_URI'];
     header("HTTP/1.1 301 Moved Permanently");
     header("Location: $redirect");
 }
-*/
+
 require 'models/Databases.php';
 
 require 'lib/Application.php';
@@ -25,6 +25,7 @@ require 'vo/PerfisPermissoesVo.php';
 require 'vo/PrioridadesVo.php';
 require 'vo/SituacoesVo.php';
 require 'vo/TiposAmbientesVo.php';
+require 'vo/TiposApontamentosVo.php';
 require 'vo/TiposAtividadesVo.php';
 require 'vo/TiposProdutosVo.php';
 require 'vo/TiposRelatoriosVo.php';
@@ -44,6 +45,7 @@ require 'models/PerfisPermissoesModel.php';
 require 'models/PrioridadesModel.php';
 require 'models/SituacoesModel.php';
 require 'models/TiposAmbientesModel.php';
+require 'models/TiposApontamentosModel.php';
 require 'models/TiposAtividadesModel.php';
 require 'models/TiposProdutosModel.php';
 require 'models/TiposRelatoriosModel.php';
@@ -79,7 +81,7 @@ ini_set('default_charset', 'UTF-8');
 ini_set('file_uploads', 'On');
 ini_set('display_errors', 'Off');
 
-error_reporting(0);
+error_reporting(E_ALL & ~E_STRICT);
 
 session_start();
 

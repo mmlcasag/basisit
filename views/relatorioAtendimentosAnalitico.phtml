@@ -52,49 +52,24 @@
         $situacao = $v_params['situacao'];
     }
     
-    $categorias = array();
-    if (array_key_exists('categorias', $v_params)) {
-        $categorias = $v_params['categorias'];
+    $tiposApontamentos = array();
+    if (array_key_exists('tiposApontamentos', $v_params)) {
+        $tiposApontamentos = $v_params['tiposApontamentos'];
     }
     
-    $categoria = "";
-    if (array_key_exists('categoria', $v_params)) {
-        $categoria = $v_params['categoria'];
+    $tipoApontamento = "";
+    if (array_key_exists('tipoApontamento', $v_params)) {
+        $tipoApontamento = $v_params['tipoApontamento'];
     }
     
-    $tiposAmbientes = array();
-    if (array_key_exists('tiposAmbientes', $v_params)) {
-        $tiposAmbientes = $v_params['tiposAmbientes'];
+    $chamados = array();
+    if (array_key_exists('chamados', $v_params)) {
+        $chamados = $v_params['chamados'];
     }
     
-    $tipoAmbiente = "";
-    if (array_key_exists('tipoAmbiente', $v_params)) {
-        $tipoAmbiente = $v_params['tipoAmbiente'];
-    }
-    
-    $tiposProdutos = array();
-    if (array_key_exists('tiposProdutos', $v_params)) {
-        $tiposProdutos = $v_params['tiposProdutos'];
-    }
-    
-    $tipoProduto = "";
-    if (array_key_exists('tipoProduto', $v_params)) {
-        $tipoProduto = $v_params['tipoProduto'];
-    }
-    
-    $modulos = array();
-    if (array_key_exists('modulos', $v_params)) {
-        $modulos = $v_params['modulos'];
-    }
-    
-    $modulo = "";
-    if (array_key_exists('modulo', $v_params)) {
-        $modulo = $v_params['modulo'];
-    }
-    
-    $registros = array();
-    if (array_key_exists('registros', $v_params)) {
-        $registros = $v_params['registros'];
+    $atividades = array();
+    if (array_key_exists('atividades', $v_params)) {
+        $atividades = $v_params['atividades'];
     }
     
     $horasFaturadasTotal = '00:00:00';
@@ -161,6 +136,33 @@
                 </select>
             </div>
             <script>document.filtros.tipoRelatorio.value = "<?php echo $tipoRelatorio ?>";</script>
+            <label class="control-label col-sm-2" for="tipoApontamento">Tipo de Apontamento:</label>
+            <div class="col-sm-3">
+                <select class="form-control" id="tipoApontamento" name="tipoApontamento">
+                    <option value="">Selecione</option>
+                    <?php
+                    foreach($tiposApontamentos as $row) {
+                        echo '<option value="' . $row->getId() . '">' . $row->getDescricao() . '</option>';
+                    }
+                    ?>
+                </select>
+            </div>
+            <script>document.filtros.tipoApontamento.value = "<?php echo $tipoApontamento ?>";</script>
+        </div>
+        
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="situacao">Situação:</label>
+            <div class="col-sm-3">
+                <select class="form-control" id="situacao" name="situacao">
+                    <option value="">Selecione</option>
+                    <?php
+                    foreach($situacoes as $row) {
+                        echo '<option value="' . $row->getId() . '">' . $row->getDescricao() . '</option>';
+                    }
+                    ?>
+                </select>
+            </div>
+            <script>document.filtros.situacao.value = "<?php echo $situacao ?>";</script>
             <?php 
             if ($exibeEmpresaAberta == 0) {
                 foreach($empresas as $row) {
@@ -187,75 +189,6 @@
         </div>
         
         <div class="form-group">
-            <label class="control-label col-sm-2" for="situacao">Situação:</label>
-            <div class="col-sm-3">
-                <select class="form-control" id="situacao" name="situacao">
-                    <option value="">Selecione</option>
-                    <?php
-                    foreach($situacoes as $row) {
-                        echo '<option value="' . $row->getId() . '">' . $row->getDescricao() . '</option>';
-                    }
-                    ?>
-                </select>
-            </div>
-            <script>document.filtros.situacao.value = "<?php echo $situacao ?>";</script>
-            <label class="control-label col-sm-2" for="categoria">Categoria:</label>
-            <div class="col-sm-3">
-                <select class="form-control" id="categoria" name="categoria">
-                    <option value="">Selecione</option>
-                    <?php
-                    foreach($categorias as $row) {
-                        echo '<option value="' . $row->getId() . '">' . $row->getDescricao() . '</option>';
-                    }
-                    ?>
-                </select>
-            </div>
-            <script>document.filtros.categoria.value = "<?php echo $categoria ?>";</script>
-        </div>
-                
-        <div class="form-group">
-            <label class="control-label col-sm-2" for="tipoAmbiente">Tipo de Ambiente:</label>
-            <div class="col-sm-3">
-                <select class="form-control" id="tipoAmbiente" name="tipoAmbiente">
-                    <option value="">Selecione</option>
-                    <?php
-                    foreach($tiposAmbientes as $row) {
-                        echo '<option value="' . $row->getId() . '">' . $row->getDescricao() . '</option>';
-                    }
-                    ?>
-                </select>
-            </div>
-            <script>document.filtros.tipoAmbiente.value = "<?php echo $tipoAmbiente ?>";</script>
-            <label class="control-label col-sm-2" for="tipoProduto">Tipo de Produto:</label>
-            <div class="col-sm-3">
-                <select class="form-control" id="tipoProduto" name="tipoProduto">
-                    <option value="">Selecione</option>
-                    <?php
-                    foreach($tiposProdutos as $row) {
-                        echo '<option value="' . $row->getId() . '">' . $row->getDescricao() . '</option>';
-                    }
-                    ?>
-                </select>
-            </div>
-            <script>document.filtros.tipoProduto.value = "<?php echo $tipoProduto ?>";</script>
-        </div>
-        
-        <div class="form-group">
-            <label class="control-label col-sm-2" for="modulo">Módulo:</label>
-            <div class="col-sm-3">
-                <select class="form-control" id="modulo" name="modulo">
-                    <option value="">Selecione</option>
-                    <?php
-                    foreach($modulos as $row) {
-                        echo '<option value="' . $row->getId() . '">' . $row->getDescricao() . '</option>';
-                    }
-                    ?>
-                </select>
-            </div>
-            <script>document.filtros.modulo.value = "<?php echo $modulo ?>";</script>
-        </div>
-        
-        <div class="form-group">
             <label class="control-label col-sm-2" for="submit"><br /></label>
             <div class="col-sm-10">
                 <button type="submit" name="submit" value="Consultar" class="btn btn-default">
@@ -268,66 +201,170 @@
     
     <p><br /></p>
     
-    <?php foreach($registros AS $registro) { ?>
-    <?php $horasFaturadasTotal = Functions::sumTimes($horasFaturadasTotal, Functions::toTime($registro['horasFaturadas']));?>
-    <div class="panel panel-default">
-        <div class="panel-heading"><?php echo '<b>' . 'Chamado: <a href="javascript:detalharChamado(' . $registro['chamadoCodigo'] . ');">' . $registro['chamadoCodigo'] . '</a>' . ' - ' . $registro['chamadoAssunto'] . '</b>'?></div>
-        <div class="panel-body">
-            <div class="row">
-                <div class="col-sm-1" style="height:26px;"><b>Data:</b></div>
-                <div class="col-sm-3" style="height:26px;"><?php echo $registro['chamadoData']?></div>
-                <div class="col-sm-1" style="height:26px;"><b>Situação:</b></div>
-                <div class="col-sm-3" style="height:26px;"><?php echo $registro['situacaoDescricao']?></div>
-                <div class="col-sm-1" style="height:26px;"><b>Empresa:</b></div>
-                <div class="col-sm-3" style="height:26px;"><?php echo $registro['empresaDescricao']?></div>
+    <div class="panel-group" id="chamados">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#chamados" href="#collapse1"><b>Chamados</b></a>
+                </h4>
             </div>
-            <div class="row">
-                <div class="col-sm-1" style="height:26px;"><b>Cliente:</b></div>
-                <div class="col-sm-3" style="height:26px;"><?php echo $registro['usuarioNome']?></div>
-                <div class="col-sm-1" style="height:26px;"><b>Categoria:</b></div>
-                <div class="col-sm-3" style="height:26px;"><?php echo $registro['categoriaDescricao']?></div>
-                <div class="col-sm-1" style="height:26px;"><b>Ambiente:</b></div>
-                <div class="col-sm-3" style="height:26px;"><?php echo $registro['tipoAmbienteDescricao']?></div>
-            </div>
-            <div class="row">
-                <div class="col-sm-1" style="height:26px;"><b>Produto:</b></div>
-                <div class="col-sm-3" style="height:26px;"><?php echo $registro['tipoProdutoDescricao']?></div>
-                <div class="col-sm-1" style="height:26px;"><b>Módulo:</b></div>
-                <div class="col-sm-3" style="height:26px;"><?php echo $registro['moduloDescricao']?></div>
-                <div class="col-sm-1" style="height:26px;"><b>Faturado:</b></div>
-                <div class="col-sm-3" style="height:26px;"><?php echo $registro['horasFaturadas']?></div>
-            </div>
-            
-            <br />
-            
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th class="col-sm-4">Data</th>
-                        <th class="col-sm-8">Descrição</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach($registro['chamadoHistoricoArray'] AS $historico) { ?>
-                    <tr>
-                        <td align="left" colspan="1"><?php echo $historico->getData()?></td>
-                        <td align="left" colspan="2"><?php echo $historico->getObservacao()?></td>
-                    </tr>
+            <?php 
+            if (($tipoApontamento == 1) || ($tipoApontamento == 2)) {
+                $in = 'in';
+            } else {
+                $in = '';
+            }
+            ?>
+            <div id="collapse1" class="panel-collapse collapse <?php echo $in ?> ">
+                <div class="panel-body">
+                    
+                    <?php $horasFaturadasChamadosTotal = '00:00:00'; ?>
+                    <?php foreach($chamados AS $registro) { ?>
+                    <?php $horasFaturadasChamadosTotal = Functions::sumTimes($horasFaturadasChamadosTotal, Functions::toTime($registro['horasFaturadas']));?>
+                        <div class="panel-group" id="accordion">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h4 class="panel-title">
+                                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseCHA<?php echo $registro['chamadoCodigo'] ?>"><?php echo $registro['chamadoCodigo'] . ' - ' . $registro['chamadoAssunto'] ?></a>
+                                    </h4>
+                                </div>
+                                <div id="collapseCHA<?php echo $registro['chamadoCodigo'] ?>" class="panel-collapse collapse">
+                                    <div class="panel-body">
+                                        <div class="row">
+                                            <div class="col-sm-1" style="height:26px;"><b>Código:</b></div>
+                                            <div class="col-sm-3" style="height:26px;"><?php echo '<a href="javascript:detalharChamado(' . $registro['chamadoCodigo'] . ');">' . $registro['chamadoCodigo'] . '</a>'?></div>
+                                            <div class="col-sm-1" style="height:26px;"><b>Assunto:</b></div>
+                                            <div class="col-sm-7" style="height:26px;"><?php echo $registro['chamadoAssunto'] ?></div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-1" style="height:26px;"><b>Data:</b></div>
+                                            <div class="col-sm-3" style="height:26px;"><?php echo $registro['chamadoData']?></div>
+                                            <div class="col-sm-1" style="height:26px;"><b>Situação:</b></div>
+                                            <div class="col-sm-3" style="height:26px;"><?php echo $registro['situacaoDescricao']?></div>
+                                            <div class="col-sm-1" style="height:26px;"><b>Empresa:</b></div>
+                                            <div class="col-sm-3" style="height:26px;"><?php echo $registro['empresaDescricao']?></div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-1" style="height:26px;"><b>Cliente:</b></div>
+                                            <div class="col-sm-3" style="height:26px;"><?php echo $registro['usuarioNome']?></div>
+                                            <div class="col-sm-1" style="height:26px;"><b>Categoria:</b></div>
+                                            <div class="col-sm-3" style="height:26px;"><?php echo $registro['categoriaDescricao']?></div>
+                                            <div class="col-sm-1" style="height:26px;"><b>Ambiente:</b></div>
+                                            <div class="col-sm-3" style="height:26px;"><?php echo $registro['tipoAmbienteDescricao']?></div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-1" style="height:26px;"><b>Produto:</b></div>
+                                            <div class="col-sm-3" style="height:26px;"><?php echo $registro['tipoProdutoDescricao']?></div>
+                                            <div class="col-sm-1" style="height:26px;"><b>Módulo:</b></div>
+                                            <div class="col-sm-3" style="height:26px;"><?php echo $registro['moduloDescricao']?></div>
+                                            <div class="col-sm-1" style="height:26px;"><b>Faturado:</b></div>
+                                            <div class="col-sm-3" style="height:26px;"><?php echo $registro['horasFaturadas']?></div>
+                                        </div>
+                                        <br />
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th class="col-sm-4">Data</th>
+                                                    <th class="col-sm-8">Descrição</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php foreach($registro['chamadoHistoricoArray'] AS $historico) { ?>
+                                                <tr>
+                                                    <td align="left" colspan="1"><?php echo $historico->getData()?></td>
+                                                    <td align="left" colspan="2"><?php echo $historico->getObservacao()?></td>
+                                                </tr>
+                                                <?php } ?>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     <?php } ?>
-                </tbody>
-            </table>
+                
+                </div>
+                <div class="panel-footer"><b>Total Chamados: <?php echo $horasFaturadasChamadosTotal?></b></div>
+            </div>
         </div>
     </div>
     
-    <br />
+    <div class="panel-group" id="atividades">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#atividades" href="#collapse2"><b>Atividades</b></a>
+                </h4>
+            </div>
+            <?php 
+            if (($tipoApontamento == 1) || ($tipoApontamento == 3)) {
+                $in = 'in';
+            } else {
+                $in = '';
+            }
+            ?>
+            <div id="collapse2" class="panel-collapse collapse <?php echo $in ?> ">
+                <div class="panel-body">
+                    
+                    <?php $horasFaturadasAtividadesTotal = '00:00:00'; ?>
+                    <?php foreach($atividades AS $registro) { ?>
+                    <?php $horasFaturadasAtividadesTotal = Functions::sumTimes($horasFaturadasAtividadesTotal, Functions::toTime($registro['horasFaturadas']));?>
+                        <div class="panel-group" id="accordion">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h4 class="panel-title">
+                                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseATI<?php echo $registro['atividadeCodigo'] ?>"><?php echo $registro['atividadeCodigo'] . ' - ' . $registro['atividadeAssunto'] ?></a>
+                                    </h4>
+                                </div>
+                                <div id="collapseATI<?php echo $registro['atividadeCodigo'] ?>" class="panel-collapse collapse">
+                                    <div class="panel-body">
+                                        <div class="row">
+                                            <div class="col-sm-1" style="height:26px;"><b>Código:</b></div>
+                                            <div class="col-sm-3" style="height:26px;"><?php echo '<a href="javascript:detalharAtividade(' . $registro['atividadeCodigo'] . ');">' . $registro['atividadeCodigo'] . '</a>'?></div>
+                                            <div class="col-sm-1" style="height:26px;"><b>Assunto:</b></div>
+                                            <div class="col-sm-7" style="height:26px;"><?php echo $registro['atividadeAssunto'] ?></div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-1" style="height:26px;"><b>Data:</b></div>
+                                            <div class="col-sm-3" style="height:26px;"><?php echo $registro['atividadeData']?></div>
+                                            <div class="col-sm-1" style="height:26px;"><b>Situação:</b></div>
+                                            <div class="col-sm-3" style="height:26px;"><?php echo $registro['situacaoDescricao']?></div>
+                                            <div class="col-sm-1" style="height:26px;"><b>Empresa:</b></div>
+                                            <div class="col-sm-3" style="height:26px;"><?php echo $registro['empresaDescricao']?></div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-1" style="height:26px;"><b>Cliente:</b></div>
+                                            <div class="col-sm-3" style="height:26px;"><?php echo $registro['usuarioNome']?></div>
+                                            <div class="col-sm-1" style="height:26px;"><b>Tipo:</b></div>
+                                            <div class="col-sm-3" style="height:26px;"><?php echo $registro['tipoAtividadeDescricao']?></div>
+                                            <div class="col-sm-1" style="height:26px;"><b>Faturado:</b></div>
+                                            <div class="col-sm-3" style="height:26px;"><?php echo $registro['horasFaturadas']?></div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-12"><br /><b>Observações:</b><br /><?php echo $registro['atividadeObservacao']?></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <?php } ?>
+                
+                </div>
+                <div class="panel-footer"><b>Total Atividades: <?php echo $horasFaturadasAtividadesTotal?></b></div>
+            </div>
+        </div>
+    </div>
     
-    <?php } ?>
+    <?php
+    $horasFaturadasTotal = '00:00:00';
+    $horasFaturadasTotal = Functions::sumTimes($horasFaturadasTotal, $horasFaturadasChamadosTotal);
+    $horasFaturadasTotal = Functions::sumTimes($horasFaturadasTotal, $horasFaturadasAtividadesTotal);
+    ?>
     
     <div class="panel panel-default">
         <div class="panel-body">
         <div class="row">
-            <div class="col-sm-2" style="height:26px;"><b>Total Faturado:</b></div>
-            <div class="col-sm-10" style="height:26px;"><?php echo $horasFaturadasTotal?></div>
+            <div class="col-sm-12"><b>Total Faturado: <?php echo $horasFaturadasTotal?></b></div>
         </div>
         </div>
     </div>
@@ -367,10 +404,6 @@
           , tipoRelatorio: document.filtros.tipoRelatorio.value
           , empresa: document.filtros.empresa.value
           , situacao: document.filtros.situacao.value
-          , categoria: document.filtros.categoria.value
-          , tipoAmbiente: document.filtros.tipoAmbiente.value
-          , tipoProduto: document.filtros.tipoProduto.value
-          , modulo: document.filtros.modulo.value
           , imprimir: 1
           }
         , "post"
@@ -379,6 +412,9 @@
     }
     function detalharChamado(chamadoCodigo) {
         postViaJS('', {controle: 'Chamados', acao: 'cadastrar', id: chamadoCodigo}, "post", "_blank");
+    }
+    function detalharAtividade(atividadeCodigo) {
+        postViaJS('', {controle: 'Atividades', acao: 'cadastrar', id: atividadeCodigo}, "post", "_blank");
     }
 </script>
 

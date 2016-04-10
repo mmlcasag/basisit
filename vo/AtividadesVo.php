@@ -67,7 +67,7 @@ class AtividadesVo {
         $this->assunto = $assunto;
     }
     
-    public function getAssunto($assunto) {
+    public function getAssunto() {
         return $this->assunto;
     }
     

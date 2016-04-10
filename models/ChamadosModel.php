@@ -391,7 +391,7 @@ class ChamadosModel {
         return $registros;
     }
     
-    public function loadRelatorioAtendimentosSintetico($connection, $periodoInicial, $periodoFinal, $empresa, $situacao, $categoria, $tipoAmbiente, $tipoProduto, $modulo) {
+    public function loadRelatorioAtendimentosSintetico($connection, $periodoInicial, $periodoFinal, $empresa, $situacao) {
         $registros = array();
         
         $query = "  SELECT ch.cha_cdichamado, ch.cha_dtdcriacao
@@ -423,18 +423,6 @@ class ChamadosModel {
         if (!Functions::isEmpty($situacao)) {
             $query .= " AND st.sit_cdisituacao = :situacao ";
         }
-        if (!Functions::isEmpty($categoria)) {
-            $query .= " AND cg.cat_cdicategoria = :categoria ";
-        }
-        if (!Functions::isEmpty($tipoAmbiente)) {
-            $query .= " AND ta.tpa_cditipoambiente = :tipoAmbiente ";
-        }
-        if (!Functions::isEmpty($tipoProduto)) {
-            $query .= " AND tp.tpp_cditipoproduto = :tipoProduto ";
-        }
-        if (!Functions::isEmpty($modulo)) {
-            $query .= " AND md.mod_cdimodulo = :modulo ";
-        }
         
         $query .= " GROUP BY ch.cha_cdichamado, ch.cha_dtdcriacao
                     ,        us.usu_dssnome, ep.emp_dssempresa
@@ -456,18 +444,6 @@ class ChamadosModel {
         }
         if (!Functions::isEmpty($situacao)) {
             $stmt->bindParam(':situacao', $situacao);
-        }
-        if (!Functions::isEmpty($categoria)) {
-            $stmt->bindParam(':categoria', $categoria);
-        }
-        if (!Functions::isEmpty($tipoAmbiente)) {
-            $stmt->bindParam(':tipoAmbiente', $tipoAmbiente);
-        }
-        if (!Functions::isEmpty($tipoProduto)) {
-            $stmt->bindParam(':tipoProduto', $tipoProduto);
-        }
-        if (!Functions::isEmpty($modulo)) {
-            $stmt->bindParam(':modulo', $modulo);
         }
         
         $stmt->execute();
@@ -501,7 +477,7 @@ class ChamadosModel {
         
     }
     
-    public function loadRelatorioAtendimentosAnalitico($connection, $periodoInicial, $periodoFinal, $empresa, $situacao, $categoria, $tipoAmbiente, $tipoProduto, $modulo) {
+    public function loadRelatorioAtendimentosAnalitico($connection, $periodoInicial, $periodoFinal, $empresa, $situacao) {
         $registros = array();
         
         $query = "  SELECT ch.cha_cdichamado, ch.cha_dtdcriacao
@@ -533,18 +509,6 @@ class ChamadosModel {
         if (!Functions::isEmpty($situacao)) {
             $query .= " AND st.sit_cdisituacao = :situacao ";
         }
-        if (!Functions::isEmpty($categoria)) {
-            $query .= " AND cg.cat_cdicategoria = :categoria ";
-        }
-        if (!Functions::isEmpty($tipoAmbiente)) {
-            $query .= " AND ta.tpa_cditipoambiente = :tipoAmbiente ";
-        }
-        if (!Functions::isEmpty($tipoProduto)) {
-            $query .= " AND tp.tpp_cditipoproduto = :tipoProduto ";
-        }
-        if (!Functions::isEmpty($modulo)) {
-            $query .= " AND md.mod_cdimodulo = :modulo ";
-        }
         
         $query .= " GROUP BY ch.cha_cdichamado, ch.cha_dtdcriacao
                     ,        us.usu_dssnome, ep.emp_dssempresa
@@ -566,18 +530,6 @@ class ChamadosModel {
         }
         if (!Functions::isEmpty($situacao)) {
             $stmt->bindParam(':situacao', $situacao);
-        }
-        if (!Functions::isEmpty($categoria)) {
-            $stmt->bindParam(':categoria', $categoria);
-        }
-        if (!Functions::isEmpty($tipoAmbiente)) {
-            $stmt->bindParam(':tipoAmbiente', $tipoAmbiente);
-        }
-        if (!Functions::isEmpty($tipoProduto)) {
-            $stmt->bindParam(':tipoProduto', $tipoProduto);
-        }
-        if (!Functions::isEmpty($modulo)) {
-            $stmt->bindParam(':modulo', $modulo);
         }
         
         $stmt->execute();

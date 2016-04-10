@@ -234,4 +234,159 @@ class AtividadesModel {
         $stmt->execute();
     }
     
+    public function loadRelatorioAtendimentosSintetico($connection, $periodoInicial, $periodoFinal, $empresa, $situacao) {
+        $registros = array();
+        
+        $query = "  SELECT at.ati_cdiatividade, at.ati_dtdcriacao
+                    ,      us.usu_dssnome, ep.emp_dssempresa
+                    ,      st.sit_dsssituacao, tt.tpt_dsstipoatividade, at.ati_dssassunto
+                    ,      SEC_TO_TIME(SUM(TIME_TO_SEC(ap.apo_hrsfaturadas))) apo_hrsfaturadas
+                    FROM   atividades           at
+                    LEFT   JOIN apontamentos    ap ON ap.apo_cdiatividade     = at.ati_cdiatividade
+                    LEFT   JOIN usuarios        us ON us.usu_cdiusuario       = at.ati_cdiusuario
+                    LEFT   JOIN empresas        ep ON ep.emp_cdiempresa       = at.ati_cdiempresa
+                    LEFT   JOIN situacoes       st ON st.sit_cdisituacao      = at.ati_cdisituacao
+                    LEFT   JOIN tiposatividades tt ON tt.tpt_cditipoatividade = at.ati_cditipoatividade
+                    WHERE  1 = 1 ";
+        
+        if (!Functions::isEmpty($periodoInicial)) {
+            $query .= " AND date_format(at.ati_dtdcriacao, '%Y-%m-%d') >= :periodoInicial ";
+        }
+        if (!Functions::isEmpty($periodoFinal)) {
+            $query .= " AND date_format(at.ati_dtdcriacao, '%Y-%m-%d') <= :periodoFinal ";
+        }
+        if (!Functions::isEmpty($empresa)) {
+            $query .= " AND at.ati_cdiempresa = :empresa ";
+        }
+        if (!Functions::isEmpty($situacao)) {
+            $query .= " AND at.ati_cdisituacao = :situacao ";
+        }
+        
+        $query .= " GROUP BY at.ati_cdiatividade, at.ati_dtdcriacao
+                    ,        us.usu_dssnome, ep.emp_dssempresa
+                    ,        st.sit_dsssituacao, tt.tpt_dsstipoatividade, at.ati_dssassunto
+                    ORDER BY at.ati_cdiatividade ";
+        
+        $stmt = $connection->prepare($query);
+        
+        if (!Functions::isEmpty($periodoInicial)) {
+            $stmt->bindParam(':periodoInicial', Functions::toDateToSql($periodoInicial));
+        }
+        if (!Functions::isEmpty($periodoFinal)) {
+            $stmt->bindParam(':periodoFinal', Functions::toDateToSql($periodoFinal));
+        }
+        if (!Functions::isEmpty($empresa)) {
+            $stmt->bindParam(':empresa', $empresa);
+        }
+        if (!Functions::isEmpty($situacao)) {
+            $stmt->bindParam(':situacao', $situacao);
+        }
+        
+        $stmt->execute();
+        
+        $rows = $stmt->fetchAll();
+        
+        foreach ($rows as $row) {
+            if (Functions::isEmpty($row->apo_hrsfaturadas)) {
+                $horasFaturadas = '00:00:00';
+            } else {
+                $horasFaturadas = $row->apo_hrsfaturadas;
+            }
+            
+            $registro = array( 'atividadeCodigo' => $row->ati_cdiatividade
+                             , 'atividadeData' => Functions::toDate($row->ati_dtdcriacao)
+                             , 'usuarioNome' => $row->usu_dssnome
+                             , 'empresaDescricao' => $row->emp_dssempresa
+                             , 'situacaoDescricao' => $row->sit_dsssituacao
+                             , 'tipoAtividadeDescricao' => $row->tpt_dsstipoatividade
+                             , 'atividadeAssunto' => $row->ati_dssassunto
+                             , 'horasFaturadas' => $horasFaturadas
+                             ) ;
+            
+            array_push($registros, $registro);
+        }
+        
+        return $registros;
+        
+    }
+    
+    public function loadRelatorioAtendimentosAnalitico($connection, $periodoInicial, $periodoFinal, $empresa, $situacao) {
+        $registros = array();
+        
+        $query = "  SELECT at.ati_cdiatividade, at.ati_dtdcriacao
+                    ,      us.usu_dssnome, ep.emp_dssempresa
+                    ,      st.sit_dsssituacao, tt.tpt_dsstipoatividade
+                    ,      at.ati_dssassunto, at.ati_dsbobservacao
+                    ,      SEC_TO_TIME(SUM(TIME_TO_SEC(ap.apo_hrsfaturadas))) apo_hrsfaturadas
+                    FROM   atividades           at
+                    LEFT   JOIN apontamentos    ap ON ap.apo_cdiatividade     = at.ati_cdiatividade
+                    LEFT   JOIN usuarios        us ON us.usu_cdiusuario       = at.ati_cdiusuario
+                    LEFT   JOIN empresas        ep ON ep.emp_cdiempresa       = at.ati_cdiempresa
+                    LEFT   JOIN situacoes       st ON st.sit_cdisituacao      = at.ati_cdisituacao
+                    LEFT   JOIN tiposatividades tt ON tt.tpt_cditipoatividade = at.ati_cditipoatividade
+                    WHERE  1 = 1 ";
+        
+        if (!Functions::isEmpty($periodoInicial)) {
+            $query .= " AND date_format(at.ati_dtdcriacao, '%Y-%m-%d') >= :periodoInicial ";
+        }
+        if (!Functions::isEmpty($periodoFinal)) {
+            $query .= " AND date_format(at.ati_dtdcriacao, '%Y-%m-%d') <= :periodoFinal ";
+        }
+        if (!Functions::isEmpty($empresa)) {
+            $query .= " AND ep.emp_cdiempresa = :empresa ";
+        }
+        if (!Functions::isEmpty($situacao)) {
+            $query .= " AND st.sit_cdisituacao = :situacao ";
+        }
+        
+        $query .= " GROUP BY at.ati_cdiatividade, at.ati_dtdcriacao
+                    ,        us.usu_dssnome, ep.emp_dssempresa
+                    ,        st.sit_dsssituacao, tt.tpt_dsstipoatividade
+                    ,        at.ati_dssassunto, at.ati_dsbobservacao
+                    ORDER BY at.ati_cdiatividade ";
+        
+        $stmt = $connection->prepare($query);
+        
+        if (!Functions::isEmpty($periodoInicial)) {
+            $stmt->bindParam(':periodoInicial', Functions::toDateToSql($periodoInicial));
+        }
+        if (!Functions::isEmpty($periodoFinal)) {
+            $stmt->bindParam(':periodoFinal', Functions::toDateToSql($periodoFinal));
+        }
+        if (!Functions::isEmpty($empresa)) {
+            $stmt->bindParam(':empresa', $empresa);
+        }
+        if (!Functions::isEmpty($situacao)) {
+            $stmt->bindParam(':situacao', $situacao);
+        }
+        
+        $stmt->execute();
+        
+        $rows = $stmt->fetchAll();
+        
+        foreach ($rows as $row) {
+            if (Functions::isEmpty($row->apo_hrsfaturadas)) {
+                $horasFaturadas = '00:00:00';
+            } else {
+                $horasFaturadas = $row->apo_hrsfaturadas;
+            }
+            
+            $registro = array( 'atividadeCodigo' => $row->ati_cdiatividade
+                             , 'atividadeData' => Functions::toDate($row->ati_dtdcriacao)
+                             , 'usuarioNome' => $row->usu_dssnome
+                             , 'empresaDescricao' => $row->emp_dssempresa
+                             , 'situacaoDescricao' => $row->sit_dsssituacao
+                             , 'tipoAtividadeDescricao' => $row->tpt_dsstipoatividade
+                             , 'atividadeAssunto' => $row->ati_dssassunto
+                             , 'atividadeObservacao' => $row->ati_dsbobservacao
+                             , 'horasFaturadas' => $horasFaturadas
+                             ) ;
+            
+            array_push($registros, $registro);
+        }
+        
+        return $registros;
+        
+    }
+    
 }

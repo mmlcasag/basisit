@@ -799,13 +799,19 @@ class ChamadosController extends BaseController {
     }
     
     public function relatorioAtendimentosAction() {
+        
         $connection = Databases::connect();
         
         // Carrega dados da tela
         $tiposRelatoriosModel = new TiposRelatoriosModel();
         $tiposRelatoriosArray = $tiposRelatoriosModel->load($connection);
         
+        // Carrega dados da tela
+        $tiposApontamentosModel = new TiposApontamentosModel();
+        $tiposApontamentosArray = $tiposApontamentosModel->load($connection);
+        
         $empresasArray = array();
+        
         if ($_SESSION['perfilCliente'] == 1) {
             $exibeEmpresaAberta = 0;
             
@@ -823,28 +829,13 @@ class ChamadosController extends BaseController {
         $situacoesModel = new SituacoesModel();
         $situacoesArray = $situacoesModel->load($connection);
         
-        $categoriasModel = new CategoriasModel();
-        $categoriasArray = $categoriasModel->load($connection);
-        
-        $tiposAmbientesModel = new TiposAmbientesModel();
-        $tiposAmbientesArray = $tiposAmbientesModel->load($connection);
-        
-        $tiposProdutosModel = new TiposProdutosModel();
-        $tiposProdutosArray = $tiposProdutosModel->load($connection);
-        
-        $modulosModel = new ModulosModel();
-        $modulosArray = $modulosModel->load($connection);
-        
         // Carrega valores que usuário setou
         $periodoInicial = $this->getParametroTela('periodoInicial');
         $periodoFinal = $this->getParametroTela('periodoFinal');
         $tipoRelatorio = $this->getParametroTela('tipoRelatorio');
         $empresa = $this->getParametroTela('empresa');
         $situacao = $this->getParametroTela('situacao');
-        $categoria = $this->getParametroTela('categoria');
-        $tipoAmbiente = $this->getParametroTela('tipoAmbiente');
-        $tipoProduto = $this->getParametroTela('tipoProduto');
-        $modulo = $this->getParametroTela('modulo');
+        $tipoApontamento = $this->getParametroTela('tipoApontamento');
         $imprimir = $this->getParametroTela('imprimir');
         $submit = $this->getParametroTela('submit');
         
@@ -857,6 +848,9 @@ class ChamadosController extends BaseController {
         }
         if (Functions::isEmpty($tipoRelatorio)) {
             $tipoRelatorio = 'S';
+        }
+        if (Functions::isEmpty($tipoApontamento)) {
+            $tipoApontamento = '1';
         }
         if (Functions::isEmpty($imprimir)) {
             $imprimir = 0;
@@ -872,15 +866,10 @@ class ChamadosController extends BaseController {
                            , 'empresa'            => $empresa
                            , 'situacoes'          => $situacoesArray
                            , 'situacao'           => $situacao
-                           , 'categorias'         => $categoriasArray
-                           , 'categoria'          => $categoria
-                           , 'tiposAmbientes'     => $tiposAmbientesArray
-                           , 'tipoAmbiente'       => $tipoAmbiente
-                           , 'tiposProdutos'      => $tiposProdutosArray
-                           , 'tipoProduto'        => $tipoProduto
-                           , 'modulos'            => $modulosArray
-                           , 'modulo'             => $modulo
-                           , 'registros'          => array()
+                           , 'tiposApontamentos'  => $tiposApontamentosArray
+                           , 'tipoApontamento'    => $tipoApontamento
+                           , 'chamados'           => array()
+                           , 'atividades'         => array()
                            , 'mensagem'           => ""
                            ) ;
         
@@ -897,40 +886,77 @@ class ChamadosController extends BaseController {
         
         // Se validações apuraram algum erro
         if ($erro) {
+            
             if ($imprimir == 1) {
                 $view = 'views/relatorioAtendimentosSinteticoImprimir.phtml';
             } else {
                 $view = 'views/relatorioAtendimentosSintetico.phtml';
             }
+            
             $parametros['mensagem'] = $mensagem;
+            
         // Se relatório sintético
         } else if ($tipoRelatorio == 'S') {
+            
             if ($imprimir == 1) {
                 $view = 'views/relatorioAtendimentosSinteticoImprimir.phtml';
             } else {
                 $view = 'views/relatorioAtendimentosSintetico.phtml';
             }
+            
             $chamadosModel = new ChamadosModel();
+            $atividadesModel = new AtividadesModel();
+            
             if (($submit == "Consultar") || ($imprimir == 1)) {
-                $registrosArray = $chamadosModel->loadRelatorioAtendimentosSintetico($connection, $periodoInicial, $periodoFinal, $empresa, $situacao, $categoria, $tipoAmbiente, $tipoProduto, $modulo);
+                if (($tipoApontamento == 1) || ($tipoApontamento == 2)) {
+                    $chamadosArray = $chamadosModel->loadRelatorioAtendimentosSintetico($connection, $periodoInicial, $periodoFinal, $empresa, $situacao);
+                } else {
+                    $chamadosArray = array();
+                }
+                if (($tipoApontamento == 1) || ($tipoApontamento == 3)) {
+                    $atividadesArray = $atividadesModel->loadRelatorioAtendimentosSintetico($connection, $periodoInicial, $periodoFinal, $empresa, $situacao);
+                } else {
+                    $atividadesArray = array();
+                }
             } else {
-                $registrosArray = array();
+                $chamadosArray = array();
+                $atividadesArray = array();
             }
-            $parametros['registros'] = $registrosArray;
+            
+            $parametros['chamados'] = $chamadosArray;
+            $parametros['atividades'] = $atividadesArray;
+            
         // Se relatório analítico
         } else if ($tipoRelatorio == 'A') {
+            
             if ($imprimir == 1) {
                 $view = 'views/relatorioAtendimentosAnaliticoImprimir.phtml';
             } else {
                 $view = 'views/relatorioAtendimentosAnalitico.phtml';
             }
+            
             $chamadosModel = new ChamadosModel();
+            $atividadesModel = new AtividadesModel();
+            
             if (($submit == "Consultar") || ($imprimir == 1)) {
-                $registrosArray = $chamadosModel->loadRelatorioAtendimentosAnalitico($connection, $periodoInicial, $periodoFinal, $empresa, $situacao, $categoria, $tipoAmbiente, $tipoProduto, $modulo);
+                if (($tipoApontamento == 1) || ($tipoApontamento == 2)) {
+                    $chamadosArray = $chamadosModel->loadRelatorioAtendimentosAnalitico($connection, $periodoInicial, $periodoFinal, $empresa, $situacao);
+                } else {
+                    $chamadosArray = array();
+                }
+                if (($tipoApontamento == 1) || ($tipoApontamento == 3)) {
+                    $atividadesArray = $atividadesModel->loadRelatorioAtendimentosAnalitico($connection, $periodoInicial, $periodoFinal, $empresa, $situacao);
+                } else {
+                    $atividadesArray = array();
+                }
             } else {
-                $registrosArray = array();
+                $chamadosArray = array();
+                $atividadesArray = array();
             }
-            $parametros['registros'] = $registrosArray;
+            
+            $parametros['chamados'] = $chamadosArray;
+            $parametros['atividades'] = $atividadesArray;
+            
         }
         
         Databases::disconnect($connection);

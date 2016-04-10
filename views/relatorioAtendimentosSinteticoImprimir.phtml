@@ -52,49 +52,24 @@
         $situacao = $v_params['situacao'];
     }
     
-    $categorias = array();
-    if (array_key_exists('categorias', $v_params)) {
-        $categorias = $v_params['categorias'];
+    $tiposApontamentos = array();
+    if (array_key_exists('tiposApontamentos', $v_params)) {
+        $tiposApontamentos = $v_params['tiposApontamentos'];
     }
     
-    $categoria = "";
-    if (array_key_exists('categoria', $v_params)) {
-        $categoria = $v_params['categoria'];
+    $tipoApontamento = "";
+    if (array_key_exists('tipoApontamento', $v_params)) {
+        $tipoApontamento = $v_params['tipoApontamento'];
     }
     
-    $tiposAmbientes = array();
-    if (array_key_exists('tiposAmbientes', $v_params)) {
-        $tiposAmbientes = $v_params['tiposAmbientes'];
+    $chamados = array();
+    if (array_key_exists('chamados', $v_params)) {
+        $chamados = $v_params['chamados'];
     }
     
-    $tipoAmbiente = "";
-    if (array_key_exists('tipoAmbiente', $v_params)) {
-        $tipoAmbiente = $v_params['tipoAmbiente'];
-    }
-    
-    $tiposProdutos = array();
-    if (array_key_exists('tiposProdutos', $v_params)) {
-        $tiposProdutos = $v_params['tiposProdutos'];
-    }
-    
-    $tipoProduto = "";
-    if (array_key_exists('tipoProduto', $v_params)) {
-        $tipoProduto = $v_params['tipoProduto'];
-    }
-    
-    $modulos = array();
-    if (array_key_exists('modulos', $v_params)) {
-        $modulos = $v_params['modulos'];
-    }
-    
-    $modulo = "";
-    if (array_key_exists('modulo', $v_params)) {
-        $modulo = $v_params['modulo'];
-    }
-    
-    $registros = array();
-    if (array_key_exists('registros', $v_params)) {
-        $registros = $v_params['registros'];
+    $atividades = array();
+    if (array_key_exists('atividades', $v_params)) {
+        $atividades = $v_params['atividades'];
     }
     
     $horasFaturadasTotal = '00:00:00';
@@ -122,6 +97,7 @@
             <td align="center"><b><?php echo "Relatório de Atendimentos - Sintético" ?></b></td>
             <td align="right"><?php echo "Impresso em: " . date("d/m/Y") ?></td>
         </tr>
+        <?php if (!Functions::isEmpty($mensagem)) { ?>
         <tr>
             <td align="left" colspan="3">
                 <?php
@@ -138,19 +114,25 @@
                 ?>
             </td>
         </tr>
+        <?php } ?>
         <tr>
             <td align="left" colspan="3">
+                <br />
+                
                 <table align="center" border="1" cellspacing="1" cellpadding="1" width="100%">
                     <tr>
-                        <th align="right">Chamado</th>
-                        <th align="left">Empresa</th>
-                        <th align="left">Situação</th>
-                        <th align="left">Assunto</th>
-                        <th align="left">Horas Faturadas</th>
+                        <th align="center" colspan="5"><b>Chamados</b></th>
                     </tr>
-                    
-                    <?php foreach($registros AS $registro) { ?>
-                    <?php $horasFaturadasTotal = Functions::sumTimes($horasFaturadasTotal, Functions::toTime($registro['horasFaturadas']));?>
+                    <tr>
+                        <th align="right" width="10%">Código</th>
+                        <th align="left" width="20%">Empresa</th>
+                        <th align="left" width="20%">Situação</th>
+                        <th align="left" width="40%">Assunto</th>
+                        <th align="center" width="10%">Horas Faturadas</th>
+                    </tr>
+                    <?php $horasFaturadasChamadosTotal = '00:00:00'; ?>
+                    <?php foreach($chamados AS $registro) { ?>
+                    <?php $horasFaturadasChamadosTotal = Functions::sumTimes($horasFaturadasChamadosTotal, Functions::toTime($registro['horasFaturadas']));?>
                     <tr>
                         <td align="right"><?php echo $registro['chamadoCodigo']?></td>
                         <td align="left"><?php echo $registro['empresaDescricao']?></td>
@@ -159,16 +141,55 @@
                         <td align="center"><?php echo $registro['horasFaturadas']?></td>
                     </tr>
                     <?php } ?>
-                    
                     <tr>
-                        <th align="left" colspan="4">Total:</th>
-                        <th align="center"><?php echo $horasFaturadasTotal;?></th>
+                        <th align="right" colspan="4">Total Chamados:</th>
+                        <th align="center"><?php echo $horasFaturadasChamadosTotal;?></th>
+                    </tr>
+                </table>
+                
+                <br />
+                
+                <table align="center" border="1" cellspacing="1" cellpadding="1" width="100%">
+                    <tr>
+                        <th align="center" colspan="5"><b>Atividades</b></th>
+                    </tr>
+                    <tr>
+                        <th align="right" width="10%">Código</th>
+                        <th align="left" width="20%">Empresa</th>
+                        <th align="left" width="20%">Situação</th>
+                        <th align="left" width="40%">Assunto</th>
+                        <th align="center" width="10%">Horas Faturadas</th>
+                    </tr>
+                    <?php $horasFaturadasAtividadesTotal = '00:00:00'; ?>
+                    <?php foreach($atividades AS $registro) { ?>
+                    <?php $horasFaturadasAtividadesTotal = Functions::sumTimes($horasFaturadasAtividadesTotal, Functions::toTime($registro['horasFaturadas']));?>
+                    <tr>
+                        <td align="right"><?php echo $registro['atividadeCodigo']?></td>
+                        <td align="left"><?php echo $registro['empresaDescricao']?></td>
+                        <td align="left"><?php echo $registro['situacaoDescricao']?></td>
+                        <td align="left"><?php echo $registro['atividadeAssunto']?></td>
+                        <td align="center"><?php echo $registro['horasFaturadas']?></td>
+                    </tr>
+                    <?php } ?>
+                    <tr>
+                        <th align="right" colspan="4">Total Atividades:</th>
+                        <th align="center"><?php echo $horasFaturadasAtividadesTotal;?></th>
+                    </tr>
+                    <?php
+                    $horasFaturadasTotal = '00:00:00';
+                    $horasFaturadasTotal = Functions::sumTimes($horasFaturadasTotal, $horasFaturadasChamadosTotal);
+                    $horasFaturadasTotal = Functions::sumTimes($horasFaturadasTotal, $horasFaturadasAtividadesTotal);
+                    ?>
+                    <tr>
+                        <td align="right" colspan="4"><br /></td>
+                        <td align="center"><br /></td>
+                    </tr>
+                    <tr>
+                        <td align="right" colspan="4"><b>Total Faturado:</b></td>
+                        <td align="center"><b><?php echo $horasFaturadasTotal;?></b></td>
                     </tr>
                 </table>
             </td>
-        </tr>
-        <tr>
-            <td align="center" colspan="3"><br /></td>
         </tr>
     </table>
     <script>
