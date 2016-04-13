@@ -201,6 +201,8 @@
     
     <p><br /></p>
     
+    <?php $horasFaturadasChamadosTotal = '00:00:00'; ?>
+    <?php if (($tipoApontamento == 1) || ($tipoApontamento == 2)) { ?>
     <div class="panel-group" id="chamados">
         <div class="panel panel-default">
             <div class="panel-heading">
@@ -218,7 +220,6 @@
             <div id="collapse1" class="panel-collapse collapse <?php echo $in ?> ">
                 <div class="panel-body">
                     
-                    <?php $horasFaturadasChamadosTotal = '00:00:00'; ?>
                     <?php foreach($chamados AS $registro) { ?>
                     <?php $horasFaturadasChamadosTotal = Functions::sumTimes($horasFaturadasChamadosTotal, Functions::toTime($registro['horasFaturadas']));?>
                         <div class="panel-group" id="accordion">
@@ -288,7 +289,10 @@
             </div>
         </div>
     </div>
+    <?php } ?>
     
+    <?php $horasFaturadasAtividadesTotal = '00:00:00'; ?>
+    <?php if (($tipoApontamento == 1) || ($tipoApontamento == 3)) { ?>
     <div class="panel-group" id="atividades">
         <div class="panel panel-default">
             <div class="panel-heading">
@@ -306,7 +310,6 @@
             <div id="collapse2" class="panel-collapse collapse <?php echo $in ?> ">
                 <div class="panel-body">
                     
-                    <?php $horasFaturadasAtividadesTotal = '00:00:00'; ?>
                     <?php foreach($atividades AS $registro) { ?>
                     <?php $horasFaturadasAtividadesTotal = Functions::sumTimes($horasFaturadasAtividadesTotal, Functions::toTime($registro['horasFaturadas']));?>
                         <div class="panel-group" id="accordion">
@@ -354,6 +357,7 @@
             </div>
         </div>
     </div>
+    <?php } ?>
     
     <?php
     $horasFaturadasTotal = '00:00:00';
@@ -402,6 +406,7 @@
           , periodoInicial: document.filtros.periodoInicial.value
           , periodoFinal: document.filtros.periodoFinal.value
           , tipoRelatorio: document.filtros.tipoRelatorio.value
+          , tipoApontamento: document.filtros.tipoApontamento.value
           , empresa: document.filtros.empresa.value
           , situacao: document.filtros.situacao.value
           , imprimir: 1

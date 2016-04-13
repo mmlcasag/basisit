@@ -110,12 +110,13 @@
         <tr>
             <td align="center" colspan="3"><br /></td>
         </tr>
+        <?php $horasFaturadasChamadosTotal = '00:00:00'; ?>
+        <?php if (($tipoApontamento == 1) || ($tipoApontamento == 2)) { ?>
         <tr>
             <td align="center" colspan="3"><b>Chamados</b></td>
         </tr>
         <tr>
             <td align="left" colspan="3">
-                <?php $horasFaturadasChamadosTotal = '00:00:00'; ?>
                 <?php foreach($chamados AS $registro) { ?>
                 <?php $horasFaturadasChamadosTotal = Functions::sumTimes($horasFaturadasChamadosTotal, Functions::toTime($registro['horasFaturadas']));?>
                 <table align="center" border="1" cellspacing="1" cellpadding="1" width="100%">
@@ -166,12 +167,14 @@
         <tr>
             <td align="center" colspan="3"><br /></td>
         </tr>
+        <?php } ?>
+        <?php $horasFaturadasAtividadesTotal = '00:00:00'; ?>
+        <?php if (($tipoApontamento == 1) || ($tipoApontamento == 3)) { ?>
         <tr>
             <td align="center" colspan="3"><b>Atividades</b></td>
         </tr>
         <tr>
             <td align="left" colspan="3">
-            <?php $horasFaturadasAtividadesTotal = '00:00:00'; ?>
             <?php foreach($atividades AS $registro) { ?>
             <?php $horasFaturadasAtividadesTotal = Functions::sumTimes($horasFaturadasAtividadesTotal, Functions::toTime($registro['horasFaturadas']));?>
             <table align="center" border="1" cellspacing="1" cellpadding="1" width="100%">
@@ -202,6 +205,7 @@
             <td align="left" colspan="2"><b>Total Atividades: </b></td>
             <td align="right"><b><?php echo $horasFaturadasAtividadesTotal?></b></td>
         </tr>
+        <?php } ?>
         <?php
         $horasFaturadasTotal = '00:00:00';
         $horasFaturadasTotal = Functions::sumTimes($horasFaturadasTotal, $horasFaturadasChamadosTotal);
