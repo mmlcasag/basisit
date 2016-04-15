@@ -84,18 +84,19 @@ class AtividadesController extends BaseController {
     }
     
     private function carregarDadosListar($connection, $mensagem = "") {
-        $codigo        = $this->getParametroTela('id');
-        $usuario       = $this->getParametroTela('usuario');
-        $dataIni       = $this->getParametroTela('dataIni');
-        $dataFim       = $this->getParametroTela('dataFim');
-        $empresa       = $this->getParametroTela('empresa');
-        $tipoAtividade = $this->getParametroTela('tipoAtividade');
-        $situacao      = $this->getParametroTela('situacao');
-        $assunto       = $this->getParametroTela('assunto');
-        $especial      = $this->getParametroTela('especial');
+        $codigo          = $this->getParametroTela('id');
+        $usuario         = $this->getParametroTela('usuario');
+        $dataIni         = $this->getParametroTela('dataIni');
+        $dataFim         = $this->getParametroTela('dataFim');
+        $empresa         = $this->getParametroTela('empresa');
+        $tipoAtividade   = $this->getParametroTela('tipoAtividade');
+        $situacao        = $this->getParametroTela('situacao');
+        $assunto         = $this->getParametroTela('assunto');
+        $especial        = $this->getParametroTela('especial');
+        $especialCliente = $this->getParametroTela('especialCliente');
         
         $model = new AtividadesModel();
-        $registros = $model->loadByCriteria($connection, $codigo, $usuario, $dataIni, $dataFim, $empresa, $tipoAtividade, $situacao, $assunto, $especial);
+        $registros = $model->loadByCriteria($connection, $codigo, $usuario, $dataIni, $dataFim, $empresa, $tipoAtividade, $situacao, $assunto, $especial, $especialCliente);
         
         return $this->trabalharDadosListar($registros, $mensagem);
     }

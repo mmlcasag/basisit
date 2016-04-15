@@ -52,7 +52,7 @@ class AtividadesModel {
         return $registros;
     }
     
-    public function loadByCriteria($connection, $codigo = "", $usuario = "", $dataIni = "", $dataFim = "", $empresa = "", $tipoAtividade = "", $situacao = "", $assunto = "", $especial = "") {
+    public function loadByCriteria($connection, $codigo = "", $usuario = "", $dataIni = "", $dataFim = "", $empresa = "", $tipoAtividade = "", $situacao = "", $assunto = "", $especial = "", $especialCliente = "") {
         $registros = array();
         
         $query = " SELECT *
@@ -85,6 +85,9 @@ class AtividadesModel {
         }
         if (!Functions::isEmpty($especial)) {
             $query = $query . " AND ati_cdisituacao NOT IN (" . $_SESSION['situacaoFinalizada'] . "," . $_SESSION['situacaoCancelada'] . ") ";
+        }
+        if (!Functions::isEmpty($especialCliente)) {
+            $query = $query . " AND ati_cdiusuario IN ( SELECT usu_cdiusuario FROM usuarios, perfis WHERE prf_cdiperfil = usu_cdiperfil AND prf_oplcliente = 0 ) ";
         }
         
         $query = $query . " ORDER  BY ati_cdiatividade ";

@@ -403,17 +403,15 @@ class UsuariosModel {
     public function loadResumoGeralPerfilCliente($connection, $usuarioCodigo) {
         $registros = array();
         
-        $query = " SELECT at.usu_cdiusuario
-                   ,      at.usu_dssnome
+        $query = " SELECT us.usu_cdiusuario
+                   ,      us.usu_dssnome
                    ,      COUNT(distinct ch.cha_cdichamado) sit_qtichamados
-                   FROM   usuarios      us
-                   INNER  JOIN perfis   pf ON pf.prf_cdiperfil  = us.usu_cdiperfil
-                   INNER  JOIN chamados ch ON ch.cha_cdiusuario = us.usu_cdiusuario AND ch.cha_cdisituacao NOT IN (" . $_SESSION['situacaoFinalizada'] . "," . $_SESSION['situacaoCancelada'] . ")
-                   INNER  JOIN usuarios at ON at.usu_cdiusuario = ch.cha_cdiusuario_atendente
-                   WHERE  us.usu_cdiempresa = ( select usu_cdiempresa from usuarios where usu_cdiusuario = :usuarioCodigo )
-                   AND    pf.prf_oplcliente = 1
-                   GROUP  BY ch.cha_cdiusuario_atendente, at.usu_dssnome
-                   ORDER  BY at.usu_dssnome ";
+                   FROM   chamados ch
+                   JOIN   usuarios us ON us.usu_cdiusuario = ch.cha_cdiusuario AND us.usu_cdiempresa = ch.cha_cdiempresa
+                   WHERE  ch.cha_cdiempresa      IN (select usu_cdiempresa from usuarios where usu_cdiusuario = :usuarioCodigo)
+                   AND    ch.cha_cdisituacao NOT IN (" . $_SESSION['situacaoFinalizada'] . "," . $_SESSION['situacaoCancelada'] . ")
+                   GROUP  BY us.usu_cdiusuario, us.usu_dssnome
+                   ORDER  BY us.usu_dssnome ";
         
         $stmt = $connection->prepare($query);
         
@@ -446,8 +444,7 @@ class UsuariosModel {
                    JOIN   perfis          ON perfis.prf_cdiperfil    = usuarios.usu_cdiperfil
                    LEFT   JOIN chamados   ON usuarios.usu_cdiusuario = chamados.cha_cdiusuario_atendente AND chamados.cha_cdisituacao   NOT IN (" . $_SESSION['situacaoFinalizada'] . "," . $_SESSION['situacaoCancelada'] . ")
                    LEFT   JOIN atividades ON usuarios.usu_cdiusuario = atividades.ati_cdiusuario         AND atividades.ati_cdisituacao NOT IN (" . $_SESSION['situacaoFinalizada'] . "," . $_SESSION['situacaoCancelada'] . ")
-                   WHERE  usuarios.usu_opldesativado = 0
-                   AND    perfis.prf_oplfuncionario  = 1
+                   WHERE  perfis.prf_oplcliente      = 0
                    GROUP  BY usuarios.usu_cdiusuario, usuarios.usu_dssnome
                    HAVING COUNT(distinct chamados.cha_cdichamado) > 0 OR COUNT(distinct atividades.ati_cdiatividade) > 0
                    ORDER  BY usuarios.usu_cdiusuario, usuarios.usu_dssnome ";

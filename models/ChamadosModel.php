@@ -76,7 +76,7 @@ class ChamadosModel {
         return $registros;
     }
     
-    public function loadByCriteria($connection, $codigo = null, $usuario = null, $requisitante = null, $atendente = null, $dataIni = null, $dataFim = null, $situacao = null, $empresa = null, $categoria = null, $tipoAmbiente = null, $tipoProduto = null, $modulo = null, $prioridade = null, $impacto = null, $previsaoTerminoIni = null, $previsaoTerminoFim = null, $assunto = null, $observacao = null, $especial = null) {
+    public function loadByCriteria($connection, $codigo = null, $usuario = null, $requisitante = null, $atendente = null, $dataIni = null, $dataFim = null, $situacao = null, $empresa = null, $categoria = null, $tipoAmbiente = null, $tipoProduto = null, $modulo = null, $prioridade = null, $impacto = null, $previsaoTerminoIni = null, $previsaoTerminoFim = null, $assunto = null, $observacao = null, $especial = null, $especialCliente = null) {
         $registros = array();
         
         $query = " SELECT *
@@ -139,6 +139,9 @@ class ChamadosModel {
         }
         if (!Functions::isEmpty($especial)) {
             $query = $query . " AND cha_cdisituacao NOT IN (" . $_SESSION['situacaoFinalizada'] . "," . $_SESSION['situacaoCancelada'] . ") ";
+        }
+        if (!Functions::isEmpty($especialCliente)) {
+            $query = $query . " AND cha_cdiusuario_atendente IN ( SELECT usu_cdiusuario FROM usuarios, perfis WHERE prf_cdiperfil = usu_cdiperfil AND prf_oplcliente = 0 ) ";
         }
         
         $query = $query . " ORDER  BY cha_cdichamado ";

@@ -188,6 +188,7 @@ class ChamadosController extends BaseController {
         $assunto            = $this->getParametroTela('assunto');
         $observacao         = $this->getParametroTela('observacao');
         $especial           = $this->getParametroTela('especial');
+        $especialCliente    = $this->getParametroTela('especialCliente');
         
         $erro = false;
         
@@ -209,7 +210,7 @@ class ChamadosController extends BaseController {
             $registros = array();
         } else {
             $model = new ChamadosModel();
-            $registros = $model->loadByCriteria($connection, $codigo, $usuario, $requisitante, $atendente, $dataIni, $dataFim, $situacao, $empresa, $categoria, $tipoAmbiente, $tipoProduto, $modulo, $prioridade, $impacto, $previsaoTerminoIni, $previsaoTerminoFim, $assunto, $observacao, $especial);
+            $registros = $model->loadByCriteria($connection, $codigo, $usuario, $requisitante, $atendente, $dataIni, $dataFim, $situacao, $empresa, $categoria, $tipoAmbiente, $tipoProduto, $modulo, $prioridade, $impacto, $previsaoTerminoIni, $previsaoTerminoFim, $assunto, $observacao, $especial, $especialCliente);
         }
         
         return $this->trabalharDadosListar($registros, $mensagem);
