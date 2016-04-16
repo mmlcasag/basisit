@@ -46,9 +46,10 @@
         <thead>
             <tr>
                 <th class="col-sm-1">Código</th>
-                <th class="col-sm-5">Assunto</th>
+                <th class="col-sm-4">Assunto</th>
                 <th class="col-sm-2">Empresa</th>
-                <th class="col-sm-2">Situação</th>
+                <th class="col-sm-2">Analista</th>
+                <th class="col-sm-1">Situação</th>
                 <th class="col-sm-1">Abertura</th>
                 <th class="col-sm-1">Previsão</th>
             </tr>
@@ -60,9 +61,27 @@
                 <td><?php echo '<a href="javascript:editar(' . $registro->getId() . ');">' . $registro->getId() . '</a>'?></td>
                 <td><?php echo $registro->getAssunto()?></td>
                 <td><?php echo $registro->getEmpresa()->getDescricao()?></td>
+                <td><?php echo $registro->getAtendente()->getNome()?></td>
                 <td><?php echo $registro->getSituacao()->getDescricao()?></td>
                 <td><?php echo $registro->getData()?></td>
-                <td><?php echo $registro->getPrevisaoTermino()?></td>
+                <td>
+                    <?php
+                    $chaDate = strtotime(str_replace("/","-",$registro->getPrevisaoTermino()));
+                    $curDate = mktime(0, 0, 0, date("m"), date("d"), date("Y"));
+                    
+                    if ($registro->getSituacao()->getId() == $_SESSION['situacaoEmAndamento']) {
+                        if ($chaDate > $curDate) {
+                            echo '<font color="green">' . date("d/m/Y", $chaDate) . '</font>';
+                        } else if ($chaDate == $curDate) {
+                            echo '<font color="blue">' . date("d/m/Y", $chaDate) . '</font>';
+                        } else {
+                            echo '<font color="red">' . date("d/m/Y", $chaDate) . '</font>';
+                        }
+                    } else {
+                        echo date("d/m/Y", $chaDate);
+                    }
+                    ?>
+                </td>
             </tr>
             <?php } ?>
         </tbody>
