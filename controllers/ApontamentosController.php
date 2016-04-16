@@ -78,7 +78,7 @@ class ApontamentosController extends BaseController {
         }
         
         $usuariosModel = new UsuariosModel();
-        $usuarios = $usuariosModel->load($connection, 0);
+        $usuarios = $usuariosModel->loadNaoClientes($connection, 0);
         
         return $this->trabalharDadosManter($apontamento, $usuarios, $atividade, $chamado, $mensagem);
     }
