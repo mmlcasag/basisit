@@ -237,7 +237,7 @@ class AtividadesModel {
         $stmt->execute();
     }
     
-    public function loadRelatorioAtendimentosSintetico($connection, $periodoInicial, $periodoFinal, $empresa, $situacao) {
+    public function loadRelatorioAtendimentosSintetico($connection, $periodoInicial, $periodoFinal, $empresa, $situacao, $tipoAvaliacao) {
         $registros = array();
         
         $query = "  SELECT at.ati_cdiatividade, at.ati_dtdcriacao
@@ -245,7 +245,7 @@ class AtividadesModel {
                     ,      st.sit_dsssituacao, tt.tpt_dsstipoatividade, at.ati_dssassunto
                     ,      SEC_TO_TIME(SUM(TIME_TO_SEC(ap.apo_hrsfaturadas))) apo_hrsfaturadas
                     FROM   atividades           at
-                    LEFT   JOIN apontamentos    ap ON ap.apo_cdiatividade     = at.ati_cdiatividade
+                    INNER  JOIN apontamentos    ap ON ap.apo_cdiatividade     = at.ati_cdiatividade
                     LEFT   JOIN usuarios        us ON us.usu_cdiusuario       = at.ati_cdiusuario
                     LEFT   JOIN empresas        ep ON ep.emp_cdiempresa       = at.ati_cdiempresa
                     LEFT   JOIN situacoes       st ON st.sit_cdisituacao      = at.ati_cdisituacao
@@ -263,6 +263,15 @@ class AtividadesModel {
         }
         if (!Functions::isEmpty($situacao)) {
             $query .= " AND at.ati_cdisituacao = :situacao ";
+        }
+        if (!Functions::isEmpty($tipoAvaliacao)) {
+            if ($tipoAvaliacao == 1) {
+                $query .= " AND ap.apo_cdimodofaturamento in (1,2,3) ";
+            } else if ($tipoAvaliacao == 2) {
+                $query .= " AND ap.apo_cdimodofaturamento in (1,2) ";
+            } else if ($tipoAvaliacao == 3) {
+                $query .= " AND ap.apo_cdimodofaturamento in (3) ";
+            }
         }
         
         $query .= " GROUP BY at.ati_cdiatividade, at.ati_dtdcriacao
@@ -313,7 +322,7 @@ class AtividadesModel {
         
     }
     
-    public function loadRelatorioAtendimentosAnalitico($connection, $periodoInicial, $periodoFinal, $empresa, $situacao) {
+    public function loadRelatorioAtendimentosAnalitico($connection, $periodoInicial, $periodoFinal, $empresa, $situacao, $tipoAvaliacao) {
         $registros = array();
         
         $query = "  SELECT at.ati_cdiatividade, at.ati_dtdcriacao
@@ -322,7 +331,7 @@ class AtividadesModel {
                     ,      at.ati_dssassunto, at.ati_dsbobservacao
                     ,      SEC_TO_TIME(SUM(TIME_TO_SEC(ap.apo_hrsfaturadas))) apo_hrsfaturadas
                     FROM   atividades           at
-                    LEFT   JOIN apontamentos    ap ON ap.apo_cdiatividade     = at.ati_cdiatividade
+                    INNER  JOIN apontamentos    ap ON ap.apo_cdiatividade     = at.ati_cdiatividade
                     LEFT   JOIN usuarios        us ON us.usu_cdiusuario       = at.ati_cdiusuario
                     LEFT   JOIN empresas        ep ON ep.emp_cdiempresa       = at.ati_cdiempresa
                     LEFT   JOIN situacoes       st ON st.sit_cdisituacao      = at.ati_cdisituacao
@@ -340,6 +349,15 @@ class AtividadesModel {
         }
         if (!Functions::isEmpty($situacao)) {
             $query .= " AND st.sit_cdisituacao = :situacao ";
+        }
+        if (!Functions::isEmpty($tipoAvaliacao)) {
+            if ($tipoAvaliacao == 1) {
+                $query .= " AND ap.apo_cdimodofaturamento in (1,2,3) ";
+            } else if ($tipoAvaliacao == 2) {
+                $query .= " AND ap.apo_cdimodofaturamento in (1,2) ";
+            } else if ($tipoAvaliacao == 3) {
+                $query .= " AND ap.apo_cdimodofaturamento in (3) ";
+            }
         }
         
         $query .= " GROUP BY at.ati_cdiatividade, at.ati_dtdcriacao

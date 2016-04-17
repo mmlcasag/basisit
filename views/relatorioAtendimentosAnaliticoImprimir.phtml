@@ -62,6 +62,21 @@
         $tipoApontamento = $v_params['tipoApontamento'];
     }
     
+    $exibeTipoAvaliacaoAberta = 0;
+    if (array_key_exists('exibeTipoAvaliacaoAberta', $v_params)) {
+        $exibeTipoAvaliacaoAberta = $v_params['exibeTipoAvaliacaoAberta'];
+    }
+    
+    $tiposAvaliacoes = array();
+    if (array_key_exists('tiposAvaliacoes', $v_params)) {
+        $tiposAvaliacoes = $v_params['tiposAvaliacoes'];
+    }
+    
+    $tipoAvaliacao = "";
+    if (array_key_exists('tipoAvaliacao', $v_params)) {
+        $tipoAvaliacao = $v_params['tipoAvaliacao'];
+    }
+    
     $chamados = array();
     if (array_key_exists('chamados', $v_params)) {
         $chamados = $v_params['chamados'];

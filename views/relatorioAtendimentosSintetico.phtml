@@ -62,6 +62,21 @@
         $tipoApontamento = $v_params['tipoApontamento'];
     }
     
+    $exibeTipoAvaliacaoAberta = 0;
+    if (array_key_exists('exibeTipoAvaliacaoAberta', $v_params)) {
+        $exibeTipoAvaliacaoAberta = $v_params['exibeTipoAvaliacaoAberta'];
+    }
+    
+    $tiposAvaliacoes = array();
+    if (array_key_exists('tiposAvaliacoes', $v_params)) {
+        $tiposAvaliacoes = $v_params['tiposAvaliacoes'];
+    }
+    
+    $tipoAvaliacao = "";
+    if (array_key_exists('tipoAvaliacao', $v_params)) {
+        $tipoAvaliacao = $v_params['tipoAvaliacao'];
+    }
+    
     $chamados = array();
     if (array_key_exists('chamados', $v_params)) {
         $chamados = $v_params['chamados'];
@@ -185,6 +200,25 @@
                 <script>document.filtros.empresa.value = "<?php echo $empresa ?>";</script>
             <?php } ?>
         </div>
+        
+        <?php if ($exibeTipoAvaliacaoAberta == 0) { ?>
+            <input type="hidden" name="tipoAvaliacao" value="<?php echo $tipoAvaliacao ?>" />
+        <?php } else { ?>
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="tipoAvaliacao">Tipo Avaliação:</label>
+            <div class="col-sm-3">
+                <select class="form-control" id="tipoAvaliacao" name="tipoAvaliacao">
+                    <option value="">Selecione</option>
+                    <?php
+                    foreach($tiposAvaliacoes as $row) {
+                        echo '<option value="' . $row->getId() . '">' . $row->getDescricao() . '</option>';
+                    }
+                    ?>
+                </select>
+            </div>
+            <script>document.filtros.tipoAvaliacao.value = "<?php echo $tipoAvaliacao ?>";</script>
+        </div>
+        <?php } ?>
         
         <div class="form-group">
             <label class="control-label col-sm-2" for="submit"><br /></label>
@@ -354,6 +388,7 @@
           , periodoFinal: document.filtros.periodoFinal.value
           , tipoRelatorio: document.filtros.tipoRelatorio.value
           , tipoApontamento: document.filtros.tipoApontamento.value
+          , tipoAvaliacao: document.filtros.tipoAvaliacao.value
           , empresa: document.filtros.empresa.value
           , situacao: document.filtros.situacao.value
           , imprimir: 1

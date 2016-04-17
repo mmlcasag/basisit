@@ -394,7 +394,7 @@ class ChamadosModel {
         return $registros;
     }
     
-    public function loadRelatorioAtendimentosSintetico($connection, $periodoInicial, $periodoFinal, $empresa, $situacao) {
+    public function loadRelatorioAtendimentosSintetico($connection, $periodoInicial, $periodoFinal, $empresa, $situacao, $tipoAvaliacao) {
         $registros = array();
         
         $query = "  SELECT ch.cha_cdichamado, ch.cha_dtdcriacao
@@ -404,7 +404,7 @@ class ChamadosModel {
                     ,      md.mod_dssmodulo, ch.cha_dssassunto
                     ,      SEC_TO_TIME(SUM(TIME_TO_SEC(ap.apo_hrsfaturadas))) apo_hrsfaturadas
                     FROM   chamados            ch
-                    LEFT   JOIN apontamentos   ap ON ap.apo_cdichamado      = ch.cha_cdichamado
+                    INNER  JOIN apontamentos   ap ON ap.apo_cdichamado      = ch.cha_cdichamado
                     LEFT   JOIN usuarios       us ON us.usu_cdiusuario      = ch.cha_cdiusuario
                     LEFT   JOIN empresas       ep ON ep.emp_cdiempresa      = ch.cha_cdiempresa
                     LEFT   JOIN situacoes      st ON st.sit_cdisituacao     = ch.cha_cdisituacao
@@ -425,6 +425,15 @@ class ChamadosModel {
         }
         if (!Functions::isEmpty($situacao)) {
             $query .= " AND st.sit_cdisituacao = :situacao ";
+        }
+        if (!Functions::isEmpty($tipoAvaliacao)) {
+            if ($tipoAvaliacao == 1) {
+                $query .= " AND ap.apo_cdimodofaturamento in (1,2,3) ";
+            } else if ($tipoAvaliacao == 2) {
+                $query .= " AND ap.apo_cdimodofaturamento in (1,2) ";
+            } else if ($tipoAvaliacao == 3) {
+                $query .= " AND ap.apo_cdimodofaturamento in (3) ";
+            }
         }
         
         $query .= " GROUP BY ch.cha_cdichamado, ch.cha_dtdcriacao
@@ -480,7 +489,7 @@ class ChamadosModel {
         
     }
     
-    public function loadRelatorioAtendimentosAnalitico($connection, $periodoInicial, $periodoFinal, $empresa, $situacao) {
+    public function loadRelatorioAtendimentosAnalitico($connection, $periodoInicial, $periodoFinal, $empresa, $situacao, $tipoAvaliacao) {
         $registros = array();
         
         $query = "  SELECT ch.cha_cdichamado, ch.cha_dtdcriacao
@@ -490,7 +499,7 @@ class ChamadosModel {
                     ,      md.mod_dssmodulo, ch.cha_dssassunto
                     ,      SEC_TO_TIME(SUM(TIME_TO_SEC(ap.apo_hrsfaturadas))) apo_hrsfaturadas
                     FROM   chamados            ch
-                    LEFT   JOIN apontamentos   ap ON ap.apo_cdichamado      = ch.cha_cdichamado
+                    INNER  JOIN apontamentos   ap ON ap.apo_cdichamado      = ch.cha_cdichamado
                     LEFT   JOIN usuarios       us ON us.usu_cdiusuario      = ch.cha_cdiusuario
                     LEFT   JOIN empresas       ep ON ep.emp_cdiempresa      = ch.cha_cdiempresa
                     LEFT   JOIN situacoes      st ON st.sit_cdisituacao     = ch.cha_cdisituacao
@@ -511,6 +520,15 @@ class ChamadosModel {
         }
         if (!Functions::isEmpty($situacao)) {
             $query .= " AND st.sit_cdisituacao = :situacao ";
+        }
+        if (!Functions::isEmpty($tipoAvaliacao)) {
+            if ($tipoAvaliacao == 1) {
+                $query .= " AND ap.apo_cdimodofaturamento in (1,2,3) ";
+            } else if ($tipoAvaliacao == 2) {
+                $query .= " AND ap.apo_cdimodofaturamento in (1,2) ";
+            } else if ($tipoAvaliacao == 3) {
+                $query .= " AND ap.apo_cdimodofaturamento in (3) ";
+            }
         }
         
         $query .= " GROUP BY ch.cha_cdichamado, ch.cha_dtdcriacao

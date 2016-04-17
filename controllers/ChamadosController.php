@@ -812,7 +812,6 @@ class ChamadosController extends BaseController {
         $tiposApontamentosArray = $tiposApontamentosModel->load($connection);
         
         $empresasArray = array();
-        
         if ($_SESSION['perfilCliente'] == 1) {
             $exibeEmpresaAberta = 0;
             
@@ -830,6 +829,16 @@ class ChamadosController extends BaseController {
         $situacoesModel = new SituacoesModel();
         $situacoesArray = $situacoesModel->load($connection);
         
+        $tiposAvaliacoesArray = array();
+        if ($_SESSION['perfilCliente'] == 1) {
+            $exibeTipoAvaliacaoAberta = 0;
+        } else {
+            $exibeTipoAvaliacaoAberta = 1;
+            
+            $tiposAvaliacoesModel = new TiposAvaliacoesModel();
+            $tiposAvaliacoesArray = $tiposAvaliacoesModel->load($connection);
+        }
+        
         // Carrega valores que usuário setou
         $periodoInicial = $this->getParametroTela('periodoInicial');
         $periodoFinal = $this->getParametroTela('periodoFinal');
@@ -837,6 +846,7 @@ class ChamadosController extends BaseController {
         $empresa = $this->getParametroTela('empresa');
         $situacao = $this->getParametroTela('situacao');
         $tipoApontamento = $this->getParametroTela('tipoApontamento');
+        $tipoAvaliacao = $this->getParametroTela('tipoAvaliacao');
         $imprimir = $this->getParametroTela('imprimir');
         $submit = $this->getParametroTela('submit');
         
@@ -852,6 +862,13 @@ class ChamadosController extends BaseController {
         }
         if (Functions::isEmpty($tipoApontamento)) {
             $tipoApontamento = '1';
+        }
+        if (Functions::isEmpty($tipoAvaliacao)) {
+            if ($_SESSION['perfilCliente'] == 1) {
+                $tipoAvaliacao = '2';
+            } else {
+                $tipoAvaliacao = '1';
+            }
         }
         if (Functions::isEmpty($imprimir)) {
             $imprimir = 0;
@@ -869,6 +886,9 @@ class ChamadosController extends BaseController {
                            , 'situacao'           => $situacao
                            , 'tiposApontamentos'  => $tiposApontamentosArray
                            , 'tipoApontamento'    => $tipoApontamento
+                           , 'exibeTipoAvaliacaoAberta' => $exibeTipoAvaliacaoAberta
+                           , 'tiposAvaliacoes'    => $tiposAvaliacoesArray
+                           , 'tipoAvaliacao'      => $tipoAvaliacao
                            , 'chamados'           => array()
                            , 'atividades'         => array()
                            , 'mensagem'           => ""
@@ -910,12 +930,12 @@ class ChamadosController extends BaseController {
             
             if (($submit == "Consultar") || ($imprimir == 1)) {
                 if (($tipoApontamento == 1) || ($tipoApontamento == 2)) {
-                    $chamadosArray = $chamadosModel->loadRelatorioAtendimentosSintetico($connection, $periodoInicial, $periodoFinal, $empresa, $situacao);
+                    $chamadosArray = $chamadosModel->loadRelatorioAtendimentosSintetico($connection, $periodoInicial, $periodoFinal, $empresa, $situacao, $tipoAvaliacao);
                 } else {
                     $chamadosArray = array();
                 }
                 if (($tipoApontamento == 1) || ($tipoApontamento == 3)) {
-                    $atividadesArray = $atividadesModel->loadRelatorioAtendimentosSintetico($connection, $periodoInicial, $periodoFinal, $empresa, $situacao);
+                    $atividadesArray = $atividadesModel->loadRelatorioAtendimentosSintetico($connection, $periodoInicial, $periodoFinal, $empresa, $situacao, $tipoAvaliacao);
                 } else {
                     $atividadesArray = array();
                 }
@@ -941,12 +961,12 @@ class ChamadosController extends BaseController {
             
             if (($submit == "Consultar") || ($imprimir == 1)) {
                 if (($tipoApontamento == 1) || ($tipoApontamento == 2)) {
-                    $chamadosArray = $chamadosModel->loadRelatorioAtendimentosAnalitico($connection, $periodoInicial, $periodoFinal, $empresa, $situacao);
+                    $chamadosArray = $chamadosModel->loadRelatorioAtendimentosAnalitico($connection, $periodoInicial, $periodoFinal, $empresa, $situacao, $tipoAvaliacao);
                 } else {
                     $chamadosArray = array();
                 }
                 if (($tipoApontamento == 1) || ($tipoApontamento == 3)) {
-                    $atividadesArray = $atividadesModel->loadRelatorioAtendimentosAnalitico($connection, $periodoInicial, $periodoFinal, $empresa, $situacao);
+                    $atividadesArray = $atividadesModel->loadRelatorioAtendimentosAnalitico($connection, $periodoInicial, $periodoFinal, $empresa, $situacao, $tipoAvaliacao);
                 } else {
                     $atividadesArray = array();
                 }
