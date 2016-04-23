@@ -14,7 +14,7 @@ class AtividadesController extends BaseController {
         if ((!Functions::isEmpty($vo->getId())) && (!is_numeric($vo->getId()))) {
             return 'N' . 'Valor para "ID" é inválido';
         } else if (Functions::isEmpty($vo->getUsuario()->getId())) {
-            return 'N' . 'Informe o campo "Usuário"';
+            return 'N' . 'Informe o campo "Analista"';
         } else if (Functions::isEmpty($vo->getData())) {
             return 'N' . 'Informe o campo "Data"';
         } else if (Functions::isEmpty($vo->getSituacao()->getId())) {
