@@ -412,14 +412,9 @@ class ChamadosModel {
                     LEFT   JOIN tiposambientes ta ON ta.tpa_cditipoambiente = ch.cha_cditipoambiente
                     LEFT   JOIN tiposprodutos  tp ON tp.tpp_cditipoproduto  = ch.cha_cditipoproduto
                     LEFT   JOIN modulos        md ON md.mod_cdimodulo       = ch.cha_cdimodulo
-                    WHERE  1 = 1 ";
+                    WHERE  date_format(ap.apo_dtdinicio, '%Y-%m-%d') BETWEEN :periodoInicial AND :periodoFinal
+                    AND    date_format(ap.apo_dtdfim   , '%Y-%m-%d') BETWEEN :periodoInicial AND :periodoFinal ";
         
-        if (!Functions::isEmpty($periodoInicial)) {
-            $query .= " AND date_format(ch.cha_dtdcriacao, '%Y-%m-%d') >= :periodoInicial ";
-        }
-        if (!Functions::isEmpty($periodoFinal)) {
-            $query .= " AND date_format(ch.cha_dtdcriacao, '%Y-%m-%d') <= :periodoFinal ";
-        }
         if (!Functions::isEmpty($empresa)) {
             $query .= " AND ep.emp_cdiempresa = :empresa ";
         }
@@ -507,14 +502,9 @@ class ChamadosModel {
                     LEFT   JOIN tiposambientes ta ON ta.tpa_cditipoambiente = ch.cha_cditipoambiente
                     LEFT   JOIN tiposprodutos  tp ON tp.tpp_cditipoproduto  = ch.cha_cditipoproduto
                     LEFT   JOIN modulos        md ON md.mod_cdimodulo       = ch.cha_cdimodulo
-                    WHERE  1 = 1 ";
+                    WHERE  date_format(ap.apo_dtdinicio, '%Y-%m-%d') BETWEEN :periodoInicial AND :periodoFinal
+                    AND    date_format(ap.apo_dtdfim   , '%Y-%m-%d') BETWEEN :periodoInicial AND :periodoFinal ";
         
-        if (!Functions::isEmpty($periodoInicial)) {
-            $query .= " AND date_format(ch.cha_dtdcriacao, '%Y-%m-%d') >= :periodoInicial ";
-        }
-        if (!Functions::isEmpty($periodoFinal)) {
-            $query .= " AND date_format(ch.cha_dtdcriacao, '%Y-%m-%d') <= :periodoFinal ";
-        }
         if (!Functions::isEmpty($empresa)) {
             $query .= " AND ep.emp_cdiempresa = :empresa ";
         }
