@@ -19,8 +19,6 @@ class UsuariosController extends BaseController {
             return 'N' . 'Informe o campo "E-mail"';
         } else if (!Functions::isEmail($vo->getEmail())) {
             return 'N' . 'Valor para "E-mail" é inválido';
-        } else if (Functions::isEmpty($vo->getSenha())) {
-            return 'N' . 'Informe o campo "Senha"';
         } else if (Functions::isEmpty($vo->getPerfil()->getId())) {
             return 'N' . 'Informe o campo "Perfil"';
         } else if (!Functions::isInteger($vo->getPerfil()->getId())) {
@@ -177,6 +175,14 @@ class UsuariosController extends BaseController {
         $vo->setSenha($this->getParametroTela('senha'));
         $vo->setSituacao($this->getParametroTela('situacao'));
         $vo->setObservacao($this->getParametroTela('observacao'));
+        
+        // Se campo senha não for preenchido, mantém senha atual do usuário
+        if (Functions::isEmpty($this->getParametroTela('senha'))) {
+            $model = new UsuariosModel();
+            $oldVo = $model->loadById($connection, $this->getParametroTela('id'));
+            
+            $vo->setSenha($oldVo->getSenha());
+        }
         
         $mensagem = $this->validarFormulario($vo);
         if (substr($mensagem, 0, 1) == 'S') {
