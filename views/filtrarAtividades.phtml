@@ -26,13 +26,8 @@
         $tiposAtividades = $v_params['tiposAtividades'];
     }
     
-    if ($_SESSION['perfilAdministrador'] == 1) {
-        $dataIni = "";
-        $dataFim = "";
-    } else {
-        $dataIni = date("d/m/Y", strtotime("-30 days"));
-        $dataFim = date("d/m/Y");
-    }
+    $dataIni = date("d/m/Y", strtotime("-30 days"));
+    $dataFim = date("d/m/Y");
     
     if (Functions::isEmpty($_SESSION['empresaCodigo'])) {
         $exibeEmpresaAberta = true;
@@ -136,11 +131,7 @@
                     echo '<select class="form-control" id="usuario" name="usuario">';
                     echo '<option value="">Selecione</option>';
                     foreach($usuarios as $usuario) {
-                        if ($usuario->getId() == $_SESSION['usuarioCodigo']) {
-                            echo '<option selected value="' . $usuario->getId() . '">' . $usuario->getNome() . '</option>';
-                        } else {
-                            echo '<option value="' . $usuario->getId() . '">' . $usuario->getNome() . '</option>';
-                        }
+                        echo '<option value="' . $usuario->getId() . '">' . $usuario->getNome() . '</option>';
                     }
                     echo '</select>';
                 } else {
