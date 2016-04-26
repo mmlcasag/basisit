@@ -371,26 +371,6 @@
         </div>
         
         <div class="form-group">
-            <!-- Usuário -------------------------------------------------------------------------->
-            
-            <label class="control-label col-sm-2" for="usuario">Usuário:</label>
-            <div class="col-sm-3">
-                <input type="text" class="form-control" id="usuario" name="usuario" value="" disabled="disabled" />
-            </div>
-            
-            <?php
-            if ($inclusao) {
-                $usuarioCodigo = $usuarioCodigo;
-                $usuarioNome = $usuarioNome;
-            } else {
-                $usuarioCodigo = $chamado->getUsuario()->getId();
-                $usuarioNome = $chamado->getUsuario()->getNome();
-            }
-
-            echo '<script>document.form.usuario.value = "' . $usuarioNome . '";</script>';
-            echo '<input type="hidden" name="usuario" value="' . $usuarioCodigo . '" />';
-            ?>
-            
             <!-- Empresa -------------------------------------------------------------------------->
             
             <label class="control-label col-sm-2" for="empresa">Empresa:</label>
@@ -420,6 +400,26 @@
                 echo '<script>document.form.empresa.disabled = true;</script>';
                 echo '<input type="hidden" name="empresa" value="' . $empresa . '" />';
             }
+            ?>
+            
+            <!-- Usuário -------------------------------------------------------------------------->
+            
+            <label class="control-label col-sm-2" for="usuario">Usuário:</label>
+            <div class="col-sm-3">
+                <input type="text" class="form-control" id="usuario" name="usuario" value="" disabled="disabled" />
+            </div>
+            
+            <?php
+            if ($inclusao) {
+                $usuarioCodigo = $usuarioCodigo;
+                $usuarioNome = $usuarioNome;
+            } else {
+                $usuarioCodigo = $chamado->getUsuario()->getId();
+                $usuarioNome = $chamado->getUsuario()->getNome();
+            }
+
+            echo '<script>document.form.usuario.value = "' . $usuarioNome . '";</script>';
+            echo '<input type="hidden" name="usuario" value="' . $usuarioCodigo . '" />';
             ?>
         </div>
         

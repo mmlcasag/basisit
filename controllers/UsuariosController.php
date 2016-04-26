@@ -257,4 +257,39 @@ class UsuariosController extends BaseController {
 
         $this->exibirTelaListar($dados);
     }
+    
+    public function ajaxLoadClientesDeUmaEmpresaAction() {
+        $empresaCodigo = $this->getParametroTela('empresaCodigo');
+        $exibeUsuarioAberto = $this->getParametroTela('exibeUsuarioAberto');
+        $usuarioCodigo = $this->getParametroTela('usuarioCodigo');
+        
+        $connection = Databases::connect();
+        $model = new UsuariosModel();
+        $usuarioNome = $model->loadById($connection, $usuarioCodigo);
+        $clientes = $model->loadClientesDeUmaEmpresa($connection, 0, $empresaCodigo);
+        Databases::disconnect($connection);
+        
+        $resultado = "";
+        
+        if ($exibeUsuarioAberto == 1) {
+            $resultado = '
+                <label class="control-label col-sm-2" for="usuario">Usuário:</label>
+                <div class="col-sm-3">
+                    <select class="form-control" id="usuario" name="usuario">
+                    <option value="">Selecione</option>';
+            foreach($clientes as $cliente) {
+                $resultado .= '<option value="' . $cliente->getId() . '">' . $cliente->getNome() . '</option>';
+            }
+            $resultado .= '</select></div>';
+        } else {
+            $resultado = '
+                <label class="control-label col-sm-2" for="usuario">Usuário:</label>
+                <div class="col-sm-3">
+                    <input type="hidden" name="usuario" value="' . $usuarioCodigo . '" />
+                    <input type="text" class="form-control" id="usuario" name="usuario" value="' . $usuarioNome . '" disabled="disabled" />
+                </div>';
+        }
+        
+        echo $resultado;
+    }
 }
