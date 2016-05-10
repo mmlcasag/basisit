@@ -650,4 +650,20 @@ class ApontamentosController extends BaseController {
         $index->atualizarSessao();
     }
     
+    public function relatorioApontamentosDiasDistintosAction() {
+        $connection = Databases::connect();
+        
+        $model = new ApontamentosModel();
+        $atividades = $model->loadApontamentosDiasDistintos($connection, "A");
+        $chamados = $model->loadApontamentosDiasDistintos($connection, "C");
+        
+        Databases::disconnect($connection);
+        
+        $parametros = array('atividades' => $atividades, 'chamados' => $chamados);
+        
+        $view = new View('views/relatorioApontamentosDiasDistintos.phtml');
+        $view->setParams($parametros);
+        $view->showContents();
+    }
+    
 }
