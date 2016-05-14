@@ -289,4 +289,22 @@ class AtividadesController extends BaseController {
 
         $this->exibirTelaManter($dados);
     }
+    
+    public function listarEmExecucaoAction($mensagem = "") {
+        $connection = Databases::connect();
+        $dados = $this->carregarDadosEmExecucao($connection, $mensagem);
+        Databases::disconnect($connection);
+        
+        $this->exibirTelaListar($dados);
+    }
+    
+    private function carregarDadosEmExecucao($connection, $mensagem = "") {
+        $usuario = $this->getParametroTela('usuario');
+        
+        $model = new AtividadesModel();
+        $registros = $model->loadEmExecucao($connection, $usuario);
+        
+        return $this->trabalharDadosListar($registros, $mensagem);
+    }
+    
 }

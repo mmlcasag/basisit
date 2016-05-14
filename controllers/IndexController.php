@@ -54,6 +54,8 @@ class IndexController {
             $usuariosModel = new UsuariosModel();
             $meusRegistros = $usuariosModel->loadMeusRegistrosPerfilCliente($connection, $_SESSION['usuarioCodigo']);
             $resumoGeral = $usuariosModel->loadResumoGeralPerfilCliente($connection, $_SESSION['usuarioCodigo']);
+            
+            $apontamentosAbertos = array();
         } else {
             $chamadosModel = new ChamadosModel();
             $naoClassificados = $chamadosModel->loadNaoClassificados($connection);
@@ -61,16 +63,20 @@ class IndexController {
             $usuariosModel = new UsuariosModel();
             $meusRegistros = $usuariosModel->loadMeusRegistrosDemaisPerfis($connection, $_SESSION['usuarioCodigo']);
             $resumoGeral = $usuariosModel->loadResumoGeralDemaisPerfis($connection);
+            
+            $apontamentosModel = new ApontamentosModel();
+            $apontamentosAbertos = $apontamentosModel->loadApontamentosAbertos($connection, $_SESSION['usuarioCodigo']);
         }
         
-        return $this->trabalharDadosListar($registros, count($naoClassificados), $meusRegistros, $resumoGeral);
+        return $this->trabalharDadosListar($registros, count($naoClassificados), $meusRegistros, $resumoGeral, $apontamentosAbertos);
     }
     
-    private function trabalharDadosListar($registros = array(), $naoClassificados = 0, $meusRegistros = array(), $resumoGeral = array()) {
+    private function trabalharDadosListar($registros = array(), $naoClassificados = 0, $meusRegistros = array(), $resumoGeral = array(), $apontamentosAbertos = array()) {
         return array('registros' => $registros,
                      'naoClassificados' => $naoClassificados,
                      'meusRegistros' => $meusRegistros,
-                     'resumoGeral' => $resumoGeral);
+                     'resumoGeral' => $resumoGeral,
+                     'apontamentosAbertos' => $apontamentosAbertos);
     }
     
     private function exibirTelaListar($dados = array()) {

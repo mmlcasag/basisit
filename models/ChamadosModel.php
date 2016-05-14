@@ -588,4 +588,32 @@ class ChamadosModel {
         
     }
     
+    public function loadEmExecucao($connection, $usuarioCodigo) {
+        $registros = array();
+        
+        $query = " SELECT ch.*
+                   FROM   chamados       ch
+                   JOIN   apontamentos   ap ON ap.apo_cdichamado = ch.cha_cdichamado
+                   WHERE  ap.apo_cdiusuario  = :usuarioCodigo
+                   AND    ap.apo_dtdinicio NOT LIKE '%0000%'
+                   AND    ap.apo_dtdfim        LIKE '%0000%'
+                   ORDER  BY ch.cha_cdichamado ";
+        
+        $stmt = $connection->prepare($query);
+        
+        $stmt->bindParam(':usuarioCodigo', $usuarioCodigo);
+        
+        $stmt->execute();
+        
+        $rows = $stmt->fetchAll();
+        
+        foreach ($rows as $row) {
+            $vo = $this->populateVo($connection, $row);
+            
+            array_push($registros, $vo);
+        }
+        
+        return $registros;
+    }
+    
 }

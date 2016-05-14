@@ -410,4 +410,32 @@ class AtividadesModel {
         
     }
     
+    public function loadEmExecucao($connection, $usuarioCodigo) {
+        $registros = array();
+        
+        $query = " SELECT at.*
+                   FROM   atividades     at
+                   JOIN   apontamentos   ap ON ap.apo_cdiatividade = at.ati_cdiatividade
+                   WHERE  ap.apo_cdiusuario  = :usuarioCodigo
+                   AND    ap.apo_dtdinicio NOT LIKE '%0000%'
+                   AND    ap.apo_dtdfim        LIKE '%0000%'
+                   ORDER  BY at.ati_cdiatividade ";
+        
+        $stmt = $connection->prepare($query);
+        
+        $stmt->bindParam(':usuarioCodigo', $usuarioCodigo);
+        
+        $stmt->execute();
+        
+        $rows = $stmt->fetchAll();
+        
+        foreach ($rows as $row) {
+            $vo = $this->populateVo($connection, $row);
+            
+            array_push($registros, $vo);
+        }
+        
+        return $registros;
+    }
+    
 }

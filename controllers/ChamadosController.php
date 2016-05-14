@@ -988,4 +988,21 @@ class ChamadosController extends BaseController {
         $view->showContents();
     }
     
+    public function listarEmExecucaoAction($mensagem = "") {
+        $connection = Databases::connect();
+        $dados = $this->carregarDadosEmExecucao($connection, $mensagem);
+        Databases::disconnect($connection);
+        
+        $this->exibirTelaListar($dados);
+    }
+    
+    private function carregarDadosEmExecucao($connection, $mensagem = "") {
+        $usuario = $this->getParametroTela('usuario');
+        
+        $model = new ChamadosModel();
+        $registros = $model->loadEmExecucao($connection, $usuario);
+        
+        return $this->trabalharDadosListar($registros, $mensagem);
+    }
+    
 }

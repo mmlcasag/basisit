@@ -21,6 +21,11 @@
         $resumoGeral = $v_params['resumoGeral'];
     }
     
+    $apontamentosAbertos = array();
+    if (array_key_exists('apontamentosAbertos', $v_params)) {
+        $apontamentosAbertos = $v_params['apontamentosAbertos'];
+    }
+    
     $totalMeusRegistrosAtividades = 0;
     $totalMeusRegistrosChamados = 0;
     foreach($meusRegistros AS $meuRegistro) {
@@ -185,6 +190,13 @@
                                     <td class="text-center"><?php echo '<a href="javascript:;" onclick="listarChamados(' . $_SESSION['usuarioCodigo'] . ',' . $meuRegistro['situacaoCodigo'] . ');">' . $meuRegistro['situacaoQuantidadeChamados'] . '</a>'; ?></td>
                                 </tr>
                                 <?php } ?>
+                                <?php foreach($apontamentosAbertos AS $apontamentoAberto) { ?>
+                                <tr>
+                                    <td class="text-center">Executando</td>
+                                    <td class="text-center"><?php echo '<a href="javascript:;" onclick="listarAtividadesExecutando(' . $_SESSION['usuarioCodigo'] . ');">' . $apontamentoAberto['quantidadeAtividades'] . '</a>'; ?></td>
+                                    <td class="text-center"><?php echo '<a href="javascript:;" onclick="listarChamadosExecutando(' . $_SESSION['usuarioCodigo'] . ');">' . $apontamentoAberto['quantidadeChamados'] . '</a>'; ?></td>
+                                </tr>
+                                <?php } ?>
                             </tbody>
 
                         </table>
@@ -242,6 +254,9 @@
     function listarChamados(usuarioCodigo, situacaoCodigo) {
         postViaJS('', {controle: 'Chamados', acao: 'listar', atendente: usuarioCodigo, situacao: situacaoCodigo}, "post", "_blank");
     }
+    function listarChamadosExecutando(usuarioCodigo) {
+        postViaJS('', {controle: 'Chamados', acao: 'listarEmExecucao', usuario: usuarioCodigo}, "post", "_blank");
+    }
     function listarChamadosUsuario(usuarioCodigo) {
         postViaJS('', {controle: 'Chamados', acao: 'listar', atendente: usuarioCodigo}, "post", "_blank");
     }
@@ -250,6 +265,9 @@
     }
     function listarAtividades(usuarioCodigo, situacaoCodigo) {
         postViaJS('', {controle: 'Atividades', acao: 'listar', usuario: usuarioCodigo, situacao: situacaoCodigo}, "post", "_blank");
+    }
+    function listarAtividadesExecutando(usuarioCodigo) {
+        postViaJS('', {controle: 'Atividades', acao: 'listarEmExecucao', usuario: usuarioCodigo}, "post", "_blank");
     }
     function listarAtividadesUsuario(usuarioCodigo) {
         postViaJS('', {controle: 'Atividades', acao: 'listar', usuario: usuarioCodigo}, "post", "_blank");

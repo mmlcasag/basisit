@@ -504,4 +504,38 @@ class ApontamentosModel {
         return $registros;
     }
     
+    public function loadApontamentosAbertos($connection, $usuarioCodigo) {
+        $registros = array();
+        
+        $query = " SELECT apo_cdiusuario
+                   ,      SUM(IF(COALESCE(apo_cdiatividade,0) = 0,0,1)) apo_qtiatividades
+                   ,      SUM(IF(COALESCE(apo_cdichamado  ,0) = 0,0,1)) apo_qtichamados
+                   FROM   apontamentos
+                   WHERE  apo_cdiusuario  = :usuarioCodigo
+                   AND    apo_dtdinicio NOT LIKE '%0000%'
+                   AND    apo_dtdfim        LIKE '%0000%'
+                   GROUP  BY apo_cdiusuario ";
+        
+        $stmt = $connection->prepare($query);
+        
+        if (!Functions::isEmpty($usuarioCodigo)) {
+            $stmt->bindParam(':usuarioCodigo', $usuarioCodigo);
+        }
+        
+        $stmt->execute();
+        
+        $rows = $stmt->fetchAll();
+        
+        foreach ($rows as $row) {
+            $registro = array( 'usuarioCodigo'        => $row->apo_cdiusuario
+                             , 'quantidadeAtividades' => $row->apo_qtiatividades
+                             , 'quantidadeChamados'   => $row->apo_qtichamados
+                             ) ;
+            
+            array_push($registros, $registro);
+        }
+        
+        return $registros;
+    }
+    
 }
