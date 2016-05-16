@@ -504,7 +504,6 @@ class ApontamentosModel {
         return $registros;
     }
     
-<<<<<<< HEAD
     public function loadApontamentosAbertos($connection, $usuarioCodigo) {
         $registros = array();
         
@@ -539,8 +538,6 @@ class ApontamentosModel {
         return $registros;
     }
     
-}
-=======
     public function loadApontamentosDiasDistintos($connection, $tipoApontamento) {
         $cache = phpFastCache();
         
@@ -585,4 +582,3 @@ class ApontamentosModel {
     }
     
 }
->>>>>>> fix-#0006-apontamentos-dias-distintos
