@@ -504,6 +504,7 @@ class ApontamentosModel {
         return $registros;
     }
     
+<<<<<<< HEAD
     public function loadApontamentosAbertos($connection, $usuarioCodigo) {
         $registros = array();
         
@@ -539,3 +540,49 @@ class ApontamentosModel {
     }
     
 }
+=======
+    public function loadApontamentosDiasDistintos($connection, $tipoApontamento) {
+        $cache = phpFastCache();
+        
+        $apontamentosCache = $cache->get("ApontamentosDiasDistintos" . $tipoApontamento);
+        
+        if ($apontamentosCache != null) {
+            return $apontamentosCache;
+        } else {
+            $registros = array();
+            
+            $query = " SELECT *
+                       FROM   apontamentos
+                       WHERE  apo_dtdinicio NOT LIKE '%0000%'
+                       AND    apo_dtdfim    NOT LIKE '%0000%'
+                       AND    DAY(apo_dtdinicio) <> DAY(apo_dtdfim) ";
+            
+            if ((!Functions::isEmpty($tipoApontamento)) && ($tipoApontamento == "A")) {
+                $query .= " AND apo_cdiatividade IS NOT NULL ";
+            }
+            if ((!Functions::isEmpty($tipoApontamento)) && ($tipoApontamento == "C")) {
+                $query .= " AND apo_cdichamado   IS NOT NULL ";
+            }
+            
+            $query.= " ORDER  BY apo_cdiapontamento ";
+            
+            $stmt = $connection->prepare($query);
+            
+            $stmt->execute();
+            
+            $rows = $stmt->fetchAll();
+            
+            foreach ($rows as $row) {
+                $vo = $this->populateVo($connection, $row);
+                
+                array_push($registros, $vo);
+            }
+            
+            $cache->set("ApontamentosDiasDistintos" . $tipoApontamento, $registros, 60 * Functions::getParametro('cache'));
+            
+            return $registros;
+        }
+    }
+    
+}
+>>>>>>> fix-#0006-apontamentos-dias-distintos

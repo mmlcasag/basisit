@@ -164,21 +164,78 @@ class PrioridadesController extends BaseController {
     }
     
     public function ajaxExibePrevisaoTerminoAction() {
-        $abertura = date('Y-m-d');
-
+        $prioridade   = $this->getParametroTela('prioridade');
+        $tipoAmbiente = $this->getParametroTela('tipoAmbiente');
+        
+        // Desenvolvimento
+        if ($tipoAmbiente == Functions::getParametro('AmbienteDesenvolvimentoID')) {
+            // Baixa
+            if ($prioridade == Functions::getParametro('PrioridadeBaixaID')) {
+                $prazo = 5;
+            // Média
+            } else if ($prioridade == Functions::getParametro('PrioridadeMediaID')) {
+                $prazo = 4;
+            // Alta
+            } else if ($prioridade == Functions::getParametro('PrioridadeAltaID')) {
+                $prazo = 2;
+            // Urgente
+            } else if ($prioridade == Functions::getParametro('PrioridadeUrgenteID')) {
+                $prazo = 1;
+            } else {
+                $prazo = 7;
+            }
+        // Qualidade
+        } else if ($tipoAmbiente == Functions::getParametro('AmbienteQualidadeID')) {
+            // Baixa
+            if ($prioridade == Functions::getParametro('PrioridadeBaixaID')) {
+                $prazo = 5;
+            // Média
+            } else if ($prioridade == Functions::getParametro('PrioridadeMediaID')) {
+                $prazo = 4;
+            // Alta
+            } else if ($prioridade == Functions::getParametro('PrioridadeAltaID')) {
+                $prazo = 2;
+            // Urgente
+            } else if ($prioridade == Functions::getParametro('PrioridadeUrgenteID')) {
+                $prazo = 1;
+            } else {
+                $prazo = 7;
+            }
+        // Produção
+        } else if ($tipoAmbiente == Functions::getParametro('AmbienteProducaoID')) {
+            // Baixa
+            if ($prioridade == Functions::getParametro('PrioridadeBaixaID')) {
+                $prazo = 4;
+            // Média
+            } else if ($prioridade == Functions::getParametro('PrioridadeMediaID')) {
+                $prazo = 3;
+            // Alta
+            } else if ($prioridade == Functions::getParametro('PrioridadeAltaID')) {
+                $prazo = 2;
+            // Urgente
+            } else if ($prioridade == Functions::getParametro('PrioridadeUrgenteID')) {
+                $prazo = 1;
+            } else {
+                $prazo = 7;
+            }
+        } else {
+            $prazo = 10;
+        }
+        
+        $abertura = date('Y-m-d', strtotime("+". $prazo ." days"));
+        
         // Verifica em qual dia da semana caiu
         $diadasemana = date('w', strtotime($abertura));
-
+        
         switch ($diadasemana) {
-            case  4: $termino = 4; break; // Quando dia de abertura do chamdo cair numa quinta
-            case  5: $termino = 4; break; // Quando dia de abertura do chamdo cair numa sexta
-            case  6: $termino = 3; break; // Quando dia de abertura do chamdo cair num  sábado
-            default: $termino = 2; break; // Dois dias é o prazo padrão para atendimento do chamado
+            case  0: $prazo = $prazo + 1; break; // Quando dia de abertura do chamdo cair num  domingo
+            case  6: $prazo = $prazo + 2; break; // Quando dia de abertura do chamdo cair num  sábado
+            default: $prazo = $prazo + 0; break; // Dois dias é o prazo padrão para atendimento do chamado
         }
-
-        // Adiciona os dias
-        $termino = date('Y-m-d', strtotime("+". $termino ." days"));
-
+	
+	// Adiciona os dias
+        $termino = date('Y-m-d', strtotime("+". $prazo ." days"));
+        
         echo Functions::toDate($termino);
     }
 }

@@ -1,0 +1,100 @@
+<?php
+    $v_params = $this->getParams();
+    
+    $atividades = array();
+    if (array_key_exists('atividades', $v_params)) {
+        $atividades = $v_params['atividades'];
+    }
+    
+    $chamados = array();
+    if (array_key_exists('chamados', $v_params)) {
+        $chamados = $v_params['chamados'];
+    }
+?>
+
+<?php include 'pageopen.php' ?>
+
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+
+<div class="container">
+    
+    <div class="page-header">
+        <h3>Apontamentos em Dias Distintos<small> / Relatório</small></h3>
+    </div>
+    
+    <div class="well well-sm"><b>Atividades</b></div>
+    
+    <table class="table table-striped">
+        
+        <thead>
+	    <tr>
+                <th class="col-sm-1">Código</th>
+                <th class="col-sm-3">Descrição</th>
+                <th class="col-sm-3">Usuário</th>
+                <th class="col-sm-2">Início</th>
+                <th class="col-sm-2">Fim</th>
+                <th class="col-sm-1">Duração</th>
+            </tr>
+        </thead>
+	
+        <tbody>
+            <?php foreach($atividades AS $registro) { ?>
+            <tr>
+                <td><?php echo '<a href="javascript:detalharAtividade(' . $registro->getAtividade()->getId() . ');">' . $registro->getAtividade()->getId() . '</a>'?></td>
+                <td><?php echo $registro->getAtividade()->getAssunto()?></td>
+                <td><?php echo $registro->getUsuario()->getNome()?></td>
+                <td><?php echo $registro->getDataInicio()?></td>
+                <td><?php echo $registro->getDataFim()?></td>
+                <td><?php echo $registro->getApontado()?></td>
+            </tr>
+            <?php } ?>
+        </tbody>
+        
+    </table>
+    
+    <p><br /></p>
+    
+    <div class="well well-sm"><b>Chamados</b></div>
+    
+    <table class="table table-striped">
+        
+        <thead>
+	    <tr>
+                <th class="col-sm-1">Código</th>
+                <th class="col-sm-3">Descrição</th>
+                <th class="col-sm-3">Usuário</th>
+                <th class="col-sm-2">Início</th>
+                <th class="col-sm-2">Fim</th>
+                <th class="col-sm-1">Duração</th>
+            </tr>
+        </thead>
+	
+        <tbody>
+            <?php foreach($chamados AS $registro) { ?>
+            <tr>
+                <td><?php echo '<a href="javascript:detalharChamado(' . $registro->getChamado()->getId() . ');">' . $registro->getChamado()->getId() . '</a>'?></td>
+                <td><?php echo $registro->getChamado()->getAssunto()?></td>
+                <td><?php echo $registro->getUsuario()->getNome()?></td>
+                <td><?php echo $registro->getDataInicio()?></td>
+                <td><?php echo $registro->getDataFim()?></td>
+                <td><?php echo $registro->getApontado()?></td>
+            </tr>
+            <?php } ?>
+        </tbody>
+        
+    </table>
+    
+</div>
+
+<script type="text/javascript">
+    function detalharChamado(chamadoCodigo) {
+        postViaJS('', {controle: 'Chamados', acao: 'cadastrar', id: chamadoCodigo}, "post", "_blank");
+    }
+    function detalharAtividade(atividadeCodigo) {
+        postViaJS('', {controle: 'Atividades', acao: 'cadastrar', id: atividadeCodigo}, "post", "_blank");
+    }
+</script>
+
+<?php include 'pageclose.php';

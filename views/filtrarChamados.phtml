@@ -102,6 +102,22 @@
     $(document).ready(function() {
         $(".datepicker").datepicker({dateFormat: 'dd/mm/yy'});
     });
+    function loadClientesDeUmaEmpresa(empresaCodigo, exibeUsuarioAberto, usuarioCodigo) {
+        var ajax;
+        if (window.XMLHttpRequest)
+            ajax = new XMLHttpRequest();
+        else
+            ajax = new ActiveXObject("Microsoft.XMLHTTP");
+        
+        ajax.onreadystatechange = function() {
+            if (ajax.readyState == 4 && ajax.status == 200) {
+                document.getElementById("divUsuario").innerHTML = ajax.responseText;
+            }
+        }
+        ajax.open("POST", "?controle=Usuarios&acao=ajaxLoadClientesDeUmaEmpresa", true);
+        ajax.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+        ajax.send("empresaCodigo=" + empresaCodigo + "&exibeUsuarioAberto=" + exibeUsuarioAberto + "&usuarioCodigo=" + usuarioCodigo);
+    }
 </script>
 
 <div class="container">
@@ -180,27 +196,11 @@
         </div>
         
         <div class="form-group">
-            <label class="control-label col-sm-2" for="usuario">Usuário:</label>
-            <div class="col-sm-3">
-                <?php 
-                if ($exibeUsuarioAberto) {
-                    echo '<select class="form-control" id="usuario" name="usuario">';
-                    echo '<option value="">Selecione</option>';
-                    foreach($usuarios as $usuario) {
-                        echo '<option value="' . $usuario->getId() . '">' . $usuario->getNome() . '</option>';
-                    }
-                    echo '</select>';
-                } else {
-                    echo '<input type="hidden" name="usuario" value="' . $usuarioCodigo . '" />';
-                    echo '<input type="text" class="form-control" id="usuario" name="usuario" value="' . $usuarioNome . '" disabled="disabled" />';
-                }
-                ?>
-            </div>
             <label class="control-label col-sm-2" for="empresa">Empresa:</label>
             <div class="col-sm-3">
                 <?php 
                 if ($exibeEmpresaAberta) {
-                    echo '<select class="form-control" id="empresa" name="empresa">';
+                    echo '<select class="form-control" id="empresa" name="empresa" onchange="loadClientesDeUmaEmpresa(this.value' . ',' . ($exibeUsuarioAberto ? 1 : 0) . ',' . $usuarioCodigo . ')">';
                     echo '<option value="">Selecione</option>';
                     foreach($empresas as $empresa) {
                         echo '<option value="' . $empresa->getId() . '">' . $empresa->getDescricao() . '</option>';
@@ -211,6 +211,10 @@
                     echo '<input type="text" class="form-control" id="empresa" name="empresa" value="' . $empresaDescricao . '" disabled="disabled" />';
                 }
                 ?>
+            </div>
+            
+            <div id="divUsuario">
+
             </div>
         </div>
         
@@ -345,5 +349,13 @@
         return true;
     }
 </script>
+
+<?php
+if (Functions::isEmpty($_SESSION['empresaCodigo'])) {
+    echo '<script>loadClientesDeUmaEmpresa("", ' . ($exibeUsuarioAberto ? 1 : 0) . ',' . $usuarioCodigo . ');</script>';
+} else {
+    echo '<script>loadClientesDeUmaEmpresa(' . $empresaCodigo . ', ' . ($exibeUsuarioAberto ? 1 : 0) . ',' . $usuarioCodigo . ');</script>';
+}
+?>
 
 <?php include 'pageclose.php';			

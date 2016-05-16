@@ -250,14 +250,9 @@ class AtividadesModel {
                     LEFT   JOIN empresas        ep ON ep.emp_cdiempresa       = at.ati_cdiempresa
                     LEFT   JOIN situacoes       st ON st.sit_cdisituacao      = at.ati_cdisituacao
                     LEFT   JOIN tiposatividades tt ON tt.tpt_cditipoatividade = at.ati_cditipoatividade
-                    WHERE  1 = 1 ";
+                    WHERE  date_format(ap.apo_dtdinicio, '%Y-%m-%d') BETWEEN :periodoInicial AND :periodoFinal
+                    AND    date_format(ap.apo_dtdfim   , '%Y-%m-%d') BETWEEN :periodoInicial AND :periodoFinal ";
         
-        if (!Functions::isEmpty($periodoInicial)) {
-            $query .= " AND date_format(at.ati_dtdcriacao, '%Y-%m-%d') >= :periodoInicial ";
-        }
-        if (!Functions::isEmpty($periodoFinal)) {
-            $query .= " AND date_format(at.ati_dtdcriacao, '%Y-%m-%d') <= :periodoFinal ";
-        }
         if (!Functions::isEmpty($empresa)) {
             $query .= " AND at.ati_cdiempresa = :empresa ";
         }
@@ -336,14 +331,9 @@ class AtividadesModel {
                     LEFT   JOIN empresas        ep ON ep.emp_cdiempresa       = at.ati_cdiempresa
                     LEFT   JOIN situacoes       st ON st.sit_cdisituacao      = at.ati_cdisituacao
                     LEFT   JOIN tiposatividades tt ON tt.tpt_cditipoatividade = at.ati_cditipoatividade
-                    WHERE  1 = 1 ";
+                    WHERE  date_format(ap.apo_dtdinicio, '%Y-%m-%d') BETWEEN :periodoInicial AND :periodoFinal
+                    AND    date_format(ap.apo_dtdfim   , '%Y-%m-%d') BETWEEN :periodoInicial AND :periodoFinal ";
         
-        if (!Functions::isEmpty($periodoInicial)) {
-            $query .= " AND date_format(at.ati_dtdcriacao, '%Y-%m-%d') >= :periodoInicial ";
-        }
-        if (!Functions::isEmpty($periodoFinal)) {
-            $query .= " AND date_format(at.ati_dtdcriacao, '%Y-%m-%d') <= :periodoFinal ";
-        }
         if (!Functions::isEmpty($empresa)) {
             $query .= " AND ep.emp_cdiempresa = :empresa ";
         }

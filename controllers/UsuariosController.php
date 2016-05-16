@@ -19,8 +19,6 @@ class UsuariosController extends BaseController {
             return 'N' . 'Informe o campo "E-mail"';
         } else if (!Functions::isEmail($vo->getEmail())) {
             return 'N' . 'Valor para "E-mail" é inválido';
-        } else if (Functions::isEmpty($vo->getSenha())) {
-            return 'N' . 'Informe o campo "Senha"';
         } else if (Functions::isEmpty($vo->getPerfil()->getId())) {
             return 'N' . 'Informe o campo "Perfil"';
         } else if (!Functions::isInteger($vo->getPerfil()->getId())) {
@@ -178,6 +176,14 @@ class UsuariosController extends BaseController {
         $vo->setSituacao($this->getParametroTela('situacao'));
         $vo->setObservacao($this->getParametroTela('observacao'));
         
+        // Se campo senha não for preenchido, mantém senha atual do usuário
+        if (Functions::isEmpty($this->getParametroTela('senha'))) {
+            $model = new UsuariosModel();
+            $oldVo = $model->loadById($connection, $this->getParametroTela('id'));
+            
+            $vo->setSenha($oldVo->getSenha());
+        }
+        
         $mensagem = $this->validarFormulario($vo);
         if (substr($mensagem, 0, 1) == 'S') {
             $this->salvarRegistro($connection, $vo);
@@ -250,5 +256,40 @@ class UsuariosController extends BaseController {
         Databases::disconnect($connection);
 
         $this->exibirTelaListar($dados);
+    }
+    
+    public function ajaxLoadClientesDeUmaEmpresaAction() {
+        $empresaCodigo = $this->getParametroTela('empresaCodigo');
+        $exibeUsuarioAberto = $this->getParametroTela('exibeUsuarioAberto');
+        $usuarioCodigo = $this->getParametroTela('usuarioCodigo');
+        
+        $connection = Databases::connect();
+        $model = new UsuariosModel();
+        $usuarioNome = $model->loadById($connection, $usuarioCodigo);
+        $clientes = $model->loadClientesDeUmaEmpresa($connection, 0, $empresaCodigo);
+        Databases::disconnect($connection);
+        
+        $resultado = "";
+        
+        if ($exibeUsuarioAberto == 1) {
+            $resultado = '
+                <label class="control-label col-sm-2" for="usuario">Usuário:</label>
+                <div class="col-sm-3">
+                    <select class="form-control" id="usuario" name="usuario">
+                    <option value="">Selecione</option>';
+            foreach($clientes as $cliente) {
+                $resultado .= '<option value="' . $cliente->getId() . '">' . $cliente->getNome() . '</option>';
+            }
+            $resultado .= '</select></div>';
+        } else {
+            $resultado = '
+                <label class="control-label col-sm-2" for="usuario">Usuário:</label>
+                <div class="col-sm-3">
+                    <input type="hidden" name="usuario" value="' . $usuarioCodigo . '" />
+                    <input type="text" class="form-control" id="usuario" name="usuario" value="' . $usuarioNome . '" disabled="disabled" />
+                </div>';
+        }
+        
+        echo $resultado;
     }
 }
