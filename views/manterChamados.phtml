@@ -221,8 +221,10 @@
                 }
             }
         }
-        ajax.open("GET", "?controle=Prioridades&acao=ajaxExibePrevisaoTermino", true);
-        ajax.send();
+        ajax.open("POST", "?controle=Prioridades&acao=ajaxExibePrevisaoTermino", true);
+        ajax.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+        ajax.send("prioridade=" + document.getElementById("prioridade").value +
+                  "&tipoAmbiente=" + document.getElementById("tipoAmbiente").value);
     }
     function defineUsuariosAfetados(exibeAberto, usuariosAfetados) {
         var impacto;
@@ -371,26 +373,6 @@
         </div>
         
         <div class="form-group">
-            <!-- Usuário -------------------------------------------------------------------------->
-            
-            <label class="control-label col-sm-2" for="usuario">Usuário:</label>
-            <div class="col-sm-3">
-                <input type="text" class="form-control" id="usuario" name="usuario" value="" disabled="disabled" />
-            </div>
-            
-            <?php
-            if ($inclusao) {
-                $usuarioCodigo = $usuarioCodigo;
-                $usuarioNome = $usuarioNome;
-            } else {
-                $usuarioCodigo = $chamado->getUsuario()->getId();
-                $usuarioNome = $chamado->getUsuario()->getNome();
-            }
-
-            echo '<script>document.form.usuario.value = "' . $usuarioNome . '";</script>';
-            echo '<input type="hidden" name="usuario" value="' . $usuarioCodigo . '" />';
-            ?>
-            
             <!-- Empresa -------------------------------------------------------------------------->
             
             <label class="control-label col-sm-2" for="empresa">Empresa:</label>
@@ -420,6 +402,26 @@
                 echo '<script>document.form.empresa.disabled = true;</script>';
                 echo '<input type="hidden" name="empresa" value="' . $empresa . '" />';
             }
+            ?>
+            
+            <!-- Usuário -------------------------------------------------------------------------->
+            
+            <label class="control-label col-sm-2" for="usuario">Usuário:</label>
+            <div class="col-sm-3">
+                <input type="text" class="form-control" id="usuario" name="usuario" value="" disabled="disabled" />
+            </div>
+            
+            <?php
+            if ($inclusao) {
+                $usuarioCodigo = $usuarioCodigo;
+                $usuarioNome = $usuarioNome;
+            } else {
+                $usuarioCodigo = $chamado->getUsuario()->getId();
+                $usuarioNome = $chamado->getUsuario()->getNome();
+            }
+
+            echo '<script>document.form.usuario.value = "' . $usuarioNome . '";</script>';
+            echo '<input type="hidden" name="usuario" value="' . $usuarioCodigo . '" />';
             ?>
         </div>
         
@@ -582,14 +584,14 @@
             
             <label class="control-label col-sm-2" for="tipoAmbiente">Tipo de Ambiente:</label>
             <div class="col-sm-3">
-                <select class="form-control" id="tipoAmbiente" name="tipoAmbiente">
-                    <option value="">Selecione</option>
-                    <?php
-                    foreach($tiposAmbientes as $tipoAmbiente) {
-                        echo '<option value="' . $tipoAmbiente->getId() . '">' . $tipoAmbiente->getDescricao() . '</option>';
-                    }
-                    ?>
-                </select>
+                <?php
+                echo '<select class="form-control" id="tipoAmbiente" name="tipoAmbiente" onchange="definePrevisaoTermino(' . ($inclusao ? '1' : '0') . ')">';
+                echo '<option value="">Selecione</option>';
+                foreach($tiposAmbientes as $tipoAmbiente) {
+                    echo '<option value="' . $tipoAmbiente->getId() . '">' . $tipoAmbiente->getDescricao() . '</option>';
+                }
+                echo '</select>';
+                ?>
             </div>
             
             <?php
@@ -643,6 +645,7 @@
         
         <div class="form-group">
             <!-- Módulo --------------------------------------------------------------------------->
+            
             <?php if ($exibeModulo) { ?>
             <label class="control-label col-sm-2" for="modulo">Módulo:</label>
             <div class="col-sm-3">
@@ -680,27 +683,24 @@
             
             <!-- Previsão Término ----------------------------------------------------------------->
             
-            <label class="control-label col-sm-2" for="previsaoTermino">Previsão Término:</label>
-            <div class="col-sm-3">
-                <input type="text" class="form-control datepicker" id="previsaoTermino" name="previsaoTermino" value="" />
-            </div>
-            
             <?php
             if ($chamado->getPrevisaoTermino() != "") {
                 $previsaoTermino = $chamado->getPrevisaoTermino();
             } else {
                 $previsaoTermino = "";
             }
-
-            echo '<script>document.form.previsaoTermino.value = "' . $previsaoTermino . '";</script>';
-
-            if (($exibePrevisaoTermino) && ($exibeControlesAbertos)) {
-                echo '';
-            } else {
-                echo '<script>document.form.previsaoTermino.disabled = true;</script>';
-                echo '<input type="hidden" name="previsaoTermino" value="' . $previsaoTermino . '" />';
-            }
             ?>
+            
+            <label class="control-label col-sm-2" for="previsaoTermino">Previsão Término:</label>
+            <div class="col-sm-3">
+                <?php
+                if (($exibePrevisaoTermino) && ($exibeControlesAbertos)) {
+                    echo '<input type="text" class="form-control datepicker" id="previsaoTermino" name="previsaoTermino" value="' . $previsaoTermino . '" />';
+                } else {
+                    echo '<input type="hidden" id="previsaoTermino" name="previsaoTermino" value="' . $previsaoTermino . '" /><input type="text" class="form-control datepicker" id="previsaoTerminoLabel" name="previsaoTerminoLabel" value="' . $previsaoTermino . '" disabled="disabled"/>';
+                }
+                ?>
+            </div>
         </div>
         
         <div class="form-group">
