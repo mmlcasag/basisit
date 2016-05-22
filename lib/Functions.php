@@ -263,11 +263,12 @@ class Functions {
         return $qDecoded;
     }
     
-    static function email($to, $subject, $message) {
+    static function email($to, $subject, $message, $cco = array()) {
         $sendgrid = new SendGrid("basisit", "B4s1sIT#2014");
         $email    = new SendGrid\Email();
         
         $email->addTo($to)
+              ->addBcc($cco)
               ->setFrom("site@basisit.com.br")
               ->setFromName('Chamados - BasisIT')
               ->setSubject($subject)

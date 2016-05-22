@@ -453,11 +453,14 @@ class ChamadosController extends BaseController {
             
             // Disparo de E-mail Comunicando
             if (!Functions::isEmpty($alteracoes)) {
-                $recipients = array();
-                
                 if ($modo == "I") {
-                    $subject = "BasisIT :: Inclusão de Chamado :: Número " . $vo->getId() . " :: " . $vo->getEmpresa()->getDescricao();
-                    $txt = "<b>" . $vo->getUsuario()->getNome() . "</b> da empresa <b>" . $vo->getEmpresa()->getDescricao() . "</b> criou o chamado <b>" . $vo->getId() . " - " . $vo->getAssunto() . "</b> na categoria <b>" . $vo->getCategoria()->getDescricao() . "</b>:";
+                    if ($_SESSION['perfilCliente'] == 1) {
+                        $subject = "BasisIT :: Inclusão de Chamado :: Número " . $vo->getId() . " :: " . $vo->getEmpresa()->getDescricao();
+                        $txt = "<b>" . $vo->getUsuario()->getNome() . "</b> da empresa <b>" . $vo->getEmpresa()->getDescricao() . "</b> criou o chamado <b>" . $vo->getId() . " - " . $vo->getAssunto() . "</b> na categoria <b>" . $vo->getCategoria()->getDescricao() . ".</b>";
+                    } else {
+                        $subject = "BasisIT :: Inclusão de Chamado :: Número " . $vo->getId() . " :: " . $vo->getEmpresa()->getDescricao();
+                        $txt = "Este chamado foi registrado pela <b>BasisIT</b> em nome do <b>" . $vo->getRequisitante()->getNome() . '</b> da empresa <b>' . $vo->getEmpresa()->getDescricao() . "</b>.<br />Chamado: <b>" . $vo->getId() . " - " . $vo->getAssunto() . "</b> na categoria <b>" . $vo->getCategoria()->getDescricao() . ".</b>";
+                    }
                 } else {
                     $subject = "BasisIT :: Nova Interação no Chamado :: Número " . $vo->getId() . " :: " . $vo->getEmpresa()->getDescricao();
                     $txt = "Informamos que houve uma nova interação no chamado " . $vo->getId() . ".";
@@ -472,38 +475,37 @@ class ChamadosController extends BaseController {
                 $txt = $txt . '<br /><br />';
                 $txt = $txt . '<font color="red"><b>Para responder ou consultar o histórico deste atendimento, acesse: <a href="http://www.basisit.com.br/basisit">http://www.basisit.com.br/basisit</a></b></font>';
                 
-                // Se for inclusão de chamado
+                $arrTo  = array();
+                
+                // Usuário
+                if (!Functions::isEmpty($vo->getUsuario()->getEmail())) {
+                    $to = $vo->getUsuario()->getEmail();
+                    array_push($arrTo, $to);
+                }
+                // Requisitante
+                if ((!Functions::isEmpty($vo->getRequisitante()->getEmail())) && ($vo->getRequisitante()->getEmail() != $vo->getUsuario()->getEmail())) {
+                    $to = $vo->getRequisitante()->getEmail();
+                    array_push($arrTo, $to);
+                }
+                // Atendente
+                if ((!Functions::isEmpty($vo->getAtendente()->getEmail())) && ($vo->getAtendente()->getEmail() != $vo->getUsuario()->getEmail())) {
+                    $to = $vo->getAtendente()->getEmail();
+                    array_push($arrTo, $to);
+                }
+                
+                $arrCco = array();
+                
+                // Se for inclusão de chamado, coloca em cópia oculta a galera dos parâmetros
                 if ($modo == "I") {
-                    // Manda E-mail para o usuário que abriu o chamado
-                    if (!Functions::isEmpty($vo->getUsuario()->getEmail())) {
-                        $to = $vo->getUsuario()->getEmail();
-                        Functions::email($to, $subject, $txt);                   
-                    }
                     // Manda E-mail para todos os destinatários definidos no cadastro de parâmetros
                     $destinatarios = explode(';', Functions::getParametro('destinatários'));
                     foreach ($destinatarios as $to) {
-                        array_push($recipients, $to);
+                        array_push($arrCco, $to);
                     }
-                    Functions::email($recipients, $subject, $txt);
-                // Se for alteração de chamado, vai para os envolvidos que estiverem envolvidos no chamado (usuário, analista e requisitante)
-                } else {
-                    // Usuário
-                    if (!Functions::isEmpty($vo->getUsuario()->getEmail())) {
-                        $to = $vo->getUsuario()->getEmail();
-                        array_push($recipients, $to);
-                    }
-                    // Requisitante
-                    if ((!Functions::isEmpty($vo->getRequisitante()->getEmail())) && ($vo->getRequisitante()->getEmail() != $vo->getUsuario()->getEmail())) {
-                        $to = $vo->getRequisitante()->getEmail();
-                        array_push($recipients, $to);
-                    }
-                    // Atendente
-                    if ((!Functions::isEmpty($vo->getAtendente()->getEmail())) && ($vo->getAtendente()->getEmail() != $vo->getUsuario()->getEmail())) {
-                        $to = $vo->getAtendente()->getEmail();
-                        array_push($recipients, $to);
-                    }
-                    Functions::email($recipients, $subject, $txt);
                 }
+                
+                // Dispara o email
+                Functions::email($arrTo, $subject, $txt, $arrCco);
             }
             
             // Lançamento de Apontamento Automático
