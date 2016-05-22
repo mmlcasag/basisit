@@ -1,5 +1,4 @@
 <?php
-    
     $v_params = $this->getParams();
     
     $mensagem = array();
@@ -87,8 +86,9 @@
         $atividades = $v_params['atividades'];
     }
     
+    $horasFaturadasChamadosTotal = '00:00:00';
+    $horasFaturadasAtividadesTotal = '00:00:00';
     $horasFaturadasTotal = '00:00:00';
-    
 ?>
 
 <!DOCTYPE html>
@@ -101,113 +101,140 @@
     
     <link rel="shortcut icon" href="template/images/favicon.ico">
     
-    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <title>BasisIT</title>
+    
+    <style type="text/css">
+        * {
+          font-family: Calibri;
+          font-size: 10px;
+          margin: 0; 
+          padding: 0px;
+        }
+        sub {
+          font-family: Calibri;
+          font-size: 8px;
+        }
+        h1 {
+          font-size: 12px;
+          font-family: Calibri;
+          font-weight: bold;
+        }
+        #grid {
+          border-collapse: separate;
+          border: 0px solid #000000;
+          border-spacing: 0;
+          font-size: 11pt;
+          width: 100%;
+          border-color: #000000;
+          border-right: 1px solid;
+        }
+        #grid tr {
+          border-color: #000000;
+          border-style: none;
+          border-width: 0;
+        }
+        #grid td {
+          border-color: #000000;
+          border-bottom: 1px solid;
+          border-left: 1px solid;
+          padding: 2px;
+        }
+        #grid th {
+          border-color: #000000;
+          border-top: 1px solid;
+          border-bottom: 1px solid;
+          border-left: 1px solid;
+          background-color: #CCC;
+          padding: 2px;
+        }
+        @media print {
+            body {-webkit-print-color-adjust: exact;}
+        }
+    </style>
 </head>
 
 <body>
-    <table align="center" border="1" cellspacing="1" cellpadding="1" width="100%">
+    <table align="center" width="100%">
         <tr>
-            <td align="left"><img src="template/images/logo.jpg"></td>
-            <td align="center"><b><?php echo "Relatório de Atendimentos - Sintético" ?></b></td>
-            <td align="right"><?php echo "Impresso em: " . date("d/m/Y") ?></td>
+            <td width="20%" align="left"><img src="template/images/logo.jpg" width="50%"></td>
+            <td width="60%" align="center"><h1>Relatório de Atendimentos<br />Sintético</h1></td>
+            <td width="20%" align="right"><sub><?php echo "Impresso em: " . date("d/m/Y") ?></sub></td>
         </tr>
-        <?php if (!Functions::isEmpty($mensagem)) { ?>
+        
+        <?php
+        if (!Functions::isEmpty($mensagem)) {
+            if (substr($mensagem,0,1) == "N") {
+                echo '<tr><td align="left" colspan="3"><div class="alert alert-danger"><strong>ERRO!</strong>&nbsp;&nbsp;&nbsp;' . substr($mensagem,1,999) . '</div></td></tr>';
+            }
+            if (substr($mensagem,0,1) == "S") {
+                echo '<tr><td align="left" colspan="3"><div class="alert alert-success"><strong>SUCESSO!</strong>&nbsp;&nbsp;&nbsp;' . substr($mensagem,1,999) . '</div></td></tr>';
+            }
+        }
+        ?>
+        
         <tr>
-            <td align="left" colspan="3">
-                <?php
-                if (!Functions::isEmpty($mensagem)) {
-                    if (substr($mensagem,0,1) == "N") {
-                        echo '<div class="alert alert-danger"><strong>ERRO!</strong>&nbsp;&nbsp;&nbsp;' . substr($mensagem,1,999) . '</div>';
-                    }
-                    if (substr($mensagem,0,1) == "S") {
-                        echo '<div class="alert alert-success"><strong>SUCESSO!</strong>&nbsp;&nbsp;&nbsp;' . substr($mensagem,1,999) . '</div>';
-                    }
-                } else {
-                    echo '<br />';
-                }
-                ?>
-            </td>
-        </tr>
-        <?php } ?>
-        <tr>
-            <td align="left" colspan="3">
-                <?php $horasFaturadasChamadosTotal = '00:00:00'; ?>
+            <td align="center" colspan="3">
+                
                 <?php if (($tipoApontamento == 1) || ($tipoApontamento == 2)) { ?>
-                <br />
-                <table align="center" border="1" cellspacing="1" cellpadding="1" width="100%">
+                <br /><p align="center"><b>Chamados</b></p><br />
+                
+                <table id="grid" align="center" width="100%">
                     <tr>
-                        <th align="center" colspan="5"><b>Chamados</b></th>
+                        <th align="center" width="40px">Código</th>
+                        <th align="center" width="75px">Empresa</th>
+                        <th align="center" width="60px">Situação</th>
+                        <th align="left">Assunto</th>
+                        <th align="center" width="60px">Faturado</th>
                     </tr>
-                    <tr>
-                        <th align="right" width="10%">Código</th>
-                        <th align="left" width="20%">Empresa</th>
-                        <th align="left" width="20%">Situação</th>
-                        <th align="left" width="40%">Assunto</th>
-                        <th align="center" width="10%">Horas Faturadas</th>
-                    </tr>
-                    <?php foreach($chamados AS $registro) { ?>
-                    <?php $horasFaturadasChamadosTotal = Functions::sumTimes($horasFaturadasChamadosTotal, Functions::toTime($registro['horasFaturadas']));?>
-                    <tr>
-                        <td align="right"><?php echo $registro['chamadoCodigo']?></td>
-                        <td align="left"><?php echo $registro['empresaDescricao']?></td>
-                        <td align="left"><?php echo $registro['situacaoDescricao']?></td>
-                        <td align="left"><?php echo $registro['chamadoAssunto']?></td>
-                        <td align="center"><?php echo $registro['horasFaturadas']?></td>
-                    </tr>
+                    <?php foreach($chamados AS $registro) {
+                        $horasFaturadasChamadosTotal = Functions::sumTimes($horasFaturadasChamadosTotal, Functions::toTime($registro['horasFaturadas'])); ?>
+                        <tr>
+                            <td align="center"><?php echo $registro['chamadoCodigo']?></td>
+                            <td align="center"><?php echo $registro['empresaDescricao']?></td>
+                            <td align="center"><?php echo $registro['situacaoDescricao']?></td>
+                            <td align="left"><?php echo $registro['chamadoAssunto']?></td>
+                            <td align="center"><?php echo $registro['horasFaturadas']?></td>
+                        </tr>
                     <?php } ?>
                     <tr>
-                        <th align="right" colspan="4">Total Chamados:</th>
-                        <th align="center"><?php echo $horasFaturadasChamadosTotal;?></th>
+                        <td align="right" colspan="4"><br /></td>
+                        <td align="center"><?php echo $horasFaturadasChamadosTotal;?></td>
                     </tr>
                 </table>
                 <?php } ?>
                 
-                <?php $horasFaturadasAtividadesTotal = '00:00:00'; ?>
                 <?php if (($tipoApontamento == 1) || ($tipoApontamento == 3)) { ?>
-                <br />
-                <table align="center" border="1" cellspacing="1" cellpadding="1" width="100%">
+                <br /><p align="center"><b>Atividades</b></p><br />
+                
+                <table id="grid" align="center" width="100%">
                     <tr>
-                        <th align="center" colspan="5"><b>Atividades</b></th>
+                        <th align="center" width="40px">Código</th>
+                        <th align="center" width="75px">Empresa</th>
+                        <th align="center" width="60px">Situação</th>
+                        <th align="left">Assunto</th>
+                        <th align="center" width="60px">Faturado</th>
                     </tr>
-                    <tr>
-                        <th align="right" width="10%">Código</th>
-                        <th align="left" width="20%">Empresa</th>
-                        <th align="left" width="20%">Situação</th>
-                        <th align="left" width="40%">Assunto</th>
-                        <th align="center" width="10%">Horas Faturadas</th>
-                    </tr>
-                    <?php foreach($atividades AS $registro) { ?>
-                    <?php $horasFaturadasAtividadesTotal = Functions::sumTimes($horasFaturadasAtividadesTotal, Functions::toTime($registro['horasFaturadas']));?>
-                    <tr>
-                        <td align="right"><?php echo $registro['atividadeCodigo']?></td>
-                        <td align="left"><?php echo $registro['empresaDescricao']?></td>
-                        <td align="left"><?php echo $registro['situacaoDescricao']?></td>
-                        <td align="left"><?php echo $registro['atividadeAssunto']?></td>
-                        <td align="center"><?php echo $registro['horasFaturadas']?></td>
-                    </tr>
+                    <?php foreach($atividades AS $registro) {
+                        $horasFaturadasAtividadesTotal = Functions::sumTimes($horasFaturadasAtividadesTotal, Functions::toTime($registro['horasFaturadas'])); ?>
+                        <tr>
+                            <td align="center"><?php echo $registro['atividadeCodigo']?></td>
+                            <td align="center"><?php echo $registro['empresaDescricao']?></td>
+                            <td align="center"><?php echo $registro['situacaoDescricao']?></td>
+                            <td align="left"><?php echo $registro['atividadeAssunto']?></td>
+                            <td align="center"><?php echo $registro['horasFaturadas']?></td>
+                        </tr>
                     <?php } ?>
                     <tr>
-                        <th align="right" colspan="4">Total Atividades:</th>
-                        <th align="center"><?php echo $horasFaturadasAtividadesTotal;?></th>
+                        <td align="right" colspan="4"><br /></td>
+                        <td align="center"><?php echo $horasFaturadasAtividadesTotal;?></td>
                     </tr>
                 </table>
                 <?php } ?>
                 
-                <?php
-                $horasFaturadasTotal = '00:00:00';
-                $horasFaturadasTotal = Functions::sumTimes($horasFaturadasTotal, $horasFaturadasChamadosTotal);
-                $horasFaturadasTotal = Functions::sumTimes($horasFaturadasTotal, $horasFaturadasAtividadesTotal);
-                ?>
-                <br />
-                <table align="center" border="1" cellspacing="1" cellpadding="1" width="100%">
-                    <tr>
-                        <td align="center" colspan="99"><b>Total Faturado: <?php echo $horasFaturadasTotal;?></b></td>
-                    </tr>
-                </table>
             </td>
         </tr>
     </table>
+    
     <script>
         window.print();
     </script>
