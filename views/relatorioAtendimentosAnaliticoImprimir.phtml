@@ -232,6 +232,15 @@
                 
                     <br />
                 <?php } ?>
+                
+                <table id="grid" align="center" width="100%">
+                    <tr>
+                        <th align="left" colspan="4">Total Chamados</th>
+                        <th align="center" width="60px"><?php echo $horasFaturadasChamadosTotal;?></th>
+                    </tr>
+                </table>
+                
+                <br />
             <?php } ?>
             
             <?php if (($tipoApontamento == 1) || ($tipoApontamento == 3)) { ?>
@@ -283,7 +292,27 @@
                     
                     <br />
                 <?php } ?>
+                
+                <table id="grid" align="center" width="100%">
+                    <tr>
+                        <th align="left" colspan="4">Total Atividades</th>
+                        <th align="center" width="60px"><?php echo $horasFaturadasAtividadesTotal;?></th>
+                    </tr>
+                </table>
+                
+                <br />
             <?php } ?>
+            
+            <?php
+            $horasFaturadasTotal = Functions::sumTimes($horasFaturadasTotal, $horasFaturadasChamadosTotal);
+            $horasFaturadasTotal = Functions::sumTimes($horasFaturadasTotal, $horasFaturadasAtividadesTotal);
+            ?>
+            <table id="grid" align="center" width="100%">
+                <tr>
+                    <th align="left" colspan="4">Total Faturado</th>
+                    <th align="center" width="60px"><?php echo $horasFaturadasTotal;?></th>
+                </tr>
+            </table>
             </td>
         </tr>
     </table>

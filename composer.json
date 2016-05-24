@@ -1,5 +1,6 @@
 {
     "require": {
-	"sendgrid/sendgrid": "3.2.0.*"
+	"sendgrid/sendgrid": "3.2.0.*",
+    "phpFastCache/phpFastCache": "^4.3"
     }
 }

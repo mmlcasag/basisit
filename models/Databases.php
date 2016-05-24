@@ -4,12 +4,6 @@ class Databases {
     
     static function connect() {
         
-        // Base de Teste
-        $host = '177.153.16.177';
-        $banco = 'basisit_teste';
-        $usuario = 'basisit_teste';
-        $senha = 'T3st3Marcio';
-        
         // Base de Produção
         $host = '177.153.16.177';
         $banco = 'basisit1';
@@ -21,6 +15,12 @@ class Databases {
         $banco = 'basisit1';
         $usuario = 'root';
         $senha = '';
+        
+        // Base de Teste
+        $host = '177.153.16.177';
+        $banco = 'basisit_teste';
+        $usuario = 'basisit_teste';
+        $senha = 'T3st3Marcio';
         
         $dsn = "mysql:host=$host;dbname=$banco";
         

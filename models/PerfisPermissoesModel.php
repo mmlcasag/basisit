@@ -1,7 +1,5 @@
 <?php
 
-require_once('vendor/phpfastcache-final/phpfastcache.php');
-
 class PerfisPermissoesModel {
     
     private function populateVo($connection, $row) {

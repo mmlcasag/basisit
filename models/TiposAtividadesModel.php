@@ -1,7 +1,5 @@
 <?php
 
-require_once('vendor/phpfastcache-final/phpfastcache.php');
-
 class TiposAtividadesModel {
     
     private function populateVo($connection, $row) {

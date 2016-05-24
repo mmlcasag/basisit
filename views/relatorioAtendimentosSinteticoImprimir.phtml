@@ -176,7 +176,7 @@
             <td align="center" colspan="3">
                 
                 <?php if (($tipoApontamento == 1) || ($tipoApontamento == 2)) { ?>
-                <br /><p align="center"><b>Chamados</b></p><br />
+                <p align="center"><b>Chamados</b></p><br />
                 
                 <table id="grid" align="center" width="100%">
                     <tr>
@@ -201,10 +201,12 @@
                         <td align="center"><?php echo $horasFaturadasChamadosTotal;?></td>
                     </tr>
                 </table>
+                
+                <br />
                 <?php } ?>
                 
                 <?php if (($tipoApontamento == 1) || ($tipoApontamento == 3)) { ?>
-                <br /><p align="center"><b>Atividades</b></p><br />
+                <p align="center"><b>Atividades</b></p><br />
                 
                 <table id="grid" align="center" width="100%">
                     <tr>
@@ -229,8 +231,20 @@
                         <td align="center"><?php echo $horasFaturadasAtividadesTotal;?></td>
                     </tr>
                 </table>
+                
+                <br />
                 <?php } ?>
                 
+                <?php
+                $horasFaturadasTotal = Functions::sumTimes($horasFaturadasTotal, $horasFaturadasChamadosTotal);
+                $horasFaturadasTotal = Functions::sumTimes($horasFaturadasTotal, $horasFaturadasAtividadesTotal);
+                ?>
+                <table id="grid" align="center" width="100%">
+                    <tr>
+                        <th align="left" colspan="4">Total Faturado</th>
+                        <th align="center" width="60px"><?php echo $horasFaturadasTotal;?></th>
+                    </tr>
+                </table>
             </td>
         </tr>
     </table>
