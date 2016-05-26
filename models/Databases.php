@@ -10,17 +10,17 @@ class Databases {
         $usuario = 'basisit1';
         $senha = 'C0ntr0l3H0r4s';
         
-        // Base de Acesso Local
-        $host = 'localhost';
-        $banco = 'basisit1';
-        $usuario = 'root';
-        $senha = '';
-        
         // Base de Teste
         $host = '177.153.16.177';
         $banco = 'basisit_teste';
         $usuario = 'basisit_teste';
         $senha = 'T3st3Marcio';
+        
+        // Base de Acesso Local
+        $host = 'localhost';
+        $banco = 'basisit1';
+        $usuario = 'root';
+        $senha = '';
         
         $dsn = "mysql:host=$host;dbname=$banco";
         

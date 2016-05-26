@@ -453,27 +453,26 @@ class ChamadosController extends BaseController {
             
             // Disparo de E-mail Comunicando
             if (!Functions::isEmpty($alteracoes)) {
+                $txt = $txt . '<font color="red"><b>OBS: Este e-mail foi gerado automaticamente. Favor não responder para este endereço.</b></font>';
+                $txt = $txt . '<br /><br />';
+                
                 if ($modo == "I") {
                     if ($_SESSION['perfilCliente'] == 1) {
                         $subject = "BasisIT :: Inclusão de Chamado :: Número " . $vo->getId() . " :: " . $vo->getEmpresa()->getDescricao();
-                        $txt = "<b>" . $vo->getUsuario()->getNome() . "</b> da empresa <b>" . $vo->getEmpresa()->getDescricao() . "</b> criou o chamado <b>" . $vo->getId() . " - " . $vo->getAssunto() . "</b> na categoria <b>" . $vo->getCategoria()->getDescricao() . ".</b>";
+                        $txt = $txt . "<b>" . $vo->getUsuario()->getNome() . "</b> da empresa <b>" . $vo->getEmpresa()->getDescricao() . "</b> criou o chamado <b>" . $vo->getId() . " - " . $vo->getAssunto() . "</b> na categoria <b>" . $vo->getCategoria()->getDescricao() . ".</b>";
                     } else {
                         $subject = "BasisIT :: Inclusão de Chamado :: Número " . $vo->getId() . " :: " . $vo->getEmpresa()->getDescricao();
-                        $txt = "Este chamado foi registrado pela <b>BasisIT</b> em nome do <b>" . $vo->getRequisitante()->getNome() . '</b> da empresa <b>' . $vo->getEmpresa()->getDescricao() . "</b>.<br />Chamado: <b>" . $vo->getId() . " - " . $vo->getAssunto() . "</b> na categoria <b>" . $vo->getCategoria()->getDescricao() . ".</b>";
+                        $txt = $txt . "Este chamado foi registrado pela <b>BasisIT</b> em nome do <b>" . $vo->getRequisitante()->getNome() . '</b> da empresa <b>' . $vo->getEmpresa()->getDescricao() . "</b>.<br />Chamado: <b>" . $vo->getId() . " - " . $vo->getAssunto() . "</b> na categoria <b>" . $vo->getCategoria()->getDescricao() . ".</b>";
                     }
                 } else {
                     $subject = "BasisIT :: Nova Interação no Chamado :: Número " . $vo->getId() . " :: " . $vo->getEmpresa()->getDescricao();
-                    $txt = "Informamos que houve uma nova interação no chamado " . $vo->getId() . ".";
+                    $txt = $txt . "Informamos que houve uma nova interação no chamado " . $vo->getId() . ".";
                 }
                 
                 $txt = $txt . '<br /><br />';
                 $txt = $txt . 'Você receberá um aviso a cada notificação feita.';
                 $txt = $txt . '<br /><br />';
                 $txt = $txt . '<fieldset><legend><b>Descrição da Interação:</b></legend>'. $alteracoes . '</fieldset>';
-                $txt = $txt . '<br />';
-                $txt = $txt . '<font color="red"><b>Atenção: Esta é uma mensagem automática.</b></font>';
-                $txt = $txt . '<br /><br />';
-                $txt = $txt . '<font color="red"><b>Para responder ou consultar o histórico deste atendimento, acesse: <a href="http://www.basisit.com.br/basisit">http://www.basisit.com.br/basisit</a></b></font>';
                 
                 $arrTo  = array();
                 
@@ -651,12 +650,11 @@ class ChamadosController extends BaseController {
             // Disparo de E-mail Comunicando
             $recipients = array();
             $subject = "BasisIT :: Finalização de Chamado :: Número " . $chamadoVo->getId() . " :: " . $chamadoVo->getEmpresa()->getDescricao();
-            $txt = "Informamos que houve uma nova interação no chamado " . $chamadoVo->getId() . ".";
-            
+            $txt = $txt . '<font color="red"><b>OBS: Este e-mail foi gerado automaticamente. Favor não responder para este endereço.</b></font>';
+            $txt = $txt . '<br /><br />';
+            $txt = $txt . "Informamos que houve uma nova interação no chamado " . $chamadoVo->getId() . ".";
             $txt = $txt . '<br /><br />';
             $txt = $txt . '<fieldset><legend><b>Descrição da Interação:</b></legend>* O chamado foi finalizado</fieldset>';
-            $txt = $txt . '<br />';
-            $txt = $txt . '<font color="red"><b>OBS: Este e-mail foi gerado automaticamente. Favor não responder para este endereço.</b></font>';
             
             // E-mail para o usuário que abriu o chamado vai sempre
             if (!Functions::isEmpty($chamadoVo->getUsuario()->getEmail())) {
@@ -718,12 +716,11 @@ class ChamadosController extends BaseController {
             // Disparo de E-mail Comunicando
             $recipients = array();
             $subject = "BasisIT :: Cancelamento de Chamado :: Número " . $chamadoVo->getId() . " :: " . $chamadoVo->getEmpresa()->getDescricao();
-            $txt = "Informamos que houve uma nova interação no chamado " . $chamadoVo->getId() . ".";
-            
+            $txt = $txt . '<font color="red"><b>OBS: Este e-mail foi gerado automaticamente. Favor não responder para este endereço.</b></font>';
+            $txt = $txt . '<br /><br />';
+            $txt = $txt . "Informamos que houve uma nova interação no chamado " . $chamadoVo->getId() . ".";
             $txt = $txt . '<br /><br />';
             $txt = $txt . '<fieldset><legend><b>Descrição da Interação:</b></legend>* O chamado foi cancelado</fieldset>';
-            $txt = $txt . '<br />';
-            $txt = $txt . '<font color="red"><b>OBS: Este e-mail foi gerado automaticamente. Favor não responder para este endereço.</b></font>';
             
             // E-mail para o usuário que abriu o chamado vai sempre
             if (!Functions::isEmpty($chamadoVo->getUsuario()->getEmail())) {
