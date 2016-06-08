@@ -424,7 +424,7 @@ class ChamadosController extends BaseController {
                 $erro = true;
                 $mensagem = 'N' . 'Percebemos que você selecionou um usuário de uma empresa diferente da sua. Por motivos de segurança, não gravaremos o chamado';
             }
-            if (!empty($chamadoVo->getSituacao())) {
+            if ($chamadoVo->getSituacao() != "") {
                 // Solicitação número 2 do documento "Ajuste_Sistema_Chamados_Ver1_11.pdf"
                 if ($chamadoVo->getSituacao()->getId() == $_SESSION['situacaoFinalizada']) {
                     $erro = true;
@@ -469,15 +469,15 @@ class ChamadosController extends BaseController {
                 
                 if ($modo == "I") {
                     if ($_SESSION['perfilCliente'] == 1) {
-                        $subject = "BasisIT :: Inclusão de Chamado :: Número " . $vo->getId() . " :: " . $vo->getEmpresa()->getDescricao();
-                        $txt = $txt . "<b>" . $vo->getUsuario()->getNome() . "</b> da empresa <b>" . $vo->getEmpresa()->getDescricao() . "</b> criou o chamado <b>" . $vo->getId() . " - " . $vo->getAssunto() . "</b> na categoria <b>" . $vo->getCategoria()->getDescricao() . ".</b>";
+                        $subject = 'BasisIT :: Inclusão de Chamado :: Número ' . $vo->getId() . ' :: ' . $vo->getEmpresa()->getDescricao();
+                        $txt = $txt . '<b>' . $vo->getUsuario()->getNome() . '</b> da empresa <b>' . $vo->getEmpresa()->getDescricao() . '</b> criou o chamado <b>' . $vo->getId() . ' - ' . $vo->getAssunto() . '</b> na categoria <b>' . $vo->getCategoria()->getDescricao() . '.</b>';
                     } else {
-                        $subject = "BasisIT :: Inclusão de Chamado :: Número " . $vo->getId() . " :: " . $vo->getEmpresa()->getDescricao();
-                        $txt = $txt . "Este chamado foi registrado pela <b>BasisIT</b> em nome do <b>" . $vo->getRequisitante()->getNome() . '</b> da empresa <b>' . $vo->getEmpresa()->getDescricao() . "</b>.<br />Chamado: <b>" . $vo->getId() . " - " . $vo->getAssunto() . "</b> na categoria <b>" . $vo->getCategoria()->getDescricao() . ".</b>";
+                        $subject = 'BasisIT :: Inclusão de Chamado :: Número ' . $vo->getId() . ' :: ' . $vo->getEmpresa()->getDescricao();
+                        $txt = $txt . 'Este chamado foi registrado pela <b>BasisIT</b> em nome do <b>' . $vo->getRequisitante()->getNome() . '</b> da empresa <b>' . $vo->getEmpresa()->getDescricao() . '</b>.<br />Chamado: <b>' . $vo->getId() . ' - ' . $vo->getAssunto() . '</b> na categoria <b>' . $vo->getCategoria()->getDescricao() . '.</b>';
                     }
                 } else {
-                    $subject = "BasisIT :: Nova Interação no Chamado :: Número " . $vo->getId() . " :: " . $vo->getEmpresa()->getDescricao();
-                    $txt = $txt . "Informamos que houve uma nova interação no chamado " . $vo->getId() . ".";
+                    $subject = 'BasisIT :: Nova Interação no Chamado :: Número ' . $vo->getId() . ' :: ' . $vo->getEmpresa()->getDescricao();
+                    $txt = $txt . 'Informamos que houve uma nova interação no chamado ' . $vo->getId() . '.';
                 }
                 
                 $txt = $txt . '<br /><br />Você receberá um aviso a cada notificação feita.<br /><br />';
@@ -637,6 +637,22 @@ class ChamadosController extends BaseController {
         $apontamentoController = new ApontamentosController();
         $mensagem = $apontamentoController->validarIniciarApontamento(new AtividadesVo(), $chamadoVo, $apontamento, "C", $id);
         
+        // Validações adicionais de segurança para o perfil de cliente
+        if ($_SESSION['perfilCliente'] == 1) {
+            if ($chamadoVo->getSituacao() != "") {
+                // Solicitação número 2 do documento "Ajuste_Sistema_Chamados_Ver1_11.pdf"
+                if ($chamadoVo->getSituacao()->getId() == $_SESSION['situacaoFinalizada']) {
+                    $erro = true;
+                    $mensagem = 'N' . 'Chamado se encontra finalizado e portanto não pode mais ser alterado.';
+                }
+                // Solicitação número 2 do documento "Ajuste_Sistema_Chamados_Ver1_11.pdf"
+                if ($chamadoVo->getSituacao()->getId() == $_SESSION['situacaoCancelada']) {
+                    $erro = true;
+                    $mensagem = 'N' . 'Chamado se encontra cancelado e portanto não pode mais ser alterado.';
+                }
+            }
+        }
+        
         if (substr($mensagem, 0, 1) == 'S') {
             $situacaoModel = new SituacoesModel();
             $situacaoVo = $situacaoModel->loadById($connection, $_SESSION['situacaoFinalizada']); // Finalizado
@@ -658,9 +674,9 @@ class ChamadosController extends BaseController {
             
             // Disparo de E-mail Comunicando
             $recipients = array();
-            $subject = "BasisIT :: Finalização de Chamado :: Número " . $chamadoVo->getId() . " :: " . $chamadoVo->getEmpresa()->getDescricao();
+            $subject = 'BasisIT :: Finalização de Chamado :: Número ' . $chamadoVo->getId() . ' :: ' . $chamadoVo->getEmpresa()->getDescricao();
             $txt = '<font color="red"><b>OBS: Este e-mail foi gerado automaticamente. Favor não responder para este endereço.</b></font><br /><br />';
-            $txt = $txt . "Informamos que houve uma nova interação no chamado " . $chamadoVo->getId() . ".<br /><br />";
+            $txt = $txt . 'Informamos que houve uma nova interação no chamado ' . $chamadoVo->getId() . '.<br /><br />';
             $txt = $txt . '<fieldset><legend><b>Descrição da Interação:</b></legend>* O chamado foi finalizado</fieldset>';
             
             // E-mail para o usuário que abriu o chamado vai sempre
@@ -700,7 +716,23 @@ class ChamadosController extends BaseController {
 
         $apontamentoController = new ApontamentosController();
         $mensagem = $apontamentoController->validarIniciarApontamento(new AtividadesVo(), $chamadoVo, $apontamento, "C", $id);
-
+        
+        // Validações adicionais de segurança para o perfil de cliente
+        if ($_SESSION['perfilCliente'] == 1) {
+            if ($chamadoVo->getSituacao() != "") {
+                // Solicitação número 2 do documento "Ajuste_Sistema_Chamados_Ver1_11.pdf"
+                if ($chamadoVo->getSituacao()->getId() == $_SESSION['situacaoFinalizada']) {
+                    $erro = true;
+                    $mensagem = 'N' . 'Chamado se encontra finalizado e portanto não pode mais ser alterado.';
+                }
+                // Solicitação número 2 do documento "Ajuste_Sistema_Chamados_Ver1_11.pdf"
+                if ($chamadoVo->getSituacao()->getId() == $_SESSION['situacaoCancelada']) {
+                    $erro = true;
+                    $mensagem = 'N' . 'Chamado se encontra cancelado e portanto não pode mais ser alterado.';
+                }
+            }
+        }
+        
         if (substr($mensagem, 0, 1) == 'S') {
             $situacaoModel = new SituacoesModel();
             $situacaoVo = $situacaoModel->loadById($connection, $_SESSION['situacaoCancelada']); // Cancelado
@@ -722,9 +754,9 @@ class ChamadosController extends BaseController {
             
             // Disparo de E-mail Comunicando
             $recipients = array();
-            $subject = "BasisIT :: Cancelamento de Chamado :: Número " . $chamadoVo->getId() . " :: " . $chamadoVo->getEmpresa()->getDescricao();
+            $subject = 'BasisIT :: Cancelamento de Chamado :: Número ' . $chamadoVo->getId() . ' :: ' . $chamadoVo->getEmpresa()->getDescricao();
             $txt = '<font color="red"><b>OBS: Este e-mail foi gerado automaticamente. Favor não responder para este endereço.</b></font><br /><br />';
-            $txt = $txt . "Informamos que houve uma nova interação no chamado " . $chamadoVo->getId() . ".<br /><br />";
+            $txt = $txt . 'Informamos que houve uma nova interação no chamado ' . $chamadoVo->getId() . '.<br /><br />';
             $txt = $txt . '<fieldset><legend><b>Descrição da Interação:</b></legend>* O chamado foi cancelado</fieldset>';
             
             // E-mail para o usuário que abriu o chamado vai sempre
