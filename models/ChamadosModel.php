@@ -197,10 +197,12 @@ class ChamadosModel {
             $stmt->bindParam(':cha_dtdprevisaoterminofim', Functions::toDateToSql($previsaoTerminoFim));
         }
         if (!Functions::isEmpty($assunto)) {
-            $stmt->bindParam(':cha_dssassunto', "%".strtolower($assunto)."%");
+            $assunto = "%" . strtolower($assunto) . "%";
+            $stmt->bindParam(':cha_dssassunto', $assunto);
         }
         if (!Functions::isEmpty($observacao)) {
-            $stmt->bindParam(':cha_dsbobservacao', "%".strtolower($observacao)."%");
+            $observacao = "%" . strtolower($observacao) . "%";
+            $stmt->bindParam(':cha_dsbobservacao', $observacao);
         }
         
         $stmt->execute();
