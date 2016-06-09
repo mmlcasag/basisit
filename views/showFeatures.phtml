@@ -193,8 +193,8 @@
                                 <?php foreach($apontamentosAbertos AS $apontamentoAberto) { ?>
                                 <tr>
                                     <td class="text-center">Executando</td>
-                                    <td class="text-center"><?php echo '<a href="javascript:;" onclick="listarAtividadesExecutando(' . $_SESSION['usuarioCodigo'] . ');">' . $apontamentoAberto['quantidadeAtividades'] . '</a>'; ?></td>
-                                    <td class="text-center"><?php echo '<a href="javascript:;" onclick="listarChamadosExecutando(' . $_SESSION['usuarioCodigo'] . ');">' . $apontamentoAberto['quantidadeChamados'] . '</a>'; ?></td>
+                                    <td class="text-center"><?php echo '<a href="javascript:;" onclick="mostrarAtividade(' . $apontamentoAberto['atividadeCodigo'] . ');">' . $apontamentoAberto['quantidadeAtividades'] . '</a>'; ?></td>
+                                    <td class="text-center"><?php echo '<a href="javascript:;" onclick="mostrarChamado(' . $apontamentoAberto['chamadoCodigo'] . ');">' . $apontamentoAberto['quantidadeChamados'] . '</a>'; ?></td>
                                 </tr>
                                 <?php } ?>
                             </tbody>
@@ -254,9 +254,6 @@
     function listarChamados(usuarioCodigo, situacaoCodigo) {
         postViaJS('', {controle: 'Chamados', acao: 'listar', atendente: usuarioCodigo, situacao: situacaoCodigo}, "post", "_blank");
     }
-    function listarChamadosExecutando(usuarioCodigo) {
-        postViaJS('', {controle: 'Chamados', acao: 'listarEmExecucao', usuario: usuarioCodigo}, "post", "_blank");
-    }
     function listarChamadosUsuario(usuarioCodigo) {
         postViaJS('', {controle: 'Chamados', acao: 'listar', atendente: usuarioCodigo}, "post", "_blank");
     }
@@ -265,9 +262,6 @@
     }
     function listarAtividades(usuarioCodigo, situacaoCodigo) {
         postViaJS('', {controle: 'Atividades', acao: 'listar', usuario: usuarioCodigo, situacao: situacaoCodigo}, "post", "_blank");
-    }
-    function listarAtividadesExecutando(usuarioCodigo) {
-        postViaJS('', {controle: 'Atividades', acao: 'listarEmExecucao', usuario: usuarioCodigo}, "post", "_blank");
     }
     function listarAtividadesUsuario(usuarioCodigo) {
         postViaJS('', {controle: 'Atividades', acao: 'listar', usuario: usuarioCodigo}, "post", "_blank");
@@ -289,6 +283,16 @@
     }
     function listarChamadosNaoClassificados() {
         postViaJS('', {controle: 'Chamados', acao: 'listarNaoClassificados'}, "post", "_blank");
+    }
+    function mostrarAtividade(atividadeCodigo) {
+        if (atividadeCodigo != 0) {
+            postViaJS('', {controle: 'Atividades', acao: 'cadastrar', id: atividadeCodigo}, "post", "_blank");
+        }
+    }
+    function mostrarChamado(chamadoCodigo) {
+        if (chamadoCodigo != 0) {
+            postViaJS('', {controle: 'Chamados', acao: 'cadastrar', id: chamadoCodigo}, "post", "_blank");
+        }
     }
 </script>
 

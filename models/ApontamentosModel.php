@@ -510,6 +510,8 @@ class ApontamentosModel {
         $query = " SELECT apo_cdiusuario
                    ,      SUM(IF(COALESCE(apo_cdiatividade,0) = 0,0,1)) apo_qtiatividades
                    ,      SUM(IF(COALESCE(apo_cdichamado  ,0) = 0,0,1)) apo_qtichamados
+                   ,      SUM(IF(COALESCE(apo_cdiatividade,0) = 0,0,apo_cdiatividade)) apo_cdiatividade
+                   ,      SUM(IF(COALESCE(apo_cdichamado  ,0) = 0,0,apo_cdichamado))   apo_cdichamado
                    FROM   apontamentos
                    WHERE  apo_cdiusuario  = :usuarioCodigo
                    AND    apo_dtdinicio NOT LIKE '%0000%'
@@ -530,6 +532,8 @@ class ApontamentosModel {
             $registro = array( 'usuarioCodigo'        => $row->apo_cdiusuario
                              , 'quantidadeAtividades' => $row->apo_qtiatividades
                              , 'quantidadeChamados'   => $row->apo_qtichamados
+                             , 'atividadeCodigo'      => $row->apo_cdiatividade
+                             , 'chamadoCodigo'        => $row->apo_cdichamado
                              ) ;
             
             array_push($registros, $registro);
