@@ -1032,13 +1032,53 @@ class ChamadosController extends BaseController {
         $this->exibirTelaListar($dados);
     }
     
-    private function carregarDadosEmExecucao($connection, $mensagem = "") {
+    public function carregarDadosEmExecucao($connection, $mensagem = "") {
         $usuario = $this->getParametroTela('usuario');
         
         $model = new ChamadosModel();
         $registros = $model->loadEmExecucao($connection, $usuario);
         
         return $this->trabalharDadosListar($registros, $mensagem);
+    }
+    
+    public function listarMeusRegistrosPerfilClienteAction($mensagem = "") {
+        $usuarioCodigo = $this->getParametroTela('usuarioCodigo');
+        $situacaoCodigo = $this->getParametroTela('situacaoCodigo');
+        
+        $connection = Databases::connect();
+        $model = new ChamadosModel();
+        $registros = $model->listarMeusRegistrosPerfilCliente($connection, $usuarioCodigo, $situacaoCodigo);
+        Databases::disconnect($connection);
+        
+        $dados = $this->trabalharDadosListar($registros, $mensagem);
+        $this->exibirTelaListar($dados);
+    }
+    
+    public function listarMeusRegistrosDemaisPerfisAction($mensagem = "") {
+        $usuarioCodigo = $this->getParametroTela('usuarioCodigo');
+        $situacaoCodigo = $this->getParametroTela('situacaoCodigo');
+        
+        $connection = Databases::connect();
+        $model = new ChamadosModel();
+        $registros = $model->listarMeusRegistrosDemaisPerfis($connection, $usuarioCodigo, $situacaoCodigo);
+        Databases::disconnect($connection);
+        
+        $dados = $this->trabalharDadosListar($registros, $mensagem);
+        $this->exibirTelaListar($dados);
+    }
+    
+    public function listarMinhaEmpresaAction($mensagem = "") {
+        $empresaCodigo = $this->getParametroTela('empresaCodigo');
+        $usuarioCodigo = $this->getParametroTela('usuarioCodigo');
+        $situacaoCodigo = $this->getParametroTela('situacaoCodigo');
+        
+        $connection = Databases::connect();
+        $model = new ChamadosModel();
+        $registros = $model->listarMinhaEmpresa($connection, $empresaCodigo, $usuarioCodigo, $situacaoCodigo);
+        Databases::disconnect($connection);
+        
+        $dados = $this->trabalharDadosListar($registros, $mensagem);
+        $this->exibirTelaListar($dados);
     }
     
 }

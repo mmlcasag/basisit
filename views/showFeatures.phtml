@@ -59,7 +59,7 @@
                             <table width="100%">
                                 <tr>
                                     <td align="left"><h1><span class="glyphicon glyphicon-tasks"></h1></td>
-                                    <td align="right"><b><h2><?php echo $totalMeusRegistrosChamados ?></h2>Meus Registros</b></td>
+                                    <td align="right"><b><h2><?php echo '<a href="javascript:;" style="color: #006600" onclick="meusRegistrosChamadosPerfilClienteTotal(' . $_SESSION['usuarioCodigo'] . ');">' . $totalMeusRegistrosChamados . '</a>' ?></h2>Meus Registros</b></td>
                                 </tr>
                             </table>
                         </div>
@@ -77,7 +77,7 @@
                                 <?php foreach($meusRegistros AS $meuRegistro) { ?>
                                 <tr>
                                     <td class="text-center"><?php echo $meuRegistro['situacaoDescricao']; ?></td>
-                                    <td class="text-center"><?php echo '<a href="javascript:;" onclick="listarChamadosCliente(' . $_SESSION['usuarioCodigo'] . ',' . $meuRegistro['situacaoCodigo'] . ');">' . $meuRegistro['situacaoQuantidadeChamados'] . '</a>'; ?></td>
+                                    <td class="text-center"><?php echo '<a href="javascript:;" onclick="meusRegistrosChamadosPerfilCliente(' . $_SESSION['usuarioCodigo'] . ',' . $meuRegistro['situacaoCodigo'] . ');">' . $meuRegistro['situacaoQuantidadeChamados'] . '</a>'; ?></td>
                                 </tr>
                                 <?php } ?>
                             </tbody>
@@ -94,7 +94,7 @@
                             <table width="100%">
                                 <tr>
                                     <td align="left"><h1><span class="glyphicon glyphicon-globe"></h1></td>
-                                    <td align="right"><b><h2><?php echo $totalResumoGeralChamados ?></h2>Minha Empresa</b></td>
+                                    <td align="right"><b><h2><?php echo '<a href="javascript:;" style="color: #8B7500" onclick="listarMinhaEmpresaChamadosTotal(' . $_SESSION['empresaCodigo'] . ',' . $_SESSION['situacaoEmAndamento'] . ');">' . $totalResumoGeralChamados . '</a>'; ?></h2>Minha Empresa</b></td>
                                 </tr>
                             </table>
                         </div>
@@ -112,7 +112,7 @@
                                 <?php foreach($resumoGeral AS $resumo) { ?>
                                 <tr>
                                     <td class="text-center"><?php echo $resumo['usuarioNome']; ?></td>
-                                    <td class="text-center"><?php echo '<a href="javascript:;" onclick="listarChamadosEspecialCliente(' . $resumo['usuarioCodigo'] . ', 1);">' . $resumo['usuarioQuantidadeChamados'] . '</a>'; ?></td>
+                                    <td class="text-center"><?php echo '<a href="javascript:;" onclick="listarMinhaEmpresaChamados(' . $_SESSION['empresaCodigo'] . ',' . $resumo['usuarioCodigo'] . ',' . $_SESSION['situacaoEmAndamento'] . ');">' . $resumo['usuarioQuantidadeChamados'] . '</a>'; ?></td>
                                 </tr>
                                 <?php } ?>
                             </tbody>
@@ -134,7 +134,7 @@
                             <table width="100%">
                                 <tr>
                                     <td align="left"><h1><span class="glyphicon glyphicon-comment"></h1></td>
-                                    <td align="right"><b><h2><?php echo '<a href="javascript:;" style="color: #AA0000" onclick="listarChamadosNaoClassificados();">' . $naoClassificados . '</a>' ?></h2>Não Classificados</b></td>
+                                    <td align="right"><b><h2><?php echo '<a href="javascript:;" style="color: #AA0000" onclick="naoClassificadosTotal();">' . $naoClassificados . '</a>' ?></h2>Não Classificados</b></td>
                                 </tr>
                             </table>
                         </div>
@@ -151,7 +151,7 @@
                                 <tbody>
                                     <tr>
                                         <td class="text-center">Quantidade</td>
-                                        <td class="text-center"><?php echo '<a href="javascript:;" onclick="listarChamadosNaoClassificados();">' . $naoClassificados . '</a>'; ?></td>
+                                        <td class="text-center"><?php echo '<a href="javascript:;" onclick="naoClassificados();">' . $naoClassificados . '</a>'; ?></td>
                                     </tr>
                                 </tbody>
 
@@ -167,7 +167,7 @@
                             <table width="100%">
                                 <tr>
                                     <td align="left"><h1><span class="glyphicon glyphicon-tasks"></h1></td>
-                                    <td align="right"><b><h2><?php echo '<a href="javascript:;" style="color: #006600" onclick="listarAtividadesUsuario(' . $_SESSION['usuarioCodigo'] . ');">' . $totalMeusRegistrosAtividades . '</a>' . ' / ' . '<a href="javascript:;" style="color: #006600" onclick="listarChamadosUsuario(' . $_SESSION['usuarioCodigo'] . ');">' . $totalMeusRegistrosChamados . '</a>' ?></h2>Meus Registros</b></td>
+                                    <td align="right"><b><h2><?php echo '<a href="javascript:;" style="color: #006600" onclick="meusRegistrosAtividadesTotal(' . $_SESSION['usuarioCodigo'] . ');">' . $totalMeusRegistrosAtividades . '</a>' . ' / ' . '<a href="javascript:;" style="color: #006600" onclick="meusRegistrosChamadosDemaisPerfisTotal(' . $_SESSION['usuarioCodigo'] . ');">' . $totalMeusRegistrosChamados . '</a>' ?></h2>Meus Registros</b></td>
                                 </tr>
                             </table>
                         </div>
@@ -186,15 +186,15 @@
                                 <?php foreach($meusRegistros AS $meuRegistro) { ?>
                                 <tr>
                                     <td class="text-center"><?php echo $meuRegistro['situacaoDescricao']; ?></td>
-                                    <td class="text-center"><?php echo '<a href="javascript:;" onclick="listarAtividades(' . $_SESSION['usuarioCodigo'] . ',' . $meuRegistro['situacaoCodigo'] . ');">' . $meuRegistro['situacaoQuantidadeAtividades'] . '</a>'; ?></td>
-                                    <td class="text-center"><?php echo '<a href="javascript:;" onclick="listarChamados(' . $_SESSION['usuarioCodigo'] . ',' . $meuRegistro['situacaoCodigo'] . ');">' . $meuRegistro['situacaoQuantidadeChamados'] . '</a>'; ?></td>
+                                    <td class="text-center"><?php echo '<a href="javascript:;" onclick="meusRegistrosAtividades(' . $_SESSION['usuarioCodigo'] . ',' . $meuRegistro['situacaoCodigo'] . ');">' . $meuRegistro['situacaoQuantidadeAtividades'] . '</a>'; ?></td>
+                                    <td class="text-center"><?php echo '<a href="javascript:;" onclick="meusRegistrosChamadosDemaisPerfis(' . $_SESSION['usuarioCodigo'] . ',' . $meuRegistro['situacaoCodigo'] . ');">' . $meuRegistro['situacaoQuantidadeChamados'] . '</a>'; ?></td>
                                 </tr>
                                 <?php } ?>
                                 <?php foreach($apontamentosAbertos AS $apontamentoAberto) { ?>
                                 <tr>
                                     <td class="text-center">Executando</td>
-                                    <td class="text-center"><?php echo '<a href="javascript:;" onclick="mostrarAtividade(' . $apontamentoAberto['atividadeCodigo'] . ');">' . $apontamentoAberto['quantidadeAtividades'] . '</a>'; ?></td>
-                                    <td class="text-center"><?php echo '<a href="javascript:;" onclick="mostrarChamado(' . $apontamentoAberto['chamadoCodigo'] . ');">' . $apontamentoAberto['quantidadeChamados'] . '</a>'; ?></td>
+                                    <td class="text-center"><?php echo '<a href="javascript:;" onclick="meusRegistrosExecutandoAtividades(' . $apontamentoAberto['atividadeCodigo'] . ');">' . $apontamentoAberto['quantidadeAtividades'] . '</a>'; ?></td>
+                                    <td class="text-center"><?php echo '<a href="javascript:;" onclick="meusRegistrosExecutandoChamados(' . $apontamentoAberto['chamadoCodigo'] . ');">' . $apontamentoAberto['quantidadeChamados'] . '</a>'; ?></td>
                                 </tr>
                                 <?php } ?>
                             </tbody>
@@ -211,7 +211,7 @@
                             <table width="100%">
                                 <tr>
                                     <td align="left"><h1><span class="glyphicon glyphicon-globe"></h1></td>
-                                    <td align="right"><b><h2><?php echo '<a href="javascript:;" style="color: #8B7500" onclick="listarAtividadesEspecialGeral(1);">' . $totalResumoGeralAtividades . '</a>' . ' / ' . '<a href="javascript:;" style="color: #8B7500" onclick="listarChamadosEspecialGeral(1);">' . $totalResumoGeralChamados . '</a>' ?></h2>Resumo Geral</b></td>
+                                    <td align="right"><b><h2><?php echo '<a href="javascript:;" style="color: #8B7500" onclick="resumoGeralAtividadesTotal(' . $_SESSION['situacaoEmAndamento'] . ');">' . $totalResumoGeralAtividades . '</a>' . ' / ' . '<a href="javascript:;" style="color: #8B7500" onclick="resumoGeralChamadosTotal(' . $_SESSION['situacaoEmAndamento'] . ');">' . $totalResumoGeralChamados . '</a>' ?></h2>Resumo Geral</b></td>
                                 </tr>
                             </table>
                         </div>
@@ -230,8 +230,8 @@
                                 <?php foreach($resumoGeral AS $resumo) { ?>
                                 <tr>
                                     <td class="text-center"><?php echo $resumo['usuarioNome']; ?></td>
-                                    <td class="text-center"><?php echo '<a href="javascript:;" onclick="listarAtividadesEspecial(' . $resumo['usuarioCodigo'] . ', 1);">' . $resumo['usuarioQuantidadeAtividades'] . '</a>'; ?></td>
-                                    <td class="text-center"><?php echo '<a href="javascript:;" onclick="listarChamadosEspecial(' . $resumo['usuarioCodigo'] . ', 1);">' . $resumo['usuarioQuantidadeChamados'] . '</a>'; ?></td>
+                                    <td class="text-center"><?php echo '<a href="javascript:;" onclick="resumoGeralAtividades(' . $resumo['usuarioCodigo'] . ',' . $_SESSION['situacaoEmAndamento'] . ');">' . $resumo['usuarioQuantidadeAtividades'] . '</a>'; ?></td>
+                                    <td class="text-center"><?php echo '<a href="javascript:;" onclick="resumoGeralChamados(' . $resumo['usuarioCodigo'] . ',' . $_SESSION['situacaoEmAndamento'] . ');">' . $resumo['usuarioQuantidadeChamados'] . '</a>'; ?></td>
                                 </tr>
                                 <?php } ?>
                             </tbody>
@@ -251,49 +251,85 @@
     function post(controle, acao) {
         postViaJS('', {controle: controle, acao: acao});
     }
-    function listarChamados(usuarioCodigo, situacaoCodigo) {
-        postViaJS('', {controle: 'Chamados', acao: 'listar', atendente: usuarioCodigo, situacao: situacaoCodigo}, "post", "_blank");
-    }
-    function listarChamadosUsuario(usuarioCodigo) {
-        postViaJS('', {controle: 'Chamados', acao: 'listar', atendente: usuarioCodigo}, "post", "_blank");
-    }
-    function listarChamadosCliente(usuarioCodigo, situacaoCodigo) {
-        postViaJS('', {controle: 'Chamados', acao: 'listar', usuario: usuarioCodigo, situacao: situacaoCodigo}, "post", "_blank");
-    }
-    function listarAtividades(usuarioCodigo, situacaoCodigo) {
-        postViaJS('', {controle: 'Atividades', acao: 'listar', usuario: usuarioCodigo, situacao: situacaoCodigo}, "post", "_blank");
-    }
-    function listarAtividadesUsuario(usuarioCodigo) {
-        postViaJS('', {controle: 'Atividades', acao: 'listar', usuario: usuarioCodigo}, "post", "_blank");
-    }
-    function listarChamadosEspecial(usuarioCodigo, especial) {
-        postViaJS('', {controle: 'Chamados', acao: 'listar', atendente: usuarioCodigo, especial: especial}, "post", "_blank");
-    }
-    function listarChamadosEspecialGeral(especial) {
-        postViaJS('', {controle: 'Chamados', acao: 'listar', especial: especial, especialCliente: 1}, "post", "_blank");
-    }
-    function listarChamadosEspecialCliente(usuarioCodigo, especial) {
-        postViaJS('', {controle: 'Chamados', acao: 'listar', usuario: usuarioCodigo, especial: especial}, "post", "_blank");
-    }
-    function listarAtividadesEspecial(usuarioCodigo, especial) {
-        postViaJS('', {controle: 'Atividades', acao: 'listar', usuario: usuarioCodigo, especial: especial}, "post", "_blank");
-    }
-    function listarAtividadesEspecialGeral(especial) {
-        postViaJS('', {controle: 'Atividades', acao: 'listar', especial: especial, especialCliente: 1}, "post", "_blank");
-    }
-    function listarChamadosNaoClassificados() {
-        postViaJS('', {controle: 'Chamados', acao: 'listarNaoClassificados'}, "post", "_blank");
-    }
-    function mostrarAtividade(atividadeCodigo) {
-        if (atividadeCodigo != 0) {
-            postViaJS('', {controle: 'Atividades', acao: 'cadastrar', id: atividadeCodigo}, "post", "_blank");
+    
+    // Não Classificados
+        // Total
+        function naoClassificadosTotal() {
+            postViaJS('', {controle: 'Chamados', acao: 'listarNaoClassificados'}, "post", "_blank");
         }
-    }
-    function mostrarChamado(chamadoCodigo) {
-        if (chamadoCodigo != 0) {
-            postViaJS('', {controle: 'Chamados', acao: 'cadastrar', id: chamadoCodigo}, "post", "_blank");
+        // Normal
+        function naoClassificados() {
+            postViaJS('', {controle: 'Chamados', acao: 'listarNaoClassificados'}, "post", "_blank");
         }
-    }
+    
+    // Meus Registros
+        // Situacao Executando
+            // Atividades
+            function meusRegistrosExecutandoAtividades(atividadeCodigo) {
+                if (atividadeCodigo != 0) {
+                    postViaJS('', {controle: 'Atividades', acao: 'cadastrar', id: atividadeCodigo}, "post", "_blank");
+                }
+            }
+            // Chamados
+            function meusRegistrosExecutandoChamados(chamadoCodigo) {
+                if (chamadoCodigo != 0) {
+                    postViaJS('', {controle: 'Chamados', acao: 'cadastrar', id: chamadoCodigo}, "post", "_blank");
+                }
+            }
+        // Situacoes Outras
+            // Atividades
+                // Total
+                function meusRegistrosAtividadesTotal(usuarioCodigo) {
+                    postViaJS('', {controle: 'Atividades', acao: 'listar', usuario: usuarioCodigo}, "post", "_blank");
+                }
+                // Normal
+                function meusRegistrosAtividades(usuarioCodigo, situacaoCodigo) {
+                    postViaJS('', {controle: 'Atividades', acao: 'listar', usuario: usuarioCodigo, situacao: situacaoCodigo}, "post", "_blank");
+                }
+            // Chamados
+                // Total
+                function meusRegistrosChamadosPerfilClienteTotal(usuarioCodigo) {
+                    postViaJS('', {controle: 'Chamados', acao: 'listarMeusRegistrosPerfilCliente', usuarioCodigo: usuarioCodigo}, "post", "_blank");
+                }
+                function meusRegistrosChamadosDemaisPerfisTotal(usuarioCodigo) {
+                    postViaJS('', {controle: 'Chamados', acao: 'listarMeusRegistrosDemaisPerfis', usuarioCodigo: usuarioCodigo}, "post", "_blank");
+                }
+                // Normal
+                function meusRegistrosChamadosPerfilCliente(usuarioCodigo, situacaoCodigo) {
+                    postViaJS('', {controle: 'Chamados', acao: 'listarMeusRegistrosPerfilCliente', usuarioCodigo: usuarioCodigo, situacaoCodigo: situacaoCodigo}, "post", "_blank");
+                }
+                function meusRegistrosChamadosDemaisPerfis(usuarioCodigo, situacaoCodigo) {
+                    postViaJS('', {controle: 'Chamados', acao: 'listarMeusRegistrosDemaisPerfis', usuarioCodigo: usuarioCodigo, situacaoCodigo: situacaoCodigo}, "post", "_blank");
+                }
+        // Resumo Geral
+            // Atividades
+                // Total
+                function resumoGeralAtividadesTotal(situacaoCodigo) {
+                    postViaJS('', {controle: 'Atividades', acao: 'listar', situacao: situacaoCodigo}, "post", "_blank");
+                }
+                // Normal
+                function resumoGeralAtividades(usuarioCodigo, situacaoCodigo) {
+                    postViaJS('', {controle: 'Atividades', acao: 'listar', usuario: usuarioCodigo, situacao: situacaoCodigo}, "post", "_blank");
+                }
+            // Chamados
+                // Total
+                function resumoGeralChamadosTotal(situacaoCodigo) {
+                    postViaJS('', {controle: 'Chamados', acao: 'listar', situacao: situacaoCodigo}, "post", "_blank");
+                }
+                // Normal
+                function resumoGeralChamados(usuarioCodigo, situacaoCodigo) {
+                    postViaJS('', {controle: 'Chamados', acao: 'listar', atendente: usuarioCodigo, situacao: situacaoCodigo}, "post", "_blank");
+                }
+        // Minha Empresa
+            // Chamados
+                // Total
+                function listarMinhaEmpresaChamadosTotal(empresaCodigo, situacaoCodigo) {
+                    postViaJS('', {controle: 'Chamados', acao: 'listarMinhaEmpresa', empresaCodigo: empresaCodigo, situacaoCodigo: situacaoCodigo}, "post", "_blank");
+                }
+                // Normal
+                function listarMinhaEmpresaChamados(empresaCodigo, usuarioCodigo, situacaoCodigo) {
+                    postViaJS('', {controle: 'Chamados', acao: 'listarMinhaEmpresa', empresaCodigo: empresaCodigo, usuarioCodigo: usuarioCodigo, situacaoCodigo: situacaoCodigo}, "post", "_blank");
+                }
 </script>
 
 <?php include 'pageclose.php';

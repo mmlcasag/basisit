@@ -608,4 +608,118 @@ class ChamadosModel {
         return $registros;
     }
     
+    public function listarMeusRegistrosPerfilCliente($connection, $usuarioCodigo = "", $situacaoCodigo = "") {
+        $registros = array();
+        
+        $query = " SELECT *
+		           FROM   chamados
+		           WHERE  1 = 1 ";
+        
+        if (!Functions::isEmpty($usuarioCodigo)) {
+            $query .= " AND :usuarioCodigo IN (cha_cdiusuario, cha_cdiusuario_requisitante) ";
+        }
+        if (!Functions::isEmpty($situacaoCodigo)) {
+            $query .= " AND cha_cdisituacao = :situacaoCodigo ";
+        }
+        
+        $stmt = $connection->prepare($query);
+        
+        if (!Functions::isEmpty($usuarioCodigo)) {
+            $stmt->bindParam(':usuarioCodigo', $usuarioCodigo);
+        }
+        if (!Functions::isEmpty($situacaoCodigo)) {
+            $stmt->bindParam(':situacaoCodigo', $situacaoCodigo);
+        }
+        
+        $stmt->execute();
+        
+        $rows = $stmt->fetchAll();
+        
+        foreach ($rows as $row) {
+            $vo = $this->populateVo($connection, $row);
+            
+            array_push($registros, $vo);
+        }
+        
+        return $registros;
+    }
+    
+    public function listarMeusRegistrosDemaisPerfis($connection, $usuarioCodigo = "", $situacaoCodigo = "") {
+        $registros = array();
+        
+        $query = " SELECT *
+		           FROM   chamados
+		           WHERE  1 = 1 ";
+        
+        if (!Functions::isEmpty($usuarioCodigo)) {
+            $query .= " AND :usuarioCodigo IN (cha_cdiusuario, cha_cdiusuario_atendente) ";
+        }
+        if (!Functions::isEmpty($situacaoCodigo)) {
+            $query .= " AND cha_cdisituacao = :situacaoCodigo ";
+        }
+        
+        $stmt = $connection->prepare($query);
+        
+        if (!Functions::isEmpty($usuarioCodigo)) {
+            $stmt->bindParam(':usuarioCodigo', $usuarioCodigo);
+        }
+        if (!Functions::isEmpty($situacaoCodigo)) {
+            $stmt->bindParam(':situacaoCodigo', $situacaoCodigo);
+        }
+        
+        $stmt->execute();
+        
+        $rows = $stmt->fetchAll();
+        
+        foreach ($rows as $row) {
+            $vo = $this->populateVo($connection, $row);
+            
+            array_push($registros, $vo);
+        }
+        
+        return $registros;
+    }
+    
+    public function listarMinhaEmpresa($connection, $empresaCodigo = "", $usuarioCodigo = "", $situacaoCodigo = "") {
+        $registros = array();
+        
+        $query = " SELECT *
+		           FROM   chamados
+		           WHERE  1 = 1 ";
+        
+        if (!Functions::isEmpty($empresaCodigo)) {
+            $query .= " AND cha_cdiempresa = :empresaCodigo ";
+        }
+        if (!Functions::isEmpty($usuarioCodigo)) {
+            $query .= " AND :usuarioCodigo IN (cha_cdiusuario, cha_cdiusuario_requisitante) ";
+        }
+        if (!Functions::isEmpty($situacaoCodigo)) {
+            $query .= " AND cha_cdisituacao = :situacaoCodigo ";
+        }
+        
+        $stmt = $connection->prepare($query);
+        
+        if (!Functions::isEmpty($empresaCodigo)) {
+            $stmt->bindParam(':empresaCodigo', $empresaCodigo);
+        }
+        if (!Functions::isEmpty($usuarioCodigo)) {
+            $stmt->bindParam(':usuarioCodigo', $usuarioCodigo);
+        }
+        if (!Functions::isEmpty($situacaoCodigo)) {
+            $stmt->bindParam(':situacaoCodigo', $situacaoCodigo);
+        }
+        
+        $stmt->execute();
+        
+        $rows = $stmt->fetchAll();
+        
+        foreach ($rows as $row) {
+            $vo = $this->populateVo($connection, $row);
+            
+            array_push($registros, $vo);
+        }
+        
+        return $registros;
+    }
+    
 }
