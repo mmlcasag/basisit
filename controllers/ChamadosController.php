@@ -19,14 +19,18 @@ class ChamadosController extends BaseController {
             return 'N' . 'Informe o campo "Situação"';
         } else if (!Functions::isInteger($vo->getSituacao()->getId())) {
             return 'N' . 'Valor inválido para o campo "Situação"';
-        } else if (Functions::isEmpty($vo->getUsuario()->getId())) {
-            return 'N' . 'Informe o campo "Usuário"';
-        } else if (!Functions::isInteger($vo->getUsuario()->getId())) {
-            return 'N' . 'Valor inválido para o campo "Usuário"';
         } else if (Functions::isEmpty($vo->getEmpresa()->getId())) {
             return 'N' . 'Informe o campo "Empresa"';
         } else if (!Functions::isInteger($vo->getEmpresa()->getId())) {
             return 'N' . 'Valor inválido para o campo "Empresa"';
+        } else if (Functions::isEmpty($vo->getUsuario()->getId())) {
+            return 'N' . 'Informe o campo "Usuário"';
+        } else if (!Functions::isInteger($vo->getUsuario()->getId())) {
+            return 'N' . 'Valor inválido para o campo "Usuário"';
+        } else if (($vo->getUsuario()->getPerfil()->getCliente() == 0) && (Functions::isEmpty($vo->getRequisitante()->getId()))) {
+            return 'N' . 'Informe o campo "Requisitante"';
+        } else if (($vo->getUsuario()->getPerfil()->getCliente() == 0) && (!Functions::isInteger($vo->getRequisitante()->getId()))) {
+            return 'N' . 'Valor inválido para o campo "Requisitante"';
         } else if (Functions::isEmpty($vo->getCategoria()->getId())) {
             return 'N' . 'Informe o campo "Categoria"';
         } else if (!Functions::isInteger($vo->getCategoria()->getId())) {
