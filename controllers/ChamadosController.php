@@ -94,10 +94,10 @@ class ChamadosController extends BaseController {
         $situacoesModel = new SituacoesModel();
         $situacoes = $situacoesModel->load($connection);
         
-	$empresasModel = new EmpresasModel();
+	    $empresasModel = new EmpresasModel();
         $empresas = $empresasModel->load($connection);
 	
-	$categoriasModel = new CategoriasModel();
+	    $categoriasModel = new CategoriasModel();
         $categorias = $categoriasModel->load($connection);
         
         $tiposAmbientesModel = new TiposAmbientesModel();
@@ -177,7 +177,7 @@ class ChamadosController extends BaseController {
         $usuario            = $this->getParametroTela('usuario');
         $requisitante       = $this->getParametroTela('requisitante');
         $atendente          = $this->getParametroTela('atendente');
-	$dataIni            = $this->getParametroTela('dataIni');
+	    $dataIni            = $this->getParametroTela('dataIni');
         $dataFim            = $this->getParametroTela('dataFim');
         $situacao           = $this->getParametroTela('situacao');
         $empresa            = $this->getParametroTela('empresa');
@@ -201,13 +201,15 @@ class ChamadosController extends BaseController {
             // Valida se cliente fez malandragem de trocar empresa
             if ($this->clienteSelecionouEmpresaInvalida($connection, $empresa)) {
                 $erro = true;
-                $mensagem = 'NPercebemos que você selecionou uma empresa diferente da sua. Por motivos de segurança, não listaremos o resultado';
+                $mensagem = 'N' . 'Percebemos que você selecionou uma empresa diferente da sua. Por motivos de segurança, não listaremos o resultado';
             }
             // Valida se cliente fez malandragem de trocar usuário
+            /*
             if ($this->clienteSelecionouUsuarioInvalido($connection, $usuario)) {
                 $erro = true;
-                $mensagem = 'NPercebemos que você selecionou um usuário de uma empresa diferente da sua. Por motivos de segurança, não listaremos o resultado';
+                $mensagem = 'N' . 'Percebemos que você selecionou um usuário de uma empresa diferente da sua. Por motivos de segurança, não listaremos o resultado';
             }
+            */
         }
         
         if ($erro) {
@@ -424,10 +426,12 @@ class ChamadosController extends BaseController {
                 $mensagem = 'N' . 'Percebemos que você selecionou uma empresa diferente da sua. Por motivos de segurança, não gravaremos o chamado';
             }
             // Valida se cliente fez malandragem de trocar usuário
+            /*
             if ($this->clienteSelecionouUsuarioInvalido($connection, $usuarioVo->getId())) {
                 $erro = true;
                 $mensagem = 'N' . 'Percebemos que você selecionou um usuário de uma empresa diferente da sua. Por motivos de segurança, não gravaremos o chamado';
             }
+            */
             if ($chamadoVo->getSituacao() != "") {
                 // Solicitação número 2 do documento "Ajuste_Sistema_Chamados_Ver1_11.pdf"
                 if ($chamadoVo->getSituacao()->getId() == $_SESSION['situacaoFinalizada']) {
