@@ -485,7 +485,7 @@ class ChamadosController extends BaseController {
                     }
                 } else {
                     $subject = 'BasisIT :: Nova Interação no Chamado :: Número ' . $vo->getId() . ' :: ' . $vo->getEmpresa()->getDescricao();
-                    $txt = $txt . 'Informamos que houve uma nova interação no chamado ' . $vo->getId() . '.';
+                    $txt = $txt . 'Informamos que houve uma nova interação no chamado ' . $vo->getId() . ' - ' . $vo->getAssunto() . '.';
                 }
                 
                 $txt = $txt . '<br /><br />Você receberá um aviso a cada notificação feita.<br /><br />';
@@ -684,7 +684,7 @@ class ChamadosController extends BaseController {
             $recipients = array();
             $subject = 'BasisIT :: Finalização de Chamado :: Número ' . $chamadoVo->getId() . ' :: ' . $chamadoVo->getEmpresa()->getDescricao();
             $txt = '<font color="red"><b>OBS: Este e-mail foi gerado automaticamente. Favor não responder para este endereço.</b></font><br /><br />';
-            $txt = $txt . 'Informamos que houve uma nova interação no chamado ' . $chamadoVo->getId() . '.<br /><br />';
+            $txt = $txt . 'Informamos que houve uma nova interação no chamado ' . $chamadoVo->getId() . ' - ' . $chamadoVo->getAssunto() . '.<br /><br />';
             $txt = $txt . '<fieldset><legend><b>Descrição da Interação:</b></legend>* O chamado foi finalizado</fieldset>';
             
             // E-mail para o usuário que abriu o chamado vai sempre
@@ -764,7 +764,7 @@ class ChamadosController extends BaseController {
             $recipients = array();
             $subject = 'BasisIT :: Cancelamento de Chamado :: Número ' . $chamadoVo->getId() . ' :: ' . $chamadoVo->getEmpresa()->getDescricao();
             $txt = '<font color="red"><b>OBS: Este e-mail foi gerado automaticamente. Favor não responder para este endereço.</b></font><br /><br />';
-            $txt = $txt . 'Informamos que houve uma nova interação no chamado ' . $chamadoVo->getId() . '.<br /><br />';
+            $txt = $txt . 'Informamos que houve uma nova interação no chamado ' . $chamadoVo->getId() . ' - ' . $chamadoVo->getAssunto() . '.<br /><br />';
             $txt = $txt . '<fieldset><legend><b>Descrição da Interação:</b></legend>* O chamado foi cancelado</fieldset>';
             
             // E-mail para o usuário que abriu o chamado vai sempre
