@@ -405,7 +405,6 @@ class UsuariosModel {
                    FROM   chamados ch
                    JOIN   usuarios us ON us.usu_cdiusuario IN (ch.cha_cdiusuario, ch.cha_cdiusuario_requisitante) AND us.usu_cdiperfil IN ( SELECT pr.prf_cdiperfil FROM perfis pr WHERE pr.prf_oplcliente = 1 )
                    WHERE  ch.cha_cdiempresa IN ( SELECT a.usu_cdiempresa FROM usuarios a WHERE a.usu_cdiusuario = :usuarioCodigo )
-                   AND    :usuarioCodigo IN (ch.cha_cdiusuario, ch.cha_cdiusuario_requisitante)
                    AND    ch.cha_cdisituacao NOT IN (:sessaoFinalizada, :sessaoCancelada)
                    GROUP  BY us.usu_cdiusuario, us.usu_dssnome
                    ORDER  BY us.usu_dssnome ";
