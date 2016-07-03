@@ -135,8 +135,8 @@ class AtividadesModel {
     
     public function loadById($connection, $codigo) {
         $query = " SELECT * 
-		   FROM   atividades 
-		   WHERE  ati_cdiatividade = :ati_cdiatividade ";
+		           FROM   atividades 
+		           WHERE  ati_cdiatividade = :ati_cdiatividade ";
         
         $stmt = $connection->prepare($query);
         

@@ -41,7 +41,7 @@ class AtividadesController extends BaseController {
         $connection = Databases::connect();
         $dados = $this->carregarDadosFiltrar($connection, $mensagem);
         Databases::disconnect($connection);
-
+        
         $this->exibirTelaFiltrar($dados);
     }
     
@@ -79,7 +79,7 @@ class AtividadesController extends BaseController {
         $connection = Databases::connect();
         $dados = $this->carregarDadosListar($connection, $mensagem);
         Databases::disconnect($connection);
-
+        
         $this->exibirTelaListar($dados);
     }
     
@@ -114,11 +114,11 @@ class AtividadesController extends BaseController {
     
     public function cadastrarAction() {
         $id = $this->getParametroTela('id');
-
+        
         $connection = Databases::connect();
         $dados = $this->carregarDadosManter($connection, $id);
         Databases::disconnect($connection);
-
+        
         $this->exibirTelaManter($dados);
     }
     
@@ -179,27 +179,27 @@ class AtividadesController extends BaseController {
     
     public function salvarCadastrarAction() {
         $connection = Databases::connect();
-
+        
         $situacoesModel = new SituacoesModel();
         $situacaoVo = $situacoesModel->loadById($connection, $this->getParametroTela('situacao'));
-
+        
         $usuariosModel = new UsuariosModel();
         $usuarioVo = $usuariosModel->loadById($connection, $this->getParametroTela('usuario'));
-
+        
         $empresasModel = new EmpresasModel();
         $empresaVo = $empresasModel->loadById($connection, $this->getParametroTela('empresa'));
-
+        
         $tiposAtividadesModel = new TiposAtividadesModel();
         $tipoAtividadeVo = $tiposAtividadesModel->loadById($connection, $this->getParametroTela('tipoAtividade'));
-
+        
         if (Functions::isEmpty($this->getParametroTela('id'))) {
             $modo = "I";
         } else {
             $modo = "A";
         }
-
+        
         $vo = new AtividadesVo();
-
+        
         $vo->setId($this->getParametroTela('id'));
         $vo->setData($this->getParametroTela('data'));
         $vo->setSituacao($situacaoVo);
@@ -208,19 +208,19 @@ class AtividadesController extends BaseController {
         $vo->setTipoAtividade($tipoAtividadeVo);
         $vo->setAssunto($this->getParametroTela('assunto'));
         $vo->setObservacao($this->getParametroTela('observacao'));
-
+        
         $mensagem = $this->validarFormulario($vo);
-
+        
         if (substr($mensagem, 0, 1) == 'S') {
             $id = $this->salvarRegistro($connection, $vo);
             $vo->setId($id);
-
+            
             if ($modo == "I") {
                 $controller = new ApontamentosController();
                 $mensagem = $controller->iniciar($connection, "A", $vo->getId(), "Iniciado automaticamente");
             }
         }
-
+        
         $dados = $this->carregarDadosManter($connection, $vo, $mensagem);
         Databases::disconnect($connection);
         $this->exibirTelaManter($dados);
@@ -228,47 +228,47 @@ class AtividadesController extends BaseController {
     
     public function finalizarAction($mensagem = "") {
         $connection = Databases::connect();
-
+        
         $id = $this->getParametroTela('id');
-
+        
         $atividadeModel = new AtividadesModel();
         $atividadeVo = $atividadeModel->loadById($connection, $id);
-
+        
         $usuarioModel = new UsuariosModel();
         $usuarioVo = $usuarioModel->loadById($connection, $_SESSION['usuarioCodigo']);
-
+        
         $apontamentoModel = new ApontamentosModel();
         $apontamento = $apontamentoModel->verificaSeAberto($connection, "A", $id);
-
+        
         $apontamentoController = new ApontamentosController();
         $mensagem = $apontamentoController->validarIniciarApontamento($atividadeVo, new ChamadosVo(), $apontamento, "A", $id);
-
+        
         if (substr($mensagem, 0, 1) == 'S') {
             $situacaoModel = new SituacoesModel();
             $situacaoVo = $situacaoModel->loadById($connection, $_SESSION['situacaoFinalizada']); // Finalizado
-
+            
             $atividadeVo->setSituacao($situacaoVo);
             $atividadeModel->save($connection, $atividadeVo);
         }
-
+        
         $dados = $this->carregarDadosManter($connection, $id, $mensagem);
-
+        
         Databases::disconnect($connection);
-
+        
         $this->exibirTelaManter($dados);
     }
     
     public function cancelarAction($mensagem = "") {
         $connection = Databases::connect();
-
+        
         $id = $this->getParametroTela('id');
-
+        
         $atividadeModel = new AtividadesModel();
         $atividadeVo = $atividadeModel->loadById($connection, $id);
-
+        
         $usuarioModel = new UsuariosModel();
         $usuarioVo = $usuarioModel->loadById($connection, $_SESSION['usuarioCodigo']);
-
+        
         $apontamentoModel = new ApontamentosModel();
         $apontamento = $apontamentoModel->verificaSeAberto($connection, "A", $id);
         
@@ -278,15 +278,15 @@ class AtividadesController extends BaseController {
         if (substr($mensagem, 0, 1) == 'S') {
             $situacaoModel = new SituacoesModel();
             $situacaoVo = $situacaoModel->loadById($connection, $_SESSION['situacaoCancelada']); // Cancelado
-
+            
             $atividadeVo->setSituacao($situacaoVo);
             $atividadeModel->save($connection, $atividadeVo);
         }
-
+        
         $dados = $this->carregarDadosManter($connection, $id, $mensagem);
-
+        
         Databases::disconnect($connection);
-
+        
         $this->exibirTelaManter($dados);
     }
     

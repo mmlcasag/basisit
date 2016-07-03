@@ -57,9 +57,9 @@ class ChamadosModel {
         $registros = array();
         
         $query = " SELECT *
-		   FROM   chamados
+		           FROM   chamados
                    WHERE  1 = 1
-		   ORDER  BY cha_cdichamado ";
+		           ORDER  BY cha_cdichamado ";
         
         $stmt = $connection->prepare($query);
         
@@ -80,8 +80,8 @@ class ChamadosModel {
         $registros = array();
         
         $query = " SELECT *
-		   FROM   chamados
-		   WHERE  1 = 1 ";
+		           FROM   chamados
+		           WHERE  1 = 1 ";
         
         if (!Functions::isEmpty($codigo)) {
             $query = $query . " AND cha_cdichamado = :cha_cdichamado ";
@@ -220,8 +220,8 @@ class ChamadosModel {
     
     public function loadById($connection, $codigo) {
         $query = " SELECT * 
-		   FROM   chamados 
-		   WHERE  cha_cdichamado = :cha_cdichamado ";
+		           FROM   chamados 
+		           WHERE  cha_cdichamado = :cha_cdichamado ";
         
         $stmt = $connection->prepare($query);
         
@@ -255,18 +255,18 @@ class ChamadosModel {
                      , cha_cdisituacao
                      , cha_cdiempresa
                      , cha_cdicategoria
-		     , cha_cditipoambiente
+		             , cha_cditipoambiente
                      , cha_cditipoproduto
                      , cha_cdimodulo
                      , cha_cdiprioridade
                      , cha_oplimpacto
                      , cha_nuiusuariosafetados
                      , cha_nuiareasafetadas
-		     , cha_dtdprevisaotermino
+		             , cha_dtdprevisaotermino
                      , cha_dssassunto
                      , cha_dsbobservacao
                      )
-		   VALUES
+		           VALUES
                      ( :cha_cdiusuario
                      , :cha_cdiusuario_requisitante
                      , :cha_cdiusuario_atendente
@@ -274,12 +274,12 @@ class ChamadosModel {
                      , :cha_cdisituacao
                      , :cha_cdiempresa
                      , :cha_cdicategoria
-		     , :cha_cditipoambiente
+		             , :cha_cditipoambiente
                      , :cha_cditipoproduto
                      , :cha_cdimodulo
                      , :cha_cdiprioridade
                      , :cha_oplimpacto
-		     , :cha_nuiusuariosafetados
+		             , :cha_nuiusuariosafetados
                      , :cha_nuiareasafetadas
                      , :cha_dtdprevisaotermino
                      , :cha_dssassunto
@@ -376,8 +376,8 @@ class ChamadosModel {
         $registros = array();
         
         $query = " SELECT *
-		   FROM   chamados
-		   WHERE  cha_cdiusuario_atendente IS NULL
+		           FROM   chamados
+		           WHERE  cha_cdiusuario_atendente IS NULL
                    AND    cha_cdisituacao NOT IN (" . $_SESSION['situacaoCancelada'] . ")
                    ORDER  BY cha_cdichamado ";
         

@@ -124,7 +124,7 @@
     }
     ?>
     
-    <form class="form-horizontal" role="form" method="post" onsubmit="return verifica();">
+    <form class="form-horizontal" role="form" method="post" name="form" onsubmit="return verifica();">
         
         <button type="button" class="btn btn-default" onclick="javascript:voltar();">
             <span class="glyphicon glyphicon-arrow-left"></span>&nbsp;&nbsp;Voltar
@@ -277,14 +277,25 @@
         <div class="form-group">
             <label class="control-label col-sm-2" for="id">Assunto:</label>
             <div class="col-sm-8">
-                <?php
-                if ($exibeControlesAbertos) {
-                    echo '<input type="text" class="form-control" id="assunto" name="assunto" value="' . $atividade->getAssunto() . '">';
-                } else {
-                    echo '<input type="text" class="form-control" id="assunto" name="assunto" value="' . $atividade->getAssunto() . '" disabled="disabled">';
-                }
-                ?>
+                <input type="text" class="form-control" id="assunto" name="assunto" value="">
             </div>
+            
+            <?php
+            if ($atividade->getAssunto() != "") {
+                $assunto = addslashes($atividade->getAssunto());
+            } else {
+                $assunto = "";
+            }
+
+            echo '<script>document.form.assunto.value = "' . $assunto . '";</script>';
+
+            if ($exibeControlesAbertos) {
+                echo '';
+            } else {
+                echo '<script>document.form.assunto.disabled = true;</script>';
+                echo '<input type="hidden" name="assunto" value="' . $assunto . '" />';
+            }
+            ?>
         </div>
         
         <!-- include summernote css/js-->

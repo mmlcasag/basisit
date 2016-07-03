@@ -96,7 +96,7 @@ class ChamadosController extends BaseController {
         
 	    $empresasModel = new EmpresasModel();
         $empresas = $empresasModel->load($connection);
-	
+	    
 	    $categoriasModel = new CategoriasModel();
         $categorias = $categoriasModel->load($connection);
         
@@ -139,7 +139,7 @@ class ChamadosController extends BaseController {
         $connection = Databases::connect();
         $dados = $this->carregarDadosListar($connection, $mensagem);
         Databases::disconnect($connection);
-
+        
         $this->exibirTelaListar($dados);
     }
     
@@ -237,7 +237,7 @@ class ChamadosController extends BaseController {
         $connection = Databases::connect();
         $dados = $this->carregarDadosNaoClassificados($connection, $mensagem);
         Databases::disconnect($connection);
-
+        
         $this->exibirTelaListar($dados);
     }
     
@@ -250,11 +250,11 @@ class ChamadosController extends BaseController {
     
     public function cadastrarAction() {
         $id = $this->getParametroTela('id');
-
+        
         $connection = Databases::connect();
         $dados = $this->carregarDadosManter($connection, $id);
         Databases::disconnect($connection);
-
+        
         $this->exibirTelaManter($dados);
     }
     
@@ -277,13 +277,13 @@ class ChamadosController extends BaseController {
         }
         
         $apenasAtivos = 0;
-	if (Functions::isEmpty($chamado->getId())) {
+	    if (Functions::isEmpty($chamado->getId())) {
             $apenasAtivos = 1;
         }
         
         $usuariosModel = new UsuariosModel();
         $usuarios = $usuariosModel->load($connection, $apenasAtivos);
-	
+	    
         $requisitantesModel = new UsuariosModel();
         $requisitantes = $requisitantesModel->loadClientes($connection, $apenasAtivos);
         
@@ -293,40 +293,40 @@ class ChamadosController extends BaseController {
         $situacoesModel = new SituacoesModel();
         $situacoes = $situacoesModel->load($connection);
         
-	$empresasModel = new EmpresasModel();
+	    $empresasModel = new EmpresasModel();
         $empresas = $empresasModel->load($connection);
-	
-	$categoriasModel = new CategoriasModel();
+	    
+	    $categoriasModel = new CategoriasModel();
         $categorias = $categoriasModel->load($connection);
-	
-	$tiposAmbientesModel = new TiposAmbientesModel();
+	    
+	    $tiposAmbientesModel = new TiposAmbientesModel();
         $tiposAmbientes = $tiposAmbientesModel->load($connection);
-	
-	$tiposProdutosModel = new TiposProdutosModel();
+	    
+	    $tiposProdutosModel = new TiposProdutosModel();
         $tiposProdutos = $tiposProdutosModel->load($connection);
         
-	$prioridadesModel = new PrioridadesModel();
+	    $prioridadesModel = new PrioridadesModel();
         $prioridades = $prioridadesModel->load($connection);
-	
+	    
         $moduloModel = new ModulosModel();
         $modulos = $moduloModel->load($connection);
         
-	$historicosModel = new ChamadosHistoricosModel();
-	$historicos = $historicosModel->loadByChamado($connection, $chamado->getId());
-	
-	$apontamentosModel = new ApontamentosModel();
-	$apontamentos = $apontamentosModel->load($connection, "", $chamado->getId());
-	
-	$outroChamado = new ChamadosVo();
-	
+	    $historicosModel = new ChamadosHistoricosModel();
+	    $historicos = $historicosModel->loadByChamado($connection, $chamado->getId());
+	    
+	    $apontamentosModel = new ApontamentosModel();
+	    $apontamentos = $apontamentosModel->load($connection, "", $chamado->getId());
+	    
+	    $outroChamado = new ChamadosVo();
+	    
         $caller = "cadastrar";
-	
+	    
         return $this->trabalharDadosManter($chamado, $usuarios, $requisitantes, $atendentes, $situacoes, $empresas, $categorias, $tiposAmbientes, $tiposProdutos, $modulos, $prioridades, $historicos, $apontamentos, $outroChamado, $caller, $mensagem);
     }
     
     private function trabalharDadosManter($chamado, $usuarios = array(), $requisitantes = array(), $atendentes = array(), $situacoes = array(), $empresas = array(), $categorias = array(), $tiposAmbientes = array(), $tiposProdutos = array(), $modulos = array(), $prioridades = array(), $historicos = array(), $apontamentos = array(), $outroChamado = "", $caller = "", $mensagem = "") {
         return array( 'mensagem'        => $mensagem
-		    , 'chamado'         => $chamado
+		            , 'chamado'         => $chamado
                     , 'usuarios'        => $usuarios 
                     , 'requisitantes'   => $requisitantes
                     , 'atendentes'      => $atendentes
@@ -352,7 +352,7 @@ class ChamadosController extends BaseController {
     
     public function salvarCadastrarAction() {
         $connection = Databases::connect();
-
+        
         $chamadosModel = new ChamadosModel();
         $chamadoVo = $chamadosModel->loadById($connection, $this->getParametroTela('id'));
         
@@ -363,16 +363,16 @@ class ChamadosController extends BaseController {
         $usuarioVo = $usuariosModel->loadById($connection, $this->getParametroTela('usuario'));
         $requisitanteVo = $usuariosModel->loadById($connection, $this->getParametroTela('requisitante'));
         $atendenteVo = $usuariosModel->loadById($connection, $this->getParametroTela('atendente'));
-
+        
         $empresasModel = new EmpresasModel();
         $empresaVo = $empresasModel->loadById($connection, $this->getParametroTela('empresa'));
         
         $categoriasModel = new CategoriasModel();
         $categoriaVo = $categoriasModel->loadById($connection, $this->getParametroTela('categoria'));
-
+        
         $tiposAmbientesModel = new TiposAmbientesModel();
         $tipoAmbienteVo = $tiposAmbientesModel->loadById($connection, $this->getParametroTela('tipoAmbiente'));
-
+        
         $tiposProdutosModel = new TiposProdutosModel();
         $tipoProdutoVo = $tiposProdutosModel->loadById($connection, $this->getParametroTela('tipoProduto'));
         
@@ -387,15 +387,15 @@ class ChamadosController extends BaseController {
         } else {
             $impacto = $this->getParametroTela('impacto');
         }
-
+        
         if (Functions::isEmpty($this->getParametroTela('id'))) {
             $modo = "I";
         } else {
             $modo = "A";
         }
-
+        
         $vo = new ChamadosVo();
-
+        
         $vo->setId($this->getParametroTela('id'));
         $vo->setUsuario($usuarioVo);
         $vo->setRequisitante($requisitanteVo);
@@ -535,7 +535,7 @@ class ChamadosController extends BaseController {
         
         $dados = $this->carregarDadosManter($connection, $vo, $mensagem);
         Databases::disconnect($connection);
-
+        
         $this->exibirTelaManter($dados);
     }
     
@@ -555,7 +555,7 @@ class ChamadosController extends BaseController {
         $mensagem = "";
         
         if (Functions::isEmpty($chamadoAntes->getId())) {
-            $mensagem = $mensagem . '* Chamado incluído. <br />* Descrição adicionada: "' . $chamadoDepois->getObservacao() . '"<br />';
+            $mensagem = $mensagem . '* Chamado "' . $chamadoDepois->getAssunto() . '" incluído.<br />* Descrição adicionada: "' . $chamadoDepois->getObservacao() . '"<br />';
         } else {
             $chamadoAnexoAntes = $chamadoAntes->getAnexo();
             $chamadoAnexoDepois = $chamadoDepois->getAnexo();
@@ -713,15 +713,15 @@ class ChamadosController extends BaseController {
     
     public function cancelarAction($mensagem = "") {
         $connection = Databases::connect();
-
+        
         $id = $this->getParametroTela('id');
-
+        
         $chamadoModel = new ChamadosModel();
         $chamadoVo = $chamadoModel->loadById($connection, $id);
-
+        
         $apontamentoModel = new ApontamentosModel();
         $apontamento = $apontamentoModel->verificaSeAberto($connection, "C", $id);
-
+        
         $apontamentoController = new ApontamentosController();
         $mensagem = $apontamentoController->validarIniciarApontamento(new AtividadesVo(), $chamadoVo, $apontamento, "C", $id);
         
@@ -744,19 +744,19 @@ class ChamadosController extends BaseController {
         if (substr($mensagem, 0, 1) == 'S') {
             $situacaoModel = new SituacoesModel();
             $situacaoVo = $situacaoModel->loadById($connection, $_SESSION['situacaoCancelada']); // Cancelado
-
+            
             $chamadoVo->setSituacao($situacaoVo);
             $chamadoModel->save($connection, $chamadoVo);
-
+            
             $usuarioModel = new UsuariosModel();
             $usuarioVo = $usuarioModel->loadById($connection, $_SESSION['usuarioCodigo']);
-
+            
             $chamadoHistoricoVo = new ChamadosHistoricosVo();
             $chamadoHistoricoVo->setChamado($chamadoVo);
             $chamadoHistoricoVo->setData(date('Y-m-d H:i'));
             $chamadoHistoricoVo->setUsuario($usuarioVo);
             $chamadoHistoricoVo->setObservacao("* Chamado cancelado");
-
+            
             $chamadoHistoricoModel = new ChamadosHistoricosModel();
             $chamadoHistoricoModel->save($connection, $chamadoHistoricoVo);
             
@@ -785,20 +785,20 @@ class ChamadosController extends BaseController {
         }
         
         $dados = $this->carregarDadosManter($connection, $id, $mensagem);
-
+        
         Databases::disconnect($connection);
-
+        
         $this->exibirTelaManter($dados);
     }
     
     public function ajaxBuscaEmpresaDoRequisitanteAction() {
         $requisitante = $this->getParametroTela('requisitante');
-
+        
         $connection = Databases::connect();
         $usuarioModel = new UsuariosModel();
         $usuarioVo = $usuarioModel->loadById($connection, $requisitante);
         Databases::disconnect($connection);
-
+        
         echo $usuarioVo->getEmpresa()->getId();
     }
     
@@ -806,9 +806,9 @@ class ChamadosController extends BaseController {
         $impacto = $this->getParametroTela('impacto');
         $usuariosAfetados = $this->getParametroTela('usuariosAfetados');
         $exibeAberto = $this->getParametroTela('exibeAberto');
-
+        
         $chamadoVo = new ChamadosVo();
-
+        
         if ($impacto == 1) {
             echo '<label class="control-label col-sm-2" for="usuariosAfetados">Usuários Afetados:</label>
                   <div class="col-sm-3">
@@ -829,7 +829,7 @@ class ChamadosController extends BaseController {
         $impacto = $this->getParametroTela('impacto');
         $areasAfetadas = $this->getParametroTela('areasAfetadas');
         $exibeAberto = $this->getParametroTela('exibeAberto');
-
+        
         $chamadoVo = new ChamadosVo();
         
         if ($impacto == 1) {

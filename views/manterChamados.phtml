@@ -764,15 +764,15 @@
                 <input type="text" class="form-control" id="assunto" name="assunto" value="" />
             </div>
             
-                <?php
+            <?php
             if ($chamado->getAssunto() != "") {
-                $assunto = $chamado->getAssunto();
+                $assunto = addslashes($chamado->getAssunto());
             } else {
                 $assunto = "";
             }
-
+            
             echo '<script>document.form.assunto.value = "' . $assunto . '";</script>';
-
+            
             if ($exibeControlesAbertos) {
                 echo '';
             } else {
