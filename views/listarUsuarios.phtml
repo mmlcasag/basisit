@@ -43,12 +43,11 @@
         <thead>
             <tr>
                 <th class="col-xs-1">#</th>
-                <th class="col-xs-2">Nome</th>
-                <th class="col-xs-2">E-mail</th>
-                <th class="col-xs-1">Perfil</th>
+                <th class="col-xs-3">Nome</th>
+                <th class="col-xs-2">Perfil</th>
                 <th class="col-xs-2">Empresa</th>
-                <th class="col-xs-2">Telefone</th>
-                <th class="col-xs-2">Celular</th>
+                <th class="col-xs-3">Contato</th>
+                <th class="col-xs-1">Situação</th>
             </tr>
         </thead>
 	    
@@ -57,11 +56,16 @@
             <tr>
                 <td><a href="javascript:editar(<?php echo $usuario->getId()?>);"><?php echo $usuario->getId()?></a></td>
                 <td><?php echo $usuario->getNome()?></td>
-                <td><?php echo $usuario->getEmail()?></td>
                 <td><?php echo $usuario->getPerfil()->getDescricao()?></td>
                 <td><?php echo $usuario->getEmpresa()->getDescricao()?></td>
-                <td><?php echo $usuario->getFoneComercial()?></td>
-                <td><?php echo $usuario->getFoneCelular()?></td>
+                <td>
+                    <p>
+                        <span class="glyphicon glyphicon-envelope"></span>&nbsp;&nbsp;<?php echo $usuario->getEmail()?><br />
+                        <span class="glyphicon glyphicon-phone-alt"></span>&nbsp;&nbsp;<?php echo $usuario->getFoneComercial()?><br />
+                        <span class="glyphicon glyphicon-phone"></span>&nbsp;&nbsp;<?php echo $usuario->getFoneCelular()?><br />
+                    </p>
+                </td>
+                <td><?php echo $usuario->getSituacaoExtenso()?></td>
             </tr>
             <?php } ?>
         </tbody>
