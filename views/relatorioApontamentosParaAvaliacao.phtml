@@ -46,6 +46,16 @@
         $apontamentoTipo = $v_params['apontamentoTipo'];
     }
     
+    $atividadeCodigo = "";
+    if (array_key_exists('atividadeCodigo', $v_params)) {
+        $atividadeCodigo = $v_params['atividadeCodigo'];
+    }
+
+    $chamadoCodigo = "";
+    if (array_key_exists('chamadoCodigo', $v_params)) {
+        $chamadoCodigo = $v_params['chamadoCodigo'];
+    }
+    
     $registros = array();
     if (array_key_exists('registros', $v_params)) {
         $registros = $v_params['registros'];
@@ -177,6 +187,17 @@
                     <option value="Atividade" <?php echo $apontamentoTipo == "Atividade" ? "selected" : "" ?>>Apenas Atividades</option>
                     <option value="Chamado" <?php echo $apontamentoTipo == "Chamado" ? "selected" : "" ?>>Apenas Chamados</option>
                 </select>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="atividadeCodigo">Atividade:</label>
+            <div class="col-sm-3">
+                <input type="text" class="form-control" id="atividadeCodigo" name="atividadeCodigo" value="<?php echo $atividadeCodigo;?>" />
+            </div>
+            <label class="control-label col-sm-2" for="chamadoCodigo">Chamado:</label>
+            <div class="col-sm-3">
+                <input type="text" class="form-control" id="chamadoCodigo" name="chamadoCodigo" value="<?php echo $chamadoCodigo;?>" />
             </div>
         </div>
         

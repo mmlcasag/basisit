@@ -373,7 +373,7 @@ class ApontamentosModel {
         return $registros;
     }
     
-    public function loadApontamentosParaAvaliacao($connection, $periodoInicial, $periodoFinal, $usuarioCodigo = "", $empresaCodigo = "", $apontamentoAvaliacao = "", $apontamentoTipo = "") {
+    public function loadApontamentosParaAvaliacao($connection, $periodoInicial, $periodoFinal, $usuarioCodigo = "", $empresaCodigo = "", $apontamentoAvaliacao = "", $apontamentoTipo = "", $atividadeCodigo = "", $chamadoCodigo = "") {
         $registros = array();
         
         $query = "  SELECT 'Atividade' apo_dsstipoapontamento
@@ -412,6 +412,14 @@ class ApontamentosModel {
             } else {
                 $query = $query . " AND 1 = 2 ";
             }
+        }
+        
+        if (!Functions::isEmpty($atividadeCodigo)) {
+            $query = $query . " AND at.ati_cdiatividade = :ati_cdiatividade ";
+        }
+        
+        if (!Functions::isEmpty($chamadoCodigo)) {
+            $query = $query . " AND 1 = 2 ";
         }
         
         $query = $query . " UNION ALL
@@ -454,6 +462,14 @@ class ApontamentosModel {
             }
         }
         
+        if (!Functions::isEmpty($atividadeCodigo)) {
+            $query = $query . " AND 1 = 2 ";
+        }
+        
+        if (!Functions::isEmpty($chamadoCodigo)) {
+            $query = $query . " AND ch.cha_cdichamado = :cha_cdichamado ";
+        }
+        
         $query = $query . " ORDER BY 1, 2, 3 ";
         
         $stmt = $connection->prepare($query);
@@ -473,6 +489,14 @@ class ApontamentosModel {
         
         if ($apontamentoAvaliacao != "") {
             $stmt->bindParam(':apo_cdimodofaturamento', $apontamentoAvaliacao);
+        }
+        
+        if (!Functions::isEmpty($atividadeCodigo)) {
+            $stmt->bindParam(':ati_cdiatividade', $atividadeCodigo);
+        }
+        
+        if (!Functions::isEmpty($chamadoCodigo)) {
+            $stmt->bindParam(':cha_cdichamado', $chamadoCodigo);
         }
         
         $stmt->execute();
