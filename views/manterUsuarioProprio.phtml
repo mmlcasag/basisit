@@ -51,14 +51,6 @@
         <input type="hidden" id="id" name="id" value="<?php echo $usuario->getId() ?>">
         
         <div class="form-group">
-            <label class="control-label col-sm-2" for="email">Usuário:</label>
-            <div class="col-sm-4">
-                <input type="hidden" id="email" name="email" value="<?php echo $usuario->getEmail()?>">
-                <input type="text" class="form-control" value="<?php echo $usuario->getEmail()?>" disabled="disabled">
-            </div>
-        </div>
-        
-        <div class="form-group">
             <label class="control-label col-sm-2" for="nome">Nome:</label>
             <div class="col-sm-4">
                 <input type="text" class="form-control" id="nome" name="nome" value="<?php echo $usuario->getNome()?>">
@@ -66,16 +58,39 @@
         </div>
         
         <div class="form-group">
-            <label class="control-label col-sm-2" for="foneComercial">Fone Comercial:</label>
-            <div class="col-sm-2">
-                <input type="text" class="form-control" id="foneComercial" name="foneComercial" value="<?php echo $usuario->getFoneComercial()?>">
+            <label class="control-label col-sm-2" for="email">E-mail:</label>
+            <div class="col-sm-4">
+                <div class="input-group">   
+                    <div class="input-group-addon">
+                        <span class="glyphicon glyphicon-envelope"></span> 
+                    </div>
+                    <input type="hidden" id="email" name="email" value="<?php echo $usuario->getEmail()?>">
+                    <input type="text" class="form-control" value="<?php echo $usuario->getEmail()?>" disabled="disabled">
+                </div>
             </div>
         </div>
         
         <div class="form-group">
-            <label class="control-label col-sm-2" for="foneCelular">Fone Celular:</label>
-            <div class="col-sm-2">
-                <input type="text" class="form-control" id="foneCelular" name="foneCelular" value="<?php echo $usuario->getFoneCelular()?>">
+            <label class="control-label col-sm-2" for="foneComercial">Telefone:</label>
+            <div class="col-sm-3">
+                <div class="input-group">   
+                    <div class="input-group-addon">
+                        <span class="glyphicon glyphicon-phone-alt"></span> 
+                    </div>
+                    <input type="text" class="form-control" id="foneComercial" name="foneComercial" value="<?php echo $usuario->getFoneComercial()?>">
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="foneCelular">Celular:</label>
+            <div class="col-sm-3">
+                <div class="input-group">   
+                    <div class="input-group-addon">
+                        <span class="glyphicon glyphicon-phone"></span> 
+                    </div>
+                    <input type="text" class="form-control" id="foneCelular" name="foneCelular" value="<?php echo $usuario->getFoneCelular()?>">
+                </div>
             </div>
         </div>
         

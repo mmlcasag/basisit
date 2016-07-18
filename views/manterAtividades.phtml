@@ -73,9 +73,9 @@
         $situacaoDescricao = "Em Andamento";
     } else {
         $inclusao = false;
-        $atividadeData = "";
-        $situacaoCodigo = "";
-        $situacaoDescricao = "";
+        $atividadeData = $atividade->getData();
+        $situacaoCodigo = $atividade->getSituacao()->getId();
+        $situacaoDescricao = $atividade->getSituacao()->getDescricao();
     }
     
     if (Functions::isEmpty($_SESSION['empresaCodigo'])) {
@@ -105,6 +105,22 @@
     $(document).ready(function() {
         $(".datepicker").datepicker({dateFormat: 'dd/mm/yy'});
     });
+    function atualizarAtendenteModal() {
+        var ajax;
+        if (window.XMLHttpRequest)
+            ajax = new XMLHttpRequest();
+        else
+            ajax = new ActiveXObject("Microsoft.XMLHTTP");
+
+        ajax.onreadystatechange = function() {
+            if (ajax.readyState == 4 && ajax.status == 200) {
+                document.getElementById("atendenteModal").innerHTML = ajax.responseText;
+            }
+        }
+        ajax.open("POST", "?controle=Usuarios&acao=ajaxExibeContatosUsuario", true);
+        ajax.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+        ajax.send("usuarioCodigo=" + document.getElementById("usuario").value);
+    }
 </script>
 
 <div class="container">
@@ -162,18 +178,13 @@
             </div>
             <label class="control-label col-sm-2" for="data">Data Abertura:</label>
             <div class="col-sm-3">
-                <?php 
-                if ($inclusao) {
-                    echo '<input type="hidden" name="data" value="' . $atividadeData . '" />';
-                    echo '<input type="text" class="form-control datepicker" id="data" name="data" value="' . $atividadeData . '" disabled="disabled" />';
-                } else {
-                    if ($exibeControlesAbertos) {
-                        echo '<input type="text" class="form-control datepicker" id="data" name="data" value="' . $atividade->getData() . '" />';
-                    } else {
-                        echo '<input type="text" class="form-control datepicker" id="data" name="data" value="' . $atividade->getData() . '" disabled="disabled"/>';
-                    }
-                } 
-                ?>
+                <div class="input-group">   
+                    <div class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span> 
+                    </div>
+                    <input type="hidden" name="data" value="<?php echo $atividadeData ?>" />
+                    <input type="text" class="form-control datepicker" id="data" name="data" value="<?php echo $atividadeData ?>" disabled="disabled" />
+                </div>
             </div>
         </div>
         
@@ -204,27 +215,36 @@
             </div>
             <label class="control-label col-sm-2" for="usuario">Analista:</label>
             <div class="col-sm-3">
-                <?php 
-                if ($exibeUsuarioAberto) {
-                    if ($exibeControlesAbertos) {
-                        echo '<select class="form-control" id="usuario" name="usuario">';
-                    } else {
-                        echo '<select class="form-control" id="usuario" name="usuario" disabled="disabled">';
-                    }
-                    echo '<option value="">Selecione</option>';
-                    foreach($usuarios as $usuario) {
-                        if ($atividade->getUsuario() != "" && $usuario->getId() == $atividade->getUsuario()->getId()) {
-                            echo '<option value="' . $usuario->getId() . '" selected>' . $usuario->getNome() . '</option>';
+                <div class="input-group">   
+                    <div class="input-group-addon" data-toggle="modal" data-target="#atendenteModal">
+                        <span class="glyphicon glyphicon-info-sign"></span> 
+                    </div>
+                    <?php 
+                    if ($exibeUsuarioAberto) {
+                        if ($exibeControlesAbertos) {
+                            echo '<select class="form-control" id="usuario" name="usuario" onchange="atualizarAtendenteModal()">';
                         } else {
-                            echo '<option value="' . $usuario->getId() . '">' . $usuario->getNome() . '</option>';
+                            echo '<select class="form-control" id="usuario" name="usuario" disabled="disabled">';
                         }
+                        echo '<option value="">Selecione</option>';
+                        foreach($usuarios as $usuario) {
+                            if ($atividade->getUsuario() != "" && $usuario->getId() == $atividade->getUsuario()->getId()) {
+                                echo '<option value="' . $usuario->getId() . '" selected>' . $usuario->getNome() . '</option>';
+                            } else {
+                                echo '<option value="' . $usuario->getId() . '">' . $usuario->getNome() . '</option>';
+                            }
+                        }
+                        echo '</select>';
+                    } else {
+                        echo '<input type="hidden" name="usuario" value="' . $usuarioCodigo . '" />';
+                        echo '<input type="text" class="form-control" id="usuario" name="usuario" value="' . $usuarioNome . '" disabled="disabled" />';
                     }
-                    echo '</select>';
-                } else {
-                    echo '<input type="hidden" name="usuario" value="' . $usuarioCodigo . '" />';
-                    echo '<input type="text" class="form-control" id="usuario" name="usuario" value="' . $usuarioNome . '" disabled="disabled" />';
-                }
-                ?>
+                    ?>
+                    
+                    <div id="atendenteModal" class="modal fade" role="dialog">
+                        
+                    </div>
+                </div>
             </div>
         </div>
         
@@ -437,6 +457,7 @@
         document.getElementById('observacao').value = markupStr;
         return true;
     }
+    atualizarAtendenteModal();
 </script>
 
 <?php include 'pageclose.php';

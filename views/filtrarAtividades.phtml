@@ -60,6 +60,22 @@
     $(document).ready(function() {
         $(".datepicker").datepicker({dateFormat: 'dd/mm/yy'});
     });
+    function atualizarAtendenteModal() {
+        var ajax;
+        if (window.XMLHttpRequest)
+            ajax = new XMLHttpRequest();
+        else
+            ajax = new ActiveXObject("Microsoft.XMLHTTP");
+
+        ajax.onreadystatechange = function() {
+            if (ajax.readyState == 4 && ajax.status == 200) {
+                document.getElementById("atendenteModal").innerHTML = ajax.responseText;
+            }
+        }
+        ajax.open("POST", "?controle=Usuarios&acao=ajaxExibeContatosUsuario", true);
+        ajax.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+        ajax.send("usuarioCodigo=" + document.getElementById("usuario").value);
+    }
 </script>
 
 <div class="container">
@@ -104,11 +120,21 @@
         <div class="form-group">
             <label class="control-label col-sm-2" for="dataIni">Data Abertura (de):</label>
             <div class="col-sm-3">
-                <input type="text" class="form-control datepicker" id="dataIni" name="dataIni" value="<?php echo $dataIni?>" />
+                <div class="input-group">   
+                    <div class="input-group-addon" onclick="document.getElementById('dataIni').focus();">
+                        <span class="glyphicon glyphicon-calendar"></span> 
+                    </div>
+                    <input type="text" class="form-control datepicker" id="dataIni" name="dataIni" value="<?php echo $dataIni?>" />
+                </div>
             </div>
             <label class="control-label col-sm-2" for="dataFim">Data Abertura (até):</label>
             <div class="col-sm-3">
-                <input type="text" class="form-control datepicker" id="dataFim" name="dataFim" value="<?php echo $dataFim?>" />
+                <div class="input-group">   
+                    <div class="input-group-addon" onclick="document.getElementById('dataFim').focus();">
+                        <span class="glyphicon glyphicon-calendar"></span> 
+                    </div>
+                    <input type="text" class="form-control datepicker" id="dataFim" name="dataFim" value="<?php echo $dataFim?>" />
+                </div>
             </div>
         </div>
         
@@ -126,19 +152,29 @@
             </div>
             <label class="control-label col-sm-2" for="usuario">Analista:</label>
             <div class="col-sm-3">
-                <?php 
-                if ($exibeUsuarioAberto) {
-                    echo '<select class="form-control" id="usuario" name="usuario">';
-                    echo '<option value="">Selecione</option>';
-                    foreach($usuarios as $usuario) {
-                        echo '<option value="' . $usuario->getId() . '">' . $usuario->getNome() . '</option>';
+                <div class="input-group">   
+                    <div class="input-group-addon" data-toggle="modal" data-target="#atendenteModal">
+                        <span class="glyphicon glyphicon-info-sign"></span> 
+                    </div>
+                    
+                    <?php 
+                    if ($exibeUsuarioAberto) {
+                        echo '<select class="form-control" id="usuario" name="usuario" onchange="atualizarAtendenteModal()">';
+                        echo '<option value="">Selecione</option>';
+                        foreach($usuarios as $usuario) {
+                            echo '<option value="' . $usuario->getId() . '">' . $usuario->getNome() . '</option>';
+                        }
+                        echo '</select>';
+                    } else {
+                        echo '<input type="hidden" name="usuario" value="' . $usuarioCodigo . '" />';
+                        echo '<input type="text" class="form-control" id="usuario" name="usuario" value="' . $usuarioNome . '" disabled="disabled" />';
                     }
-                    echo '</select>';
-                } else {
-                    echo '<input type="hidden" name="usuario" value="' . $usuarioCodigo . '" />';
-                    echo '<input type="text" class="form-control" id="usuario" name="usuario" value="' . $usuarioNome . '" disabled="disabled" />';
-                }
-                ?>
+                    ?>
+                    
+                    <div id="atendenteModal" class="modal fade" role="dialog">
+
+                    </div>
+                </div>
             </div>
         </div>
         
@@ -187,6 +223,7 @@
     function incluir() {
         postViaJS('', {controle: 'Atividades', acao: 'cadastrar'}, "post", "_blank");
     }
+    atualizarAtendenteModal();
 </script>
 
 <?php include 'pageclose.php';

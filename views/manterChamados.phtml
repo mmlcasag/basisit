@@ -294,6 +294,54 @@
         defineUsuariosAfetados(exibeAberto, usuariosAfetados);
         defineAreasAfetadas(exibeAberto, areasAfetadas);
     }
+    function atualizarAtendenteModal() {
+        var ajax;
+        if (window.XMLHttpRequest)
+            ajax = new XMLHttpRequest();
+        else
+            ajax = new ActiveXObject("Microsoft.XMLHTTP");
+
+        ajax.onreadystatechange = function() {
+            if (ajax.readyState == 4 && ajax.status == 200) {
+                document.getElementById("atendenteModal").innerHTML = ajax.responseText;
+            }
+        }
+        ajax.open("POST", "?controle=Usuarios&acao=ajaxExibeContatosUsuario", true);
+        ajax.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+        ajax.send("usuarioCodigo=" + document.getElementById("atendente").value);
+    }
+    function atualizarUsuarioModal() {
+        var ajax;
+        if (window.XMLHttpRequest)
+            ajax = new XMLHttpRequest();
+        else
+            ajax = new ActiveXObject("Microsoft.XMLHTTP");
+
+        ajax.onreadystatechange = function() {
+            if (ajax.readyState == 4 && ajax.status == 200) {
+                document.getElementById("usuarioModal").innerHTML = ajax.responseText;
+            }
+        }
+        ajax.open("POST", "?controle=Usuarios&acao=ajaxExibeContatosUsuario", true);
+        ajax.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+        ajax.send("usuarioCodigo=" + document.getElementById("usuario").value);
+    }
+    function atualizarRequisitanteModal() {
+        var ajax;
+        if (window.XMLHttpRequest)
+            ajax = new XMLHttpRequest();
+        else
+            ajax = new ActiveXObject("Microsoft.XMLHTTP");
+
+        ajax.onreadystatechange = function() {
+            if (ajax.readyState == 4 && ajax.status == 200) {
+                document.getElementById("requisitanteModal").innerHTML = ajax.responseText;
+            }
+        }
+        ajax.open("POST", "?controle=Usuarios&acao=ajaxExibeContatosUsuario", true);
+        ajax.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+        ajax.send("usuarioCodigo=" + document.getElementById("requisitante").value);
+    }
 </script>
 
 <div class="container">
@@ -357,7 +405,12 @@
             
             <label class="control-label col-sm-2" for="data">Data Abertura:</label>
             <div class="col-sm-3">
-                <input type="text" class="form-control datepicker" id="data" name="data" value="" disabled="disabled" />                
+                <div class="input-group">   
+                    <div class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span> 
+                    </div>
+                    <input type="text" class="form-control datepicker" id="data" name="data" value="" disabled="disabled" />
+                </div>
             </div>
             
             <?php
@@ -408,7 +461,12 @@
             
             <label class="control-label col-sm-2" for="usuario">Usuário:</label>
             <div class="col-sm-3">
-                <input type="text" class="form-control" id="usuario" name="usuario" value="" disabled="disabled" />
+                <div class="input-group">   
+                    <div class="input-group-addon" data-toggle="modal" data-target="#usuarioModal">
+                        <span class="glyphicon glyphicon-info-sign"></span> 
+                    </div>
+                    <input type="text" class="form-control" id="usuarioLabel" name="usuarioLabel" value="" disabled="disabled" />
+                </div>
             </div>
             
             <?php
@@ -419,10 +477,14 @@
                 $usuarioCodigo = $chamado->getUsuario()->getId();
                 $usuarioNome = $chamado->getUsuario()->getNome();
             }
-
-            echo '<script>document.form.usuario.value = "' . $usuarioNome . '";</script>';
-            echo '<input type="hidden" name="usuario" value="' . $usuarioCodigo . '" />';
+            
+            echo '<script>document.form.usuarioLabel.value = "' . $usuarioNome . '";</script>';
+            echo '<input type="hidden" id="usuario" name="usuario" value="' . $usuarioCodigo . '" />';
             ?>
+            
+            <div id="usuarioModal" class="modal fade" role="dialog">
+                <script>atualizarUsuarioModal();</script>
+            </div>
         </div>
         
         <?php if (($exibeRequisitante) || ($exibeAtendente)) { ?>
@@ -432,14 +494,22 @@
             <?php if ($exibeRequisitante) { ?>
             <label class="control-label col-sm-2" for="requisitante">Requisitante:</label>
             <div class="col-sm-3">
-                <select class="form-control" id="requisitante" name="requisitante" onchange="atualizaEmpresa();">
-                    <option value="">Selecione</option>
-                    <?php
-                    foreach($usuarios as $usuario) {
-                        echo '<option value="' . $usuario->getId() . '">' . $usuario->getNome() . '</option>';
-                    }
-                    ?>
-                </select>
+                <div class="input-group">   
+                    <div class="input-group-addon" data-toggle="modal" data-target="#requisitanteModal">
+                        <span class="glyphicon glyphicon-info-sign"></span> 
+                    </div>
+                    <select class="form-control" id="requisitante" name="requisitante" onchange="atualizaEmpresa(); atualizarRequisitanteModal();">
+                        <option value="">Selecione</option>
+                        <?php
+                        foreach($usuarios as $usuario) {
+                            echo '<option value="' . $usuario->getId() . '">' . $usuario->getNome() . '</option>';
+                        }
+                        ?>
+                    </select>
+                    <div id="requisitanteModal" class="modal fade" role="dialog">
+                        
+                    </div>
+                </div>
             </div>
             
             <?php
@@ -453,7 +523,7 @@
 
             if ($exibeRequisitante) {
                 echo '<script>document.form.requisitante.value = "' . $requisitante . '";</script>';
-
+                
                 if (($exibeRequisitanteAtivado) && ($exibeControlesAbertos)) {
                     echo '';
                 } else {
@@ -471,14 +541,22 @@
             <?php if ($exibeAtendente) { ?>
             <label class="control-label col-sm-2" for="atendente">Analista:</label>
             <div class="col-sm-3">
-                <select class="form-control" id="atendente" name="atendente">
-                    <option value="">Selecione</option>
-                    <?php
-                    foreach($atendentes as $atendente) {
-                        echo '<option value="' . $atendente->getId() . '">' . $atendente->getNome() . '</option>';
-                    }
-                    ?>
-                </select>
+                <div class="input-group">   
+                    <div class="input-group-addon" data-toggle="modal" data-target="#atendenteModal">
+                        <span class="glyphicon glyphicon-info-sign"></span> 
+                    </div>
+                    <select class="form-control" id="atendente" name="atendente" onchange="atualizarAtendenteModal();">
+                        <option value="">Selecione</option>
+                        <?php
+                        foreach($atendentes as $atendente) {
+                            echo '<option value="' . $atendente->getId() . '">' . $atendente->getNome() . '</option>';
+                        }
+                        ?>
+                    </select>
+                    <div id="atendenteModal" class="modal fade" role="dialog">
+                        
+                    </div>
+                </div>
             </div>
             
             <?php
@@ -487,10 +565,10 @@
             } else {
                 $atendente = "";
             }
-
+            
             if ($exibeAtendente) {
                 echo '<script>document.form.atendente.value = "' . $atendente . '";</script>';
-
+                
                 if (($exibeAtendenteAtivado) && ($exibeControlesAbertos)) { 
                     echo '';
                 } else {
@@ -693,13 +771,18 @@
             
             <label class="control-label col-sm-2" for="previsaoTermino">Previsão Término:</label>
             <div class="col-sm-3">
-                <?php
-                if (($exibePrevisaoTermino) && ($exibeControlesAbertos)) {
-                    echo '<input type="text" class="form-control datepicker" id="previsaoTermino" name="previsaoTermino" value="' . $previsaoTermino . '" />';
-                } else {
-                    echo '<input type="hidden" id="previsaoTermino" name="previsaoTermino" value="' . $previsaoTermino . '" /><input type="text" class="form-control datepicker" id="previsaoTerminoLabel" name="previsaoTerminoLabel" value="' . $previsaoTermino . '" disabled="disabled"/>';
-                }
-                ?>
+                <div class="input-group">   
+                    <div class="input-group-addon" onclick="document.getElementById('previsaoTermino').focus()">
+                        <span class="glyphicon glyphicon-calendar"></span> 
+                    </div>
+                    <?php
+                    if (($exibePrevisaoTermino) && ($exibeControlesAbertos)) {
+                        echo '<input type="text" class="form-control datepicker" id="previsaoTermino" name="previsaoTermino" value="' . $previsaoTermino . '" />';
+                    } else {
+                        echo '<input type="hidden" id="previsaoTermino" name="previsaoTermino" value="' . $previsaoTermino . '" /><input type="text" class="form-control datepicker" id="previsaoTerminoLabel" name="previsaoTerminoLabel" value="' . $previsaoTermino . '" disabled="disabled"/>';
+                    }
+                    ?>
+                </div>
             </div>
         </div>
         
@@ -1002,6 +1085,9 @@
         document.getElementById('observacao').value = markupStr;
         return true;
     }
+    atualizarAtendenteModal();
+    atualizarUsuarioModal();
+    atualizarRequisitanteModal();
 </script>
 
 <?php 

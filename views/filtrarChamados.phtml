@@ -112,11 +112,60 @@
         ajax.onreadystatechange = function() {
             if (ajax.readyState == 4 && ajax.status == 200) {
                 document.getElementById("divUsuario").innerHTML = ajax.responseText;
+                atualizarUsuarioModal();
             }
         }
         ajax.open("POST", "?controle=Usuarios&acao=ajaxLoadClientesDeUmaEmpresa", true);
         ajax.setRequestHeader("Content-type","application/x-www-form-urlencoded");
         ajax.send("empresaCodigo=" + empresaCodigo + "&exibeUsuarioAberto=" + exibeUsuarioAberto + "&usuarioCodigo=" + usuarioCodigo);
+    }
+    function atualizarAtendenteModal() {
+        var ajax;
+        if (window.XMLHttpRequest)
+            ajax = new XMLHttpRequest();
+        else
+            ajax = new ActiveXObject("Microsoft.XMLHTTP");
+
+        ajax.onreadystatechange = function() {
+            if (ajax.readyState == 4 && ajax.status == 200) {
+                document.getElementById("atendenteModal").innerHTML = ajax.responseText;
+            }
+        }
+        ajax.open("POST", "?controle=Usuarios&acao=ajaxExibeContatosUsuario", true);
+        ajax.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+        ajax.send("usuarioCodigo=" + document.getElementById("atendente").value);
+    }
+    function atualizarUsuarioModal() {
+        var ajax;
+        if (window.XMLHttpRequest)
+            ajax = new XMLHttpRequest();
+        else
+            ajax = new ActiveXObject("Microsoft.XMLHTTP");
+
+        ajax.onreadystatechange = function() {
+            if (ajax.readyState == 4 && ajax.status == 200) {
+                document.getElementById("usuarioModal").innerHTML = ajax.responseText;
+            }
+        }
+        ajax.open("POST", "?controle=Usuarios&acao=ajaxExibeContatosUsuario", true);
+        ajax.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+        ajax.send("usuarioCodigo=" + document.getElementById("usuario").value);
+    }
+    function atualizarRequisitanteModal() {
+        var ajax;
+        if (window.XMLHttpRequest)
+            ajax = new XMLHttpRequest();
+        else
+            ajax = new ActiveXObject("Microsoft.XMLHTTP");
+
+        ajax.onreadystatechange = function() {
+            if (ajax.readyState == 4 && ajax.status == 200) {
+                document.getElementById("requisitanteModal").innerHTML = ajax.responseText;
+            }
+        }
+        ajax.open("POST", "?controle=Usuarios&acao=ajaxExibeContatosUsuario", true);
+        ajax.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+        ajax.send("usuarioCodigo=" + document.getElementById("requisitante").value);
     }
 </script>
 
@@ -162,26 +211,25 @@
         <div class="form-group">
             <label class="control-label col-sm-2" for="dataIni">Data Abertura (de):</label>
             <div class="col-sm-3">
-                <input type="text" class="form-control datepicker" id="dataIni" name="dataIni" value="<?php echo $dataIni?>" />
+                <div class="input-group">   
+                    <div class="input-group-addon" onclick="document.getElementById('dataIni').focus();">
+                        <span class="glyphicon glyphicon-calendar"></span> 
+                    </div>
+                    <input type="text" class="form-control datepicker" id="dataIni" name="dataIni" value="<?php echo $dataIni?>" />
+                </div>
             </div>
             <label class="control-label col-sm-2" for="dataFim">Data Abertura (até):</label>
             <div class="col-sm-3">
-                <input type="text" class="form-control datepicker" id="dataFim" name="dataFim" value="<?php echo $dataFim?>" />
+                <div class="input-group">   
+                    <div class="input-group-addon" onclick="document.getElementById('dataIni').focus();">
+                        <span class="glyphicon glyphicon-calendar"></span> 
+                    </div>
+                    <input type="text" class="form-control datepicker" id="dataFim" name="dataFim" value="<?php echo $dataFim?>" />
+                </div>
             </div>
         </div>
         
         <div class="form-group">
-            <label class="control-label col-sm-2" for="atendente">Analista:</label>
-            <div class="col-sm-3">
-                <select class="form-control" id="atendente" name="atendente">
-                    <option value="">Selecione</option>
-                    <?php
-                    foreach($atendentes as $atendente) {
-                        echo '<option value="' . $atendente->getId() . '">' . $atendente->getNome() . '</option>';
-                    }
-                    ?>
-                </select>
-            </div>
             <label class="control-label col-sm-2" for="situacao">Situação:</label>
             <div class="col-sm-3">
                 <select class="form-control" id="situacao" name="situacao">
@@ -192,6 +240,25 @@
                     }
                     ?>
                 </select>
+            </div>
+            <label class="control-label col-sm-2" for="atendente">Analista:</label>
+            <div class="col-sm-3">
+                <div class="input-group">   
+                    <div class="input-group-addon" data-toggle="modal" data-target="#atendenteModal">
+                        <span class="glyphicon glyphicon-info-sign"></span> 
+                    </div>
+                    <select class="form-control" id="atendente" name="atendente" onchange="atualizarAtendenteModal()">
+                        <option value="">Selecione</option>
+                        <?php
+                        foreach($atendentes as $atendente) {
+                            echo '<option value="' . $atendente->getId() . '">' . $atendente->getNome() . '</option>';
+                        }
+                        ?>
+                    </select>
+                    <div id="atendenteModal" class="modal fade" role="dialog">
+                        
+                    </div>
+                </div>
             </div>
         </div>
         
@@ -214,25 +281,16 @@
             </div>
             
             <div id="divUsuario">
-
+                
+            </div>
+            
+            <div id="usuarioModal" class="modal fade" role="dialog">
+                
             </div>
         </div>
         
         <?php if (($exibeRequisitante) || ($exibeCategoria)) { ?>
         <div class="form-group">
-            <?php if ($exibeRequisitante) { ?>
-            <label class="control-label col-sm-2" for="requisitante">Requisitante:</label>
-            <div class="col-sm-3">
-                <select class="form-control" id="requisitante" name="requisitante">
-                    <option value="">Selecione</option>
-                    <?php
-                    foreach($usuarios as $usuario) {
-                        echo '<option value="' . $usuario->getId() . '">' . $usuario->getNome() . '</option>';
-                    }
-                    ?>
-                </select>
-            </div>
-            <?php } ?>
             <?php if ($exibeCategoria) { ?>
             <label class="control-label col-sm-2" for="categoria">Categoria:</label>
             <div class="col-sm-3">
@@ -244,6 +302,27 @@
                     }
                     ?>
                 </select>
+            </div>
+            <?php } ?>
+            <?php if ($exibeRequisitante) { ?>
+            <label class="control-label col-sm-2" for="requisitante">Requisitante:</label>
+            <div class="col-sm-3">
+                <div class="input-group">   
+                    <div class="input-group-addon" data-toggle="modal" data-target="#requisitanteModal">
+                        <span class="glyphicon glyphicon-info-sign"></span> 
+                    </div>
+                    <select class="form-control" id="requisitante" name="requisitante" onchange="atualizarRequisitanteModal()">
+                        <option value="">Selecione</option>
+                        <?php
+                        foreach($usuarios as $usuario) {
+                            echo '<option value="' . $usuario->getId() . '">' . $usuario->getNome() . '</option>';
+                        }
+                        ?>
+                    </select>
+                    <div id="requisitanteModal" class="modal fade" role="dialog">
+                        
+                    </div>
+                </div>
             </div>
             <?php } ?>
         </div>
@@ -357,5 +436,11 @@ if (Functions::isEmpty($_SESSION['empresaCodigo'])) {
     echo '<script>loadClientesDeUmaEmpresa(' . $empresaCodigo . ', ' . ($exibeUsuarioAberto ? 1 : 0) . ',' . $usuarioCodigo . ');</script>';
 }
 ?>
+
+<script>
+    atualizarAtendenteModal();
+    atualizarUsuarioModal();
+    atualizarRequisitanteModal();
+</script>
 
 <?php include 'pageclose.php';			

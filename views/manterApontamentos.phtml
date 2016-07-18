@@ -138,7 +138,12 @@
             </div>
             <label class="control-label col-sm-1" for="dataFim">Duração:</label>
             <div class="col-sm-2">
-                <input type="text" class="form-control" id="apontado" name="apontado" value="<?php echo $apontamento->getApontado()?>" disabled="disabled">
+                <div class="input-group">   
+                    <div class="input-group-addon">
+                        <span class="glyphicon glyphicon-time"></span> 
+                    </div>
+                    <input type="text" class="form-control" id="apontado" name="apontado" value="<?php echo $apontamento->getApontado()?>" disabled="disabled">
+                </div>
             </div>
         </div>
         
@@ -151,8 +156,13 @@
                 </div>
                 <label class="control-label col-sm-1" for="faturado">Faturado:</label>
                 <div class="col-sm-2">
-                    <input type="hidden" id="faturado" name="faturado" value="<?php echo $apontamento->getFaturado()?>" />
-                    <input type="text" class="form-control" id="faturado" name="faturado" value="" disabled="disabled">
+                    <div class="input-group">   
+                        <div class="input-group-addon">
+                            <span class="glyphicon glyphicon-time"></span> 
+                        </div>
+                        <input type="hidden" id="faturado" name="faturado" value="<?php echo $apontamento->getFaturado()?>" />
+                        <input type="text" class="form-control" id="faturado" name="faturado" value="" disabled="disabled">
+                    </div>
                 </div>
             </div>
         <?php } else { ?>
@@ -169,7 +179,12 @@
                 </div>
                 <label class="control-label col-sm-1" for="faturado">Faturado:</label>
                 <div class="col-sm-2">
-                    <input type="text" class="form-control" id="faturado" name="faturado" value="<?php echo $apontamento->getFaturado()?>">
+                    <div class="input-group">   
+                        <div class="input-group-addon">
+                            <span class="glyphicon glyphicon-time"></span> 
+                        </div>
+                        <input type="text" class="form-control" id="faturado" name="faturado" value="<?php echo $apontamento->getFaturado()?>">
+                    </div>
                 </div>
             </div>
         <?php } ?>

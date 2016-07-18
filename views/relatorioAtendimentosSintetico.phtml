@@ -128,11 +128,21 @@
         <div class="form-group">
             <label class="control-label col-sm-2" for="periodoInicial">Data Abertura (de):</label>
             <div class="col-sm-3">
-                <input type="text" class="form-control datepicker" id="periodoInicial" name="periodoInicial" value="<?php echo $periodoInicial; ?>" />
+                <div class="input-group">   
+                    <div class="input-group-addon" onclick="document.getElementById('periodoInicial').focus();">
+                        <span class="glyphicon glyphicon-calendar"></span> 
+                    </div>
+                    <input type="text" class="form-control datepicker" id="periodoInicial" name="periodoInicial" value="<?php echo $periodoInicial; ?>" />
+                </div>
             </div>
             <label class="control-label col-sm-2" for="periodoFinal">Data Abertura (até): </label>
             <div class="col-sm-3">
-                <input type="text" class="form-control datepicker" id="periodoFinal" name="periodoFinal" value="<?php echo $periodoFinal; ?>" />
+                <div class="input-group">   
+                    <div class="input-group-addon" onclick="document.getElementById('periodoFinal').focus();">
+                        <span class="glyphicon glyphicon-calendar"></span> 
+                    </div>
+                    <input type="text" class="form-control datepicker" id="periodoFinal" name="periodoFinal" value="<?php echo $periodoFinal; ?>" />
+                </div>
             </div>
         </div>
         

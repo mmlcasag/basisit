@@ -275,19 +275,81 @@ class UsuariosController extends BaseController {
             $resultado = '
                 <label class="control-label col-sm-2" for="usuario">Usuário:</label>
                 <div class="col-sm-3">
-                    <select class="form-control" id="usuario" name="usuario">
-                    <option value="">Selecione</option>';
+                    <div class="input-group">   
+                        <div class="input-group-addon" data-toggle="modal" data-target="#usuarioModal">
+                            <span class="glyphicon glyphicon-info-sign"></span> 
+                        </div>
+                        <select class="form-control" id="usuario" name="usuario" onchange="atualizarUsuarioModal()">
+                            <option value="">Selecione</option>';
             foreach($clientes as $cliente) {
                 $resultado .= '<option value="' . $cliente->getId() . '">' . $cliente->getNome() . '</option>';
             }
-            $resultado .= '</select></div>';
+            $resultado .= '</select></div></div>';
         } else {
             $resultado = '
                 <label class="control-label col-sm-2" for="usuario">Usuário:</label>
                 <div class="col-sm-3">
-                    <input type="hidden" name="usuario" value="' . $usuarioCodigo . '" />
-                    <input type="text" class="form-control" id="usuario" name="usuario" value="' . $usuarioNome . '" disabled="disabled" />
+                    <div class="input-group">   
+                        <div class="input-group-addon" data-toggle="modal" data-target="#usuarioModal">
+                            <span class="glyphicon glyphicon-info-sign"></span> 
+                        </div>
+                        <input type="hidden" name="usuario" value="' . $usuarioCodigo . '" />
+                        <input type="text" class="form-control" id="usuario" name="usuario" value="' . $usuarioNome . '" disabled="disabled" />
+                    </div>
                 </div>';
+        }
+        
+        echo $resultado;
+    }
+    
+    public function ajaxExibeContatosUsuarioAction() {
+        $usuarioCodigo = $this->getParametroTela('usuarioCodigo');
+        
+        $connection = Databases::connect();
+        $usuarioModel = new UsuariosModel();
+        $usuario = $usuarioModel->loadById($connection, $usuarioCodigo);
+        Databases::disconnect($connection);
+        
+        if (Functions::isEmpty($usuarioCodigo)) {
+            $resultado = '
+            <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Contatos de Usuário</h4>
+                  </div>
+                  <div class="modal-body">
+                    <p>
+                      Nenhum usuário foi selecionado.
+                    <br />
+                      Selecione um usuário para visualizar seus contatos.
+                    </p>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+                  </div>
+                </div>
+            </div>';
+        } else {
+            $resultado = '
+            <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Contatos de ' . $usuario->getNome() . '</h4>
+                  </div>
+                  <div class="modal-body">
+                    <p>
+                      <span class="glyphicon glyphicon-envelope"></span>&nbsp;&nbsp;' . $usuario->getEmail() . '<br />
+                      <span class="glyphicon glyphicon-phone-alt"></span>&nbsp;&nbsp;' . $usuario->getFoneComercial() . '<br />
+                      <span class="glyphicon glyphicon-phone"></span>&nbsp;&nbsp;' . $usuario->getFoneCelular() . '<br />
+                    </p>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+                  </div>
+                </div>
+            </div>';
         }
         
         echo $resultado;
