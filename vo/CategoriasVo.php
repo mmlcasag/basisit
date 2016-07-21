@@ -36,16 +36,16 @@ class CategoriasVo {
     
     public function getSituacaoExtenso() {
         switch ($this->situacao) {
-            case 0: return "Ativado";
-            case 1: return "Desativado";
+            case 1: return "Ativo";
+            case 9: return "Inativo";
             default: return "";
         }
     }
     
     public function getSituacaoExtensoParam($situacao) {
         switch ($situacao) {
-            case 0: return "Ativado";
-            case 1: return "Desativado";
+            case 1: return "Ativo";
+            case 9: return "Inativo";
             default: return "";
         }
     }

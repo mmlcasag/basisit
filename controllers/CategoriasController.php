@@ -43,14 +43,28 @@ class CategoriasController extends BaseController {
         $model->delete($connection, $vo);
     }
     
-    private function carregarDadosListar($connection, $mensagem = "") {
-        $model = new CategoriasModel();
-        $registros = $model->load($connection);
-        return $this->trabalharDadosListar($registros, $mensagem);
+    public function listarAction($mensagem = "") {
+        $descricao = $this->getParametroTela('descricao');
+        $situacao  = $this->getParametroTela('situacao');
+        
+        $connection = Databases::connect();
+            $dados = $this->carregarDadosListar($connection, $mensagem, $descricao, $situacao);
+        Databases::disconnect($connection);
+        
+        $this->exibirTelaListar($dados);
     }
     
-    private function trabalharDadosListar($registros = array(), $mensagem = "") {
+    private function carregarDadosListar($connection, $mensagem = "", $descricao = "", $situacao = "") {
+        $model = new CategoriasModel();
+        $registros = $model->load($connection, $descricao, $situacao);
+        
+        return $this->trabalharDadosListar($registros, $mensagem, $descricao, $situacao);
+    }
+    
+    private function trabalharDadosListar($registros = array(), $mensagem = "", $descricao = "", $situacao = "") {
         return array( 'mensagem'  => $mensagem
+                    , 'descricao' => $descricao
+                    , 'situacao'  => $situacao
                     , 'registros' => $registros );
     }
     
@@ -81,39 +95,31 @@ class CategoriasController extends BaseController {
         $view->showContents();
     }
     
-    public function listarAction($mensagem = "") {
-        $connection = Databases::connect();
-        $dados = $this->carregarDadosListar($connection, $mensagem);
-        Databases::disconnect($connection);
-
-        $this->exibirTelaListar($dados);
-    }
-    
     public function cadastrarAction() {
         $id = $this->getParametroTela('id');
-
+        
         $connection = Databases::connect();
         $dados = $this->carregarDadosManter($connection, $id);
         Databases::disconnect($connection);
-
+        
         $this->exibirTelaManter($dados);
     }
     
     public function salvarAction() {
         $vo = new CategoriasVo();
-
+        
         $vo->setId($this->getParametroTela('id'));
         $vo->setDescricao($this->getParametroTela('descricao'));
         $vo->setSituacao($this->getParametroTela('situacao'));
-
+        
         $mensagem = $this->validarFormulario($vo);
-
+        
         if (substr($mensagem, 0, 1) == 'S') {
             $connection = Databases::connect();
             $this->salvarRegistro($connection, $vo);
             $dados = $this->carregarDadosListar($connection, $mensagem);
             Databases::disconnect($connection);
-
+            
             $this->exibirTelaListar($dados);
         } else if (substr($mensagem, 0, 1) == 'N') {
             $dados = $this->trabalharDadosManter($vo, $mensagem);
@@ -123,17 +129,17 @@ class CategoriasController extends BaseController {
     
     public function excluirAction() {
         $id = $this->getParametroTela('id');
-
+        
         $connection = Databases::connect();
-
+        
         $mensagem = $this->validarExclusao($id);
         if (substr($mensagem, 0, 1) == 'S') {
             $this->excluirRegistro($connection, $id);
         }
-
+        
         $dados = $this->carregarDadosListar($connection, $mensagem);
         Databases::disconnect($connection);
-
+        
         $this->exibirTelaListar($dados);
     }
 }
