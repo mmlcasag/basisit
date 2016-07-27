@@ -12,37 +12,47 @@ class SituacoesModel {
         return $vo;
     }
     
-    public function load($connection) {
-        $cache = phpFastCache();
-        
-        $situacoesCache = $cache->get("SituacoesCacheAtivos");
-        
-        if ($situacoesCache != null) {
-            return $situacoesCache;
-        } else {
-            $registros = array();
-            
-            $query = " SELECT * 
-		       FROM   situacoes 
-		       WHERE  sit_opldesativado = 0 
-		       ORDER  BY sit_cdisituacao ";
-            
-            $stmt = $connection->prepare($query);
-            
-            $stmt->execute();
-            
-            $rows = $stmt->fetchAll();
-            
-            foreach ($rows as $row) {
-                $vo = $this->populateVo($connection, $row);
-                
-                array_push($registros, $vo);
-            }
-            
-            $cache->set("SituacoesCacheAtivos", $registros, 60 * Functions::getParametro('cache'));
-            
-            return $registros;
+    public function load($connection, $descricao = "", $situacao = "") {
+        if (Functions::isEmpty($situacao)) {
+            $situacao = 1;
         }
+        
+        $registros = array();
+        
+        $query = " SELECT * 
+                   FROM   situacoes 
+                   WHERE  1 = 1 ";
+        
+        if (!Functions::isEmpty($descricao)) {
+            $query .= " AND LOWER(sit_dsssituacao) LIKE :sit_dsssituacao ";
+        }
+        if (!Functions::isEmpty($situacao)) {
+            $query .= " AND sit_opldesativado = :sit_opldesativado ";
+        }
+        
+        $query .= " ORDER  BY sit_dsssituacao ";
+        
+        $stmt = $connection->prepare($query);
+        
+        if (!Functions::isEmpty($descricao)) {
+            $descricao = "%" . strtolower($descricao) . "%";
+            $stmt->bindParam(':sit_dsssituacao', $descricao);
+        }
+        if (!Functions::isEmpty($situacao)) {
+            $stmt->bindParam(':sit_opldesativado', $situacao);
+        }
+        
+        $stmt->execute();
+        
+        $rows = $stmt->fetchAll();
+        
+        foreach ($rows as $row) {
+            $vo = $this->populateVo($connection, $row);
+            
+            array_push($registros, $vo);
+        }
+        
+        return $registros;
     }
     
     public function loadById($connection, $codigo) {

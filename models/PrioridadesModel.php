@@ -13,43 +13,53 @@ class PrioridadesModel {
         return $vo;
     }
     
-    public function load($connection) {
-        $cache = phpFastCache();
-        
-        $prioridadesCache = $cache->get("PrioridadesCacheAtivos");
-        
-        if ($prioridadesCache != null) {
-            return $prioridadesCache;
-        } else {
-            $registros = array();
-            
-            $query = " SELECT * 
-		       FROM   prioridades 
-		       WHERE  pri_opldesativado = 0 
-		       ORDER  BY pri_cdiprioridade ";
-            
-            $stmt = $connection->prepare($query);
-            
-            $stmt->execute();
-            
-            $rows = $stmt->fetchAll();
-            
-            foreach ($rows as $row) {
-                $vo = $this->populateVo($connection, $row);
-                
-                array_push($registros, $vo);
-            }
-            
-            $cache->set("PrioridadesCacheAtivos", $registros, 60 * Functions::getParametro('cache'));
-            
-            return $registros;
+    public function load($connection, $descricao = "", $situacao = "") {
+        if (Functions::isEmpty($situacao)) {
+            $situacao = 1;
         }
+        
+        $registros = array();
+        
+        $query = " SELECT * 
+                   FROM   prioridades 
+                   WHERE  1 = 1 ";
+        
+        if (!Functions::isEmpty($descricao)) {
+            $query .= " AND LOWER(pri_dssprioridade) LIKE :pri_dssprioridade ";
+        }
+        if (!Functions::isEmpty($situacao)) {
+            $query .= " AND pri_opldesativado = :pri_opldesativado ";
+        }
+        
+        $query .= " ORDER  BY pri_dssprioridade ";
+        
+        $stmt = $connection->prepare($query);
+        
+        if (!Functions::isEmpty($descricao)) {
+            $descricao = "%" . strtolower($descricao) . "%";
+            $stmt->bindParam(':pri_dssprioridade', $descricao);
+        }
+        if (!Functions::isEmpty($situacao)) {
+            $stmt->bindParam(':pri_opldesativado', $situacao);
+        }
+        
+        $stmt->execute();
+        
+        $rows = $stmt->fetchAll();
+        
+        foreach ($rows as $row) {
+            $vo = $this->populateVo($connection, $row);
+            
+            array_push($registros, $vo);
+        }
+        
+        return $registros;
     }
     
     public function loadById($connection, $codigo) {
         $query = " SELECT * 
-		   FROM   prioridades
-		   WHERE  pri_cdiprioridade = :pri_cdiprioridade ";
+		           FROM   prioridades
+		           WHERE  pri_cdiprioridade = :pri_cdiprioridade ";
         
         $stmt = $connection->prepare($query);
         
