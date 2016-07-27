@@ -13,42 +13,53 @@ class ParametrosModel {
         return $vo;
     }
     
-    public function load($connection) {
-        $cache = phpFastCache();
-        
-        $parametrosCache = $cache->get("ParametrosCacheAtivos");
-        
-        if ($parametrosCache != null) {
-            return $parametrosCache;
-        } else {
-            $registros = array();
-            
-            $query = " SELECT * 
-		       FROM   parametros 
-		       ORDER  BY par_cdiparametro ";
-            
-            $stmt = $connection->prepare($query);
-            
-            $stmt->execute();
-            
-            $rows = $stmt->fetchAll();
-            
-            foreach ($rows as $row) {
-                $vo = $this->populateVo($connection, $row);
-                
-                array_push($registros, $vo);
-            }
-            
-            $cache->set("ParametrosCacheAtivos", $registros, 60 * Functions::getParametro('cache'));
-            
-            return $registros;
+    public function load($connection, $descricao = "", $situacao = "") {
+        if (Functions::isEmpty($situacao)) {
+            $situacao = 1;
         }
+        
+        $registros = array();
+        
+        $query = " SELECT * 
+                   FROM   parametros 
+                   WHERE  1 = 1 ";
+        
+        if (!Functions::isEmpty($descricao)) {
+            $query .= " AND LOWER(par_dssnome) LIKE :par_dssnome ";
+        }
+        if (!Functions::isEmpty($situacao)) {
+            $query .= " AND par_opldesativado = :par_opldesativado ";
+        }
+        
+        $query .= " ORDER  BY par_dssnome ";
+        
+        $stmt = $connection->prepare($query);
+        
+        if (!Functions::isEmpty($descricao)) {
+            $descricao = "%" . strtolower($descricao) . "%";
+            $stmt->bindParam(':par_dssnome', $descricao);
+        }
+        if (!Functions::isEmpty($situacao)) {
+            $stmt->bindParam(':par_opldesativado', $situacao);
+        }
+        
+        $stmt->execute();
+        
+        $rows = $stmt->fetchAll();
+        
+        foreach ($rows as $row) {
+            $vo = $this->populateVo($connection, $row);
+            
+            array_push($registros, $vo);
+        }
+        
+        return $registros;
     }
     
     public function loadById($connection, $codigo) {
         $query = " SELECT * 
-		   FROM   parametros
-		   WHERE  par_cdiparametro = :par_cdiparametro ";
+		           FROM   parametros
+		           WHERE  par_cdiparametro = :par_cdiparametro ";
         
         $stmt = $connection->prepare($query);
         
@@ -67,8 +78,8 @@ class ParametrosModel {
     
     public function loadByName($connection, $nome) {
         $query = " SELECT * 
-		   FROM   parametros
-		   WHERE  par_opldesativado = 0
+		           FROM   parametros
+		           WHERE  par_opldesativado = 1
                    AND    lower(par_dssnome) LIKE '%".strtolower($nome)."%'";
         
         $stmt = $connection->prepare($query);

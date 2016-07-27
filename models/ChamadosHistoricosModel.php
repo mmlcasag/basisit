@@ -48,8 +48,8 @@ class ChamadosHistoricosModel {
     
     public function loadById($connection, $codigo) {
         $query = " SELECT ch.* 
-		   FROM   chamadoshistoricos ch 
-		   WHERE  ch.chh_cdichamadohistorico = :chh_cdichamadohistorico ";
+		           FROM   chamadoshistoricos ch 
+		           WHERE  ch.chh_cdichamadohistorico = :chh_cdichamadohistorico ";
         
         $stmt = $connection->prepare($query);
         

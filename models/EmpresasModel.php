@@ -12,43 +12,54 @@ class EmpresasModel {
         return $vo;
     }
     
-    public function load($connection) {
-        $cache = phpFastCache();
-        
-        $empresasCache = $cache->get("EmpresasCacheAtivos");
-        
-        if ($empresasCache != null) {
-            return $empresasCache;
-        } else {
-            $registros = array();
-            
-            $query = " SELECT * 
-		       FROM   empresas 
-		       WHERE  emp_opldesativado = 0 
-		       ORDER  BY emp_dssempresa ";
-            
-            $stmt = $connection->prepare($query);
-            
-            $stmt->execute();
-            
-            $rows = $stmt->fetchAll();
-            
-            foreach ($rows as $row) {
-                $vo = $this->populateVo($connection, $row);
-                
-                array_push($registros, $vo);
-            }
-            
-            $cache->set("EmpresasCacheAtivos", $registros, 60 * Functions::getParametro('cache'));
-            
-            return $registros;
+    public function load($connection, $descricao = "", $situacao = "") {
+        if (Functions::isEmpty($situacao)) {
+            $situacao = 1;
         }
+        
+        $registros = array();
+        
+        $query = " SELECT * 
+                   FROM   empresas 
+                   WHERE  1 = 1 ";
+        
+        if (!Functions::isEmpty($descricao)) {
+            $query .= " AND LOWER(emp_dssempresa) LIKE :emp_dssempresa ";
+        }
+        if (!Functions::isEmpty($situacao)) {
+            $query .= " AND emp_opldesativado = :emp_opldesativado ";
+        }
+        
+        $query .= " ORDER  BY emp_dssempresa ";
+        
+        $stmt = $connection->prepare($query);
+        
+        if (!Functions::isEmpty($descricao)) {
+            $descricao = "%" . strtolower($descricao) . "%";
+            $stmt->bindParam(':emp_dssempresa', $descricao);
+        }
+        if (!Functions::isEmpty($situacao)) {
+            $stmt->bindParam(':emp_opldesativado', $situacao);
+        }
+        
+        $stmt->execute();
+        
+        $rows = $stmt->fetchAll();
+        
+        foreach ($rows as $row) {
+            $vo = $this->populateVo($connection, $row);
+            
+            array_push($registros, $vo);
+        }
+        
+        return $registros;
+        
     }
     
     public function loadById($connection, $codigo) {
         $query = " SELECT * 
-		   FROM   empresas
-		   WHERE  emp_cdiempresa = :emp_cdiempresa ";
+		           FROM   empresas
+		           WHERE  emp_cdiempresa = :emp_cdiempresa ";
         
         $stmt = $connection->prepare($query);
         
@@ -64,7 +75,7 @@ class EmpresasModel {
             return $this->populateVo($connection, $row);
         }
     }
-
+    
     public function save($connection, $vo) {
         if (Functions::isEmpty($vo->getId())) {
             $this->insert($connection, $vo);
@@ -72,7 +83,7 @@ class EmpresasModel {
             $this->update($connection, $vo);
         }
     }
-
+    
     public function insert($connection, $vo) {
         $query = " INSERT INTO empresas
                      ( emp_dssempresa

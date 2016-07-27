@@ -80,7 +80,7 @@ foreach($items as $item) {
     </script>
 </head>
 
-<body>
+<body id="app-layout">
     
     <div id="header">
         <img src="template/images/bg-header.jpg" alt="" width="100%" />

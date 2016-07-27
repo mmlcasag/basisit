@@ -43,17 +43,6 @@ class CategoriasController extends BaseController {
         $model->delete($connection, $vo);
     }
     
-    public function listarAction($mensagem = "") {
-        $descricao = $this->getParametroTela('descricao');
-        $situacao  = $this->getParametroTela('situacao');
-        
-        $connection = Databases::connect();
-            $dados = $this->carregarDadosListar($connection, $mensagem, $descricao, $situacao);
-        Databases::disconnect($connection);
-        
-        $this->exibirTelaListar($dados);
-    }
-    
     private function carregarDadosListar($connection, $mensagem = "", $descricao = "", $situacao = "") {
         $model = new CategoriasModel();
         $registros = $model->load($connection, $descricao, $situacao);
@@ -93,6 +82,17 @@ class CategoriasController extends BaseController {
         $view = new View('views/manterCategorias.phtml');
         $view->setParams($dados);
         $view->showContents();
+    }
+    
+    public function listarAction($mensagem = "") {
+        $descricao = $this->getParametroTela('descricao');
+        $situacao  = $this->getParametroTela('situacao');
+        
+        $connection = Databases::connect();
+            $dados = $this->carregarDadosListar($connection, $mensagem, $descricao, $situacao);
+        Databases::disconnect($connection);
+        
+        $this->exibirTelaListar($dados);
     }
     
     public function cadastrarAction() {

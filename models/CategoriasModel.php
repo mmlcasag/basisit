@@ -12,7 +12,7 @@ class CategoriasModel {
         return $vo;
     }
     
-    public function load($connection, $descricao, $situacao) {
+    public function load($connection, $descricao = "", $situacao = "") {
         if (Functions::isEmpty($situacao)) {
             $situacao = 1;
         }

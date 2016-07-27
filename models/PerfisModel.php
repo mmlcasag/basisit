@@ -15,43 +15,53 @@ class PerfisModel {
         return $vo;
     }
     
-    public function load($connection) {
-        $cache = phpFastCache();
-        
-        $perfisCache = $cache->get("PerfisCacheAtivos");
-        
-        if ($perfisCache != null) {
-            return $perfisCache;
-        } else {
-            $registros = array();
-            
-            $query = " SELECT * 
-		       FROM   perfis 
-		       WHERE  prf_opldesativado = 0 
-		       ORDER  BY prf_dssperfil ";
-            
-            $stmt = $connection->prepare($query);
-
-            $stmt->execute();
-
-            $rows = $stmt->fetchAll();
-
-            foreach ($rows as $row) {
-                $vo = $this->populateVo($connection, $row);
-                
-                array_push($registros, $vo);
-            }
-            
-            $cache->set("PerfisCacheAtivos", $registros, 60 * Functions::getParametro('cache'));
-            
-            return $registros;
+    public function load($connection, $descricao = "", $situacao = "") {
+        if (Functions::isEmpty($situacao)) {
+            $situacao = 1;
         }
+        
+        $registros = array();
+        
+        $query = " SELECT * 
+                   FROM   perfis 
+                   WHERE  1 = 1 ";
+        
+        if (!Functions::isEmpty($descricao)) {
+            $query .= " AND LOWER(prf_dssperfil) LIKE :prf_dssperfil ";
+        }
+        if (!Functions::isEmpty($situacao)) {
+            $query .= " AND prf_opldesativado = :prf_opldesativado ";
+        }
+        
+        $query .= " ORDER  BY prf_dssperfil ";
+        
+        $stmt = $connection->prepare($query);
+        
+        if (!Functions::isEmpty($descricao)) {
+            $descricao = "%" . strtolower($descricao) . "%";
+            $stmt->bindParam(':prf_dssperfil', $descricao);
+        }
+        if (!Functions::isEmpty($situacao)) {
+            $stmt->bindParam(':prf_opldesativado', $situacao);
+        }
+        
+        $stmt->execute();
+
+        $rows = $stmt->fetchAll();
+
+        foreach ($rows as $row) {
+            $vo = $this->populateVo($connection, $row);
+
+            array_push($registros, $vo);
+        }
+        
+        return $registros;
     }
     
     public function loadById($connection, $codigo) {
         $query = " SELECT * 
-		   FROM   perfis
-		   WHERE  prf_cdiperfil = :prf_cdiperfil ";
+		           FROM   perfis
+		           WHERE  prf_cdiperfil = :prf_cdiperfil ";
         
         $stmt = $connection->prepare($query);
         

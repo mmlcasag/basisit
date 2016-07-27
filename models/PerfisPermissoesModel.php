@@ -19,87 +19,59 @@ class PerfisPermissoesModel {
         return $vo;
     }
     
-    public function load($connection) {
-        $cache = phpFastCache();
-        
-        $perfisPermissoesCache = $cache->get("PerfisPermissoesCacheAtivos");
-        
-        if ($perfisPermissoesCache != null) {
-            return $perfisPermissoesCache;
-        } else {
-            $registros = array();
-            
-            $query = " SELECT * 
-		       FROM   perfispermissoes, perfis, tipossistemas
-		       WHERE  prp_opldesativado  = 0
-                       AND    prf_cdiperfil      = prp_cdiperfil
-                       AND    prf_opldesativado  = 0
-                       AND    tps_cditiposistema = prp_cditiposistema
-                       AND    tps_opldesativado  = 0
-		       ORDER  BY prf_dssperfil, tps_dsstiposistema ";
-            
-            $stmt = $connection->prepare($query);
-            
-            $stmt->execute();
-            
-            $rows = $stmt->fetchAll();
-            
-            foreach ($rows as $row) {
-                $vo = $this->populateVo($connection, $row);
-                
-                array_push($registros, $vo);
-            }
-            
-            $cache->set("PerfisPermissoesCacheAtivos", $registros, 60 * Functions::getParametro('cache'));
-            
-            return $registros;
+    public function loadByPerfil($connection, $perfilCodigo, $descricao = "", $situacao = "") {
+        if (Functions::isEmpty($situacao)) {
+            $situacao = 1;
         }
-    }
-    
-    public function loadByPerfil($connection, $perfilCodigo) {
-        $cache = phpFastCache();
         
-        $perfisPermissoesCachePerfil = $cache->get("PerfisPermissoesCachePerfil".$perfilCodigo);
+        $registros = array();
         
-        if ($perfisPermissoesCachePerfil != null) {
-            return $perfisPermissoesCachePerfil;
-        } else {
-            $registros = array();
-            
-            $query = " SELECT * 
-		       FROM   perfispermissoes, perfis, tipossistemas
-		       WHERE  prp_cdiperfil      = :prp_cdiperfil
-                       AND    prp_opldesativado  = 0
-                       AND    prf_cdiperfil      = prp_cdiperfil
-                       AND    prf_opldesativado  = 0
-                       AND    tps_cditiposistema = prp_cditiposistema
-                       AND    tps_opldesativado  = 0
-		       ORDER  BY prf_dssperfil, tps_dsstiposistema ";
-            
-            $stmt = $connection->prepare($query);
-            
-            $stmt->bindParam(':prp_cdiperfil', $perfilCodigo);
-            
-            $stmt->execute();
-            
-            $rows = $stmt->fetchAll();
-            
-            foreach ($rows as $row) {
-                $vo = $this->populateVo($connection, $row);
-                
-                array_push($registros, $vo);
-            }
-            
-            $cache->set("PerfisPermissoesCachePerfil".$perfilCodigo, $registros, 60 * Functions::getParametro('cache'));
-            
-            return $registros;
+        $query = " SELECT * 
+                   FROM   perfispermissoes, perfis, tipossistemas
+                   WHERE  prf_cdiperfil      = prp_cdiperfil
+                   AND    prf_opldesativado  = 1
+                   AND    tps_cditiposistema = prp_cditiposistema
+                   AND    tps_opldesativado  = 0
+                   AND    prp_cdiperfil      = :prp_cdiperfil ";
+        
+        if (!Functions::isEmpty($descricao)) {
+            $query .= " AND LOWER(tps_dsstiposistema) LIKE :tps_dsstiposistema ";
         }
+        if (!Functions::isEmpty($situacao)) {
+            $query .= " AND prp_opldesativado = :prp_opldesativado ";
+        }
+        
+        $query .= " ORDER  BY prf_dssperfil, tps_dsstiposistema ";
+        
+        $stmt = $connection->prepare($query);
+        
+        if (!Functions::isEmpty($descricao)) {
+            $descricao = "%" . strtolower($descricao) . "%";
+            $stmt->bindParam(':tps_dsstiposistema', $descricao);
+        }
+        if (!Functions::isEmpty($situacao)) {
+            $stmt->bindParam(':prp_opldesativado', $situacao);
+        }
+        
+        $stmt->bindParam(':prp_cdiperfil', $perfilCodigo);
+        
+        $stmt->execute();
+        
+        $rows = $stmt->fetchAll();
+        
+        foreach ($rows as $row) {
+            $vo = $this->populateVo($connection, $row);
+            
+            array_push($registros, $vo);
+        }
+        
+        return $registros;
     }
     
     public function loadById($connection, $codigo) {
         $query = " SELECT * 
-		   FROM   perfispermissoes
-		   WHERE  prp_cdiperfilpermissao = :prp_cdiperfilpermissao ";
+		           FROM   perfispermissoes
+		           WHERE  prp_cdiperfilpermissao = :prp_cdiperfilpermissao ";
         
         $stmt = $connection->prepare($query);
         

@@ -43,14 +43,17 @@ class PerfisController extends BaseController {
         $model->delete($connection, $vo);
     }
     
-    private function carregarDadosListar($connection, $mensagem = "") {
+    private function carregarDadosListar($connection, $mensagem = "", $descricao = "", $situacao = "") {
         $model = new PerfisModel();
-        $registros = $model->load($connection);
-        return $this->trabalharDadosListar($registros, $mensagem);
+        $registros = $model->load($connection, $descricao, $situacao);
+        
+        return $this->trabalharDadosListar($registros, $mensagem, $descricao, $situacao);
     }
     
-    private function trabalharDadosListar($registros = array(), $mensagem = "") {
+    private function trabalharDadosListar($registros = array(), $mensagem = "", $descricao = "", $situacao = "") {
         return array( 'mensagem'  => $mensagem
+                    , 'descricao' => $descricao
+                    , 'situacao'  => $situacao
                     , 'registros' => $registros );
     }
     
@@ -60,8 +63,7 @@ class PerfisController extends BaseController {
         $view->showContents();
     }
     
-    public function carregarDadosManter($connection, $id = "", $mensagem = "") {
-        // parametro $id pode ser tanto PerfisVo como perfisCodigo
+    public function carregarDadosManter($connection, $id = "", $mensagem = "", $descricao = "", $situacao = "") {
         if (is_object($id)) {
             $perfil = $id;
         } else if (!Functions::isEmpty($id)) {
@@ -72,14 +74,16 @@ class PerfisController extends BaseController {
         }
         
         $perfisPermissoesModel = new PerfisPermissoesModel();
-        $perfisPermissoes = $perfisPermissoesModel->loadByPerfil($connection, $perfil->getId());
+        $perfisPermissoes = $perfisPermissoesModel->loadByPerfil($connection, $perfil->getId(), $descricao, $situacao);
         
-        return $this->trabalharDadosManter($perfil, $perfisPermissoes, $mensagem);
+        return $this->trabalharDadosManter($perfil, $perfisPermissoes, $mensagem, $descricao, $situacao);
     }
     
-    private function trabalharDadosManter($perfil, $perfisPermissoes, $mensagem = "") {
+    private function trabalharDadosManter($perfil, $perfisPermissoes, $mensagem = "", $descricao = "", $situacao = "") {
         return array( 'mensagem'         => $mensagem
                     , 'registro'         => $perfil 
+                    , 'descricao'        => $descricao
+                    , 'situacao'         => $situacao
                     , 'perfisPermissoes' => $perfisPermissoes );
     }
     
@@ -90,10 +94,13 @@ class PerfisController extends BaseController {
     }
     
     public function listarAction($mensagem = "") {
+        $descricao = $this->getParametroTela('descricao');
+        $situacao  = $this->getParametroTela('situacao');
+        
         $connection = Databases::connect();
-        $dados = $this->carregarDadosListar($connection, $mensagem);
+            $dados = $this->carregarDadosListar($connection, $mensagem, $descricao, $situacao);
         Databases::disconnect($connection);
-
+        
         $this->exibirTelaListar($dados);
     }
     

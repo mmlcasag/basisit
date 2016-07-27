@@ -55,8 +55,8 @@ class TiposSistemasModel {
                    JOIN   perfispermissoes pp ON pp.prp_cdiperfil      = pr.prf_cdiperfil
                    JOIN   tipossistemas    ts ON ts.tps_cditiposistema = pp.prp_cditiposistema
                    WHERE  pr.prf_cdiperfil     = :prf_cdiperfil
-                   AND    pr.prf_opldesativado = 0
-                   AND    pp.prp_opldesativado = 0
+                   AND    pr.prf_opldesativado = 1
+                   AND    pp.prp_opldesativado = 1
                    AND    ts.tps_opldesativado = 0
                    ORDER  BY ts.tps_dsstiposistema ";
 

@@ -49,9 +49,9 @@ class PerfisPermissoesController extends BaseController {
         $model->delete($connection, $vo);
     }
     
-    private function carregarDadosListar($connection, $id, $mensagem = "") {
+    private function carregarDadosListar($connection, $id, $mensagem = "", $descricao = "", $situacao = "") {
         $controller = new PerfisController();
-        return $controller->carregarDadosManter($connection, $id, $mensagem);
+        return $controller->carregarDadosManter($connection, $id, $mensagem, $descricao, $situacao);
     }
     
     private function exibirTelaListar($dados = array()) {
@@ -60,7 +60,6 @@ class PerfisPermissoesController extends BaseController {
     }
     
     private function carregarDadosManter($connection, $perfil, $id = "", $mensagem = "") {
-        // parametro $id pode ser tanto PerfisPermissoesVo como perfilpermissaoCodigo
         if (is_object($id)) {
             $vo = $id;
         } else if (!Functions::isEmpty($id)) {
@@ -91,6 +90,18 @@ class PerfisPermissoesController extends BaseController {
         $view = new View('views/manterPerfisPermissoes.phtml');
         $view->setParams($dados);
         $view->showContents();
+    }
+    
+    public function listarAction() {
+        $id        = $this->getParametroTela('id');
+        $descricao = $this->getParametroTela('descricao');
+        $situacao  = $this->getParametroTela('situacao');
+        
+        $connection = Databases::connect();
+        $dados = $this->carregarDadosListar($connection, $id, "", $descricao, $situacao);
+        Databases::disconnect($connection);
+        
+        $this->exibirTelaListar($dados);
     }
     
     public function cadastrarAction() {
@@ -149,7 +160,7 @@ class PerfisPermissoesController extends BaseController {
             $this->excluirRegistro($connection, $id);
         }
 
-        $dados = $this->carregarDadosListar($connection, $mensagem);
+        $dados = $this->carregarDadosListar($connection, $id, $mensagem);
         Databases::disconnect($connection);
 
         $this->exibirTelaListar($dados);
