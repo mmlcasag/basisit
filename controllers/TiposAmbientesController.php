@@ -43,14 +43,17 @@ class TiposAmbientesController extends BaseController {
         $model->delete($connection, $vo);
     }
     
-    private function carregarDadosListar($connection, $mensagem = "") {
+    private function carregarDadosListar($connection, $mensagem = "", $descricao = "", $situacao = "") {
         $model = new TiposAmbientesModel();
-        $registros = $model->load($connection);
-        return $this->trabalharDadosListar($registros, $mensagem);
+        $registros = $model->load($connection, $descricao, $situacao);
+        
+        return $this->trabalharDadosListar($registros, $mensagem, $descricao, $situacao);
     }
     
-    private function trabalharDadosListar($registros = array(), $mensagem = "") {
+    private function trabalharDadosListar($registros = array(), $mensagem = "", $descricao = "", $situacao = "") {
         return array( 'mensagem'  => $mensagem
+                    , 'descricao' => $descricao
+                    , 'situacao'  => $situacao
                     , 'registros' => $registros );
     }
     
@@ -82,10 +85,13 @@ class TiposAmbientesController extends BaseController {
     }
     
     public function listarAction($mensagem = "") {
+        $descricao = $this->getParametroTela('descricao');
+        $situacao  = $this->getParametroTela('situacao');
+        
         $connection = Databases::connect();
-        $dados = $this->carregarDadosListar($connection, $mensagem);
+            $dados = $this->carregarDadosListar($connection, $mensagem, $descricao, $situacao);
         Databases::disconnect($connection);
-
+        
         $this->exibirTelaListar($dados);
     }
     

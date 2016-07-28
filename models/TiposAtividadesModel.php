@@ -12,43 +12,53 @@ class TiposAtividadesModel {
         return $vo;
     }
     
-    public function load($connection) {
-        $cache = phpFastCache();
-        
-        $tiposAtividadesCache = $cache->get("TiposAtividadesCacheAtivos");
-        
-        if ($tiposAtividadesCache != null) {
-            return $tiposAtividadesCache;
-        } else {
-            $registros = array();
-            
-            $query = " SELECT * 
-		       FROM   tiposatividades
-		       WHERE  tpt_opldesativado = 0 
-		       ORDER  BY tpt_dsstipoatividade ";
-            
-            $stmt = $connection->prepare($query);
-            
-            $stmt->execute();
-            
-            $rows = $stmt->fetchAll();
-            
-            foreach ($rows as $row) {
-                $vo = $this->populateVo($connection, $row);
-                
-                array_push($registros, $vo);
-            }
-            
-            $cache->set("TiposAtividadesCacheAtivos", $registros, 60 * Functions::getParametro('cache'));
-            
-            return $registros;
+    public function load($connection, $descricao = "", $situacao = "") {
+        if (Functions::isEmpty($situacao)) {
+            $situacao = 1;
         }
+        
+        $registros = array();
+        
+        $query = " SELECT * 
+                   FROM   tiposatividades
+                   WHERE  1 = 1 ";
+        
+        if (!Functions::isEmpty($descricao)) {
+            $query .= " AND LOWER(tpt_dsstipoatividade) LIKE :tpt_dsstipoatividade ";
+        }
+        if (!Functions::isEmpty($situacao)) {
+            $query .= " AND tpt_opldesativado = :tpt_opldesativado ";
+        }
+        
+        $query .= " ORDER  BY tpt_dsstipoatividade ";
+        
+        $stmt = $connection->prepare($query);
+        
+        if (!Functions::isEmpty($descricao)) {
+            $descricao = "%" . strtolower($descricao) . "%";
+            $stmt->bindParam(':tpt_dsstipoatividade', $descricao);
+        }
+        if (!Functions::isEmpty($situacao)) {
+            $stmt->bindParam(':tpt_opldesativado', $situacao);
+        }
+        
+        $stmt->execute();
+        
+        $rows = $stmt->fetchAll();
+        
+        foreach ($rows as $row) {
+            $vo = $this->populateVo($connection, $row);
+            
+            array_push($registros, $vo);
+        }
+        
+        return $registros;
     }
     
     public function loadById($connection, $codigo) {
         $query = " SELECT * 
-		   FROM   tiposatividades
-		   WHERE  tpt_cditipoatividade = :tpt_cditipoatividade ";
+                   FROM   tiposatividades
+                   WHERE  tpt_cditipoatividade = :tpt_cditipoatividade ";
         
         $stmt = $connection->prepare($query);
         

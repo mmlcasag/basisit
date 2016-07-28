@@ -14,42 +14,52 @@ class TiposSistemasModel {
         return $vo;
     }
     
-    public function load($connection) {
-        $cache = phpFastCache();
-        
-        $tiposSistemasCache = $cache->get("TiposSistemasCacheAtivos");
-        
-        if ($tiposSistemasCache != null) {
-            return $tiposSistemasCache;
-        } else {
-            $registros = array();
-            
-            $query = " SELECT *
-                       FROM   tipossistemas
-                       WHERE  tps_opldesativado = 0
-                       ORDER  BY tps_dsstiposistema ";
-            
-            $stmt = $connection->prepare($query);
-            
-            $stmt->execute();
-            
-            $rows = $stmt->fetchAll();
-            
-            foreach ($rows as $row) {
-                $vo = $this->populateVo($connection, $row);
-                
-                array_push($registros, $vo);
-            }
-            
-            $cache->set("TiposSistemasCacheAtivos", $registros, 60 * Functions::getParametro('cache'));
-            
-            return $registros;
+    public function load($connection, $descricao = "", $situacao = "") {
+        if (Functions::isEmpty($situacao)) {
+            $situacao = 1;
         }
+        
+        $registros = array();
+        
+        $query = " SELECT * 
+                   FROM   tipossistemas
+                   WHERE  1 = 1 ";
+        
+        if (!Functions::isEmpty($descricao)) {
+            $query .= " AND LOWER(tps_dsstiposistema) LIKE :tps_dsstiposistema ";
+        }
+        if (!Functions::isEmpty($situacao)) {
+            $query .= " AND tps_opldesativado = :tps_opldesativado ";
+        }
+        
+        $query .= " ORDER  BY tps_dsstiposistema ";
+        
+        $stmt = $connection->prepare($query);
+        
+        if (!Functions::isEmpty($descricao)) {
+            $descricao = "%" . strtolower($descricao) . "%";
+            $stmt->bindParam(':tps_dsstiposistema', $descricao);
+        }
+        if (!Functions::isEmpty($situacao)) {
+            $stmt->bindParam(':tps_opldesativado', $situacao);
+        }
+        
+        $stmt->execute();
+        
+        $rows = $stmt->fetchAll();
+        
+        foreach ($rows as $row) {
+            $vo = $this->populateVo($connection, $row);
+            
+            array_push($registros, $vo);
+        }
+        
+        return $registros;
     }
     
     public function loadByPerfil($connection, $perfilCodigo) {
         $registros = array();
-
+        
         $query = " SELECT ts.*
                    FROM   perfis           pr
                    JOIN   perfispermissoes pp ON pp.prp_cdiperfil      = pr.prf_cdiperfil
@@ -57,9 +67,9 @@ class TiposSistemasModel {
                    WHERE  pr.prf_cdiperfil     = :prf_cdiperfil
                    AND    pr.prf_opldesativado = 1
                    AND    pp.prp_opldesativado = 1
-                   AND    ts.tps_opldesativado = 0
+                   AND    ts.tps_opldesativado = 1
                    ORDER  BY ts.tps_dsstiposistema ";
-
+        
         $stmt = $connection->prepare($query);
 
         $stmt->bindParam(':prf_cdiperfil', $perfilCodigo);

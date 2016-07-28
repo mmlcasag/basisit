@@ -12,43 +12,53 @@ class TiposAmbientesModel {
         return $vo;
     }
     
-    public function load($connection) {
-        $cache = phpFastCache();
-        
-        $tiposAmbientesCache = $cache->get("TiposAmbientesCacheAtivos");
-        
-        if ($tiposAmbientesCache != null) {
-            return $tiposAmbientesCache;
-        } else {
-            $registros = array();
-            
-            $query = " SELECT * 
-		       FROM   tiposambientes
-		       WHERE  tpa_opldesativado = 0 
-		       ORDER  BY tpa_dsstipoambiente ";
-            
-            $stmt = $connection->prepare($query);
-            
-            $stmt->execute();
-            
-            $rows = $stmt->fetchAll();
-            
-            foreach ($rows as $row) {
-                $vo = $this->populateVo($connection, $row);
-                
-                array_push($registros, $vo);
-            }
-            
-            $cache->set("TiposAmbientesCacheAtivos", $registros, 60 * Functions::getParametro('cache'));
-            
-            return $registros;
+    public function load($connection, $descricao = "", $situacao = "") {
+        if (Functions::isEmpty($situacao)) {
+            $situacao = 1;
         }
+        
+        $registros = array();
+        
+        $query = " SELECT * 
+                   FROM   tiposambientes
+                   WHERE  1 = 1 ";
+        
+        if (!Functions::isEmpty($descricao)) {
+            $query .= " AND LOWER(tpa_dsstipoambiente) LIKE :tpa_dsstipoambiente ";
+        }
+        if (!Functions::isEmpty($situacao)) {
+            $query .= " AND tpa_opldesativado = :tpa_opldesativado ";
+        }
+        
+        $query .= " ORDER  BY tpa_dsstipoambiente ";
+        
+        $stmt = $connection->prepare($query);
+        
+        if (!Functions::isEmpty($descricao)) {
+            $descricao = "%" . strtolower($descricao) . "%";
+            $stmt->bindParam(':tpa_dsstipoambiente', $descricao);
+        }
+        if (!Functions::isEmpty($situacao)) {
+            $stmt->bindParam(':tpa_opldesativado', $situacao);
+        }
+        
+        $stmt->execute();
+        
+        $rows = $stmt->fetchAll();
+        
+        foreach ($rows as $row) {
+            $vo = $this->populateVo($connection, $row);
+            
+            array_push($registros, $vo);
+        }
+        
+        return $registros;
     }
     
     public function loadById($connection, $codigo) {
         $query = " SELECT * 
-		   FROM   tiposambientes
-		   WHERE  tpa_cditipoambiente = :tpa_cditipoambiente ";
+		           FROM   tiposambientes
+		           WHERE  tpa_cditipoambiente = :tpa_cditipoambiente ";
         
         $stmt = $connection->prepare($query);
         

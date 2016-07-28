@@ -26,46 +26,50 @@ class UsuariosModel {
         return $vo;
     }
     
-    public function load($connection, $apenasAtivos) {
-        $cache = phpFastCache();
+    public function load($connection, $apenasAtivos, $descricao = "", $situacao = "") {
+        if (Functions::isEmpty($situacao)) {
+            $situacao = 1;
+        }
+        
+        $registros = array();
+        
+        $query = " SELECT * 
+                   FROM   usuarios
+                   WHERE  1 = 1 ";
         
         if ($apenasAtivos == 1) {
-            $usuariosCache = $cache->get("UsuariosCacheAtivos");
-        } else {
-            $usuariosCache = $cache->get("UsuariosCacheGeral");
+            $query = $query . " AND usu_opldesativado = 1 ";
+        }
+        if (!Functions::isEmpty($descricao)) {
+            $query .= " AND LOWER(usu_dssnome) LIKE :usu_dssnome ";
+        }
+        if (!Functions::isEmpty($situacao)) {
+            $query .= " AND usu_opldesativado = :usu_opldesativado ";
         }
         
-        if ($usuariosCache != null) {
-            return $usuariosCache;
-        } else {
-            $registros = array();
-            
-            $query = " SELECT * FROM usuarios WHERE 1 = 1 ";
-            if ($apenasAtivos == 1) {
-                $query = $query . " AND usu_opldesativado = 0 ";
-            }
-            $query = $query . " ORDER BY usu_dssnome ";
-            
-            $stmt = $connection->prepare($query);
-            
-            $stmt->execute();
-            
-            $rows = $stmt->fetchAll();
-            
-            foreach ($rows as $row) {
-                $vo = $this->populateVo($connection, $row);
-                
-                array_push($registros, $vo);
-            }
-            
-            if ($apenasAtivos == 1) {
-                $cache->set("UsuariosCacheAtivos", $registros, 60 * Functions::getParametro('cache'));
-            } else {
-                $cache->set("UsuariosCacheGeral", $registros, 60 * Functions::getParametro('cache'));
-            }
-            
-            return $registros;
+        $query .= " ORDER BY usu_dssnome ";
+        
+        $stmt = $connection->prepare($query);
+        
+        if (!Functions::isEmpty($descricao)) {
+            $descricao = "%" . strtolower($descricao) . "%";
+            $stmt->bindParam(':usu_dssnome', $descricao);
         }
+        if (!Functions::isEmpty($situacao)) {
+            $stmt->bindParam(':usu_opldesativado', $situacao);
+        }
+        
+        $stmt->execute();
+        
+        $rows = $stmt->fetchAll();
+        
+        foreach ($rows as $row) {
+            $vo = $this->populateVo($connection, $row);
+            
+            array_push($registros, $vo);
+        }
+        
+        return $registros;
     }
     
     public function loadById($connection, $codigo) {
@@ -89,9 +93,9 @@ class UsuariosModel {
     }
     
     public function loadByUserAndPassword($connection, $user, $pass) {
-	$query = " SELECT * 
+	    $query = " SELECT * 
                    FROM   usuarios 
-                   WHERE  usu_opldesativado = 0
+                   WHERE  usu_opldesativado = 1
                    AND    usu_dssemail = :usu_dssemail
                    AND    usu_dsssenha = :usu_dsssenha ";
         
@@ -203,97 +207,61 @@ class UsuariosModel {
     }
     
     public function loadClientes($connection, $apenasAtivos) {
-        $cache = phpFastCache();
+        $registros = array();
+        
+        $query = " SELECT *
+                   FROM   usuarios, perfis
+                   WHERE  prf_cdiperfil  = usu_cdiperfil
+                   AND    prf_oplcliente = 1 ";
         
         if ($apenasAtivos == 1) {
-            $usuariosCache = $cache->get("UsuariosCacheClientesAtivos");
-        } else {
-            $usuariosCache = $cache->get("UsuariosCacheClientesGeral");
+            $query = $query . " AND usu_opldesativado = 1 ";
         }
         
-        if ($usuariosCache != null) {
-            return $usuariosCache;
-        } else {
-            $registros = array();
-            
-            $query = " SELECT *
-                       FROM   usuarios, perfis
-                       WHERE  prf_cdiperfil  = usu_cdiperfil
-                       AND    prf_oplcliente = 1 ";
-            
-            if ($apenasAtivos == 1) {
-                $query = $query . " AND usu_opldesativado = 0 ";
-            }
-            
-            $query = $query . " ORDER BY usu_dssnome ";
-            
-            $stmt = $connection->prepare($query);
-            
-            $stmt->execute();
-            
-            $rows = $stmt->fetchAll();
-            
-            foreach ($rows as $row) {
-                $vo = $this->populateVo($connection, $row);
-                
-                array_push($registros, $vo);
-            }
-            
-            if ($apenasAtivos == 1) {
-                $cache->set("UsuariosCacheClientesAtivos", $registros, 60 * Functions::getParametro('cache'));
-            } else {
-                $cache->set("UsuariosCacheClientesGeral", $registros, 60 * Functions::getParametro('cache'));
-            }
-            
-            return $registros;
+        $query = $query . " ORDER BY usu_dssnome ";
+
+        $stmt = $connection->prepare($query);
+
+        $stmt->execute();
+
+        $rows = $stmt->fetchAll();
+
+        foreach ($rows as $row) {
+            $vo = $this->populateVo($connection, $row);
+
+            array_push($registros, $vo);
         }
+        
+        return $registros;
     }
     
     public function loadNaoClientes($connection, $apenasAtivos) {
-        $cache = phpFastCache();
+        $registros = array();
+        
+        $query = " SELECT *
+                   FROM   usuarios, perfis
+                   WHERE  prf_cdiperfil  = usu_cdiperfil
+                   AND    prf_oplcliente = 0 ";
         
         if ($apenasAtivos == 1) {
-            $usuariosCache = $cache->get("UsuariosCacheNaoClientesAtivos");
-        } else {
-            $usuariosCache = $cache->get("UsuariosCacheNaoClientesGeral");
+            $query = $query . " AND usu_opldesativado = 1 ";
         }
         
-        if ($usuariosCache != null) {
-            return $usuariosCache;
-        } else {
-            $registros = array();
+        $query = $query . " ORDER BY usu_dssnome ";
+        
+        $stmt = $connection->prepare($query);
+        
+        $stmt->execute();
+        
+        $rows = $stmt->fetchAll();
+        
+        foreach ($rows as $row) {
+            $vo = $this->populateVo($connection, $row);
             
-            $query = " SELECT *
-                       FROM   usuarios, perfis
-                       WHERE  prf_cdiperfil  = usu_cdiperfil
-                       AND    prf_oplcliente = 0 ";
-            
-            if ($apenasAtivos == 1) {
-                $query = $query . " AND usu_opldesativado = 0 ";
-            }
-            
-            $query = $query . " ORDER BY usu_dssnome ";
-            
-            $stmt = $connection->prepare($query);
-            
-            $stmt->execute();
-            
-            $rows = $stmt->fetchAll();
-            
-            foreach ($rows as $row) {
-                $vo = $this->populateVo($connection, $row);
-                
-                array_push($registros, $vo);
-            }
-            
-            if ($apenasAtivos == 1) {
-                $cache->set("UsuariosCacheNaoClientesAtivos", $registros, 60 * Functions::getParametro('cache'));
-            } else {
-                $cache->set("UsuariosCacheNaoClientesGeral", $registros, 60 * Functions::getParametro('cache'));
-            }
-            
-            return $registros;
+            array_push($registros, $vo);
         }
+        
+        return $registros;
     }
     
     public function loadClientesDeUmaEmpresa($connection, $apenasAtivos, $empresaCodigo) {
@@ -305,7 +273,7 @@ class UsuariosModel {
                    AND    prf_oplcliente = 1 ";
 
         if ($apenasAtivos == 1) {
-            $query = $query . " AND usu_opldesativado = 0 ";
+            $query = $query . " AND usu_opldesativado = 1 ";
         }
         if (!Functions::isEmpty($empresaCodigo)) {
             $query = $query . " AND usu_cdiempresa = :usu_cdiempresa ";
@@ -340,7 +308,7 @@ class UsuariosModel {
                    ,      COUNT(distinct chamados.cha_cdichamado) sit_qtichamados
                    FROM   situacoes
                    LEFT   JOIN chamados ON situacoes.sit_cdisituacao = chamados.cha_cdisituacao AND :usuarioCodigo IN (chamados.cha_cdiusuario, chamados.cha_cdiusuario_requisitante)
-                   WHERE  situacoes.sit_opldesativado = 0
+                   WHERE  situacoes.sit_opldesativado = 1
                    GROUP  BY situacoes.sit_cdisituacao, situacoes.sit_dsssituacao
                    ORDER  BY situacoes.sit_cdisituacao, situacoes.sit_dsssituacao ";
         
@@ -374,7 +342,7 @@ class UsuariosModel {
                    FROM   situacoes
                    LEFT   JOIN chamados ON situacoes.sit_cdisituacao = chamados.cha_cdisituacao AND :usuarioCodigo IN (chamados.cha_cdiusuario, chamados.cha_cdiusuario_atendente)
                    LEFT   JOIN atividades ON situacoes.sit_cdisituacao = atividades.ati_cdisituacao AND atividades.ati_cdiusuario = :usuarioCodigo
-                   WHERE  situacoes.sit_opldesativado = 0
+                   WHERE  situacoes.sit_opldesativado = 1
                    GROUP  BY situacoes.sit_cdisituacao, situacoes.sit_dsssituacao
                    ORDER  BY situacoes.sit_cdisituacao, situacoes.sit_dsssituacao ";
         
@@ -442,7 +410,7 @@ class UsuariosModel {
                    JOIN   perfis          ON perfis.prf_cdiperfil    = usuarios.usu_cdiperfil
                    LEFT   JOIN chamados   ON usuarios.usu_cdiusuario = chamados.cha_cdiusuario_atendente AND chamados.cha_cdisituacao   NOT IN (" . $_SESSION['situacaoFinalizada'] . "," . $_SESSION['situacaoCancelada'] . ")
                    LEFT   JOIN atividades ON usuarios.usu_cdiusuario = atividades.ati_cdiusuario         AND atividades.ati_cdisituacao NOT IN (" . $_SESSION['situacaoFinalizada'] . "," . $_SESSION['situacaoCancelada'] . ")
-                   WHERE  perfis.prf_oplcliente      = 0
+                   WHERE  perfis.prf_oplcliente = 0
                    GROUP  BY usuarios.usu_cdiusuario, usuarios.usu_dssnome
                    HAVING COUNT(distinct chamados.cha_cdichamado) > 0 OR COUNT(distinct atividades.ati_cdiatividade) > 0
                    ORDER  BY usuarios.usu_cdiusuario, usuarios.usu_dssnome ";

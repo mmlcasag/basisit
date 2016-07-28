@@ -12,43 +12,53 @@ class TiposProdutosModel {
         return $vo;
     }
     
-    public function load($connection) {
-        $cache = phpFastCache();
-        
-        $tiposProdutosCache = $cache->get("TiposProdutosCacheAtivos");
-        
-        if ($tiposProdutosCache != null) {
-            return $tiposProdutosCache;
-        } else {
-            $registros = array();
-            
-            $query = " SELECT * 
-		       FROM   tiposprodutos 
-		       WHERE  tpp_opldesativado = 0 
-		       ORDER  BY tpp_dsstipoproduto ";
-            
-            $stmt = $connection->prepare($query);
-            
-            $stmt->execute();
-            
-            $rows = $stmt->fetchAll();
-            
-            foreach ($rows as $row) {
-                $vo = $this->populateVo($connection, $row);
-                
-                array_push($registros, $vo);
-            }
-            
-            $cache->set("TiposProdutosCacheAtivos", $registros, 60 * Functions::getParametro('cache'));
-            
-            return $registros;
+    public function load($connection, $descricao = "", $situacao = "") {
+        if (Functions::isEmpty($situacao)) {
+            $situacao = 1;
         }
+        
+        $registros = array();
+        
+        $query = " SELECT * 
+                   FROM   tiposprodutos
+                   WHERE  1 = 1 ";
+        
+        if (!Functions::isEmpty($descricao)) {
+            $query .= " AND LOWER(tpp_dsstipoproduto) LIKE :tpp_dsstipoproduto ";
+        }
+        if (!Functions::isEmpty($situacao)) {
+            $query .= " AND tpp_opldesativado = :tpp_opldesativado ";
+        }
+        
+        $query .= " ORDER  BY tpp_dsstipoproduto ";
+        
+        $stmt = $connection->prepare($query);
+        
+        if (!Functions::isEmpty($descricao)) {
+            $descricao = "%" . strtolower($descricao) . "%";
+            $stmt->bindParam(':tpp_dsstipoproduto', $descricao);
+        }
+        if (!Functions::isEmpty($situacao)) {
+            $stmt->bindParam(':tpp_opldesativado', $situacao);
+        }
+        
+        $stmt->execute();
+        
+        $rows = $stmt->fetchAll();
+        
+        foreach ($rows as $row) {
+            $vo = $this->populateVo($connection, $row);
+            
+            array_push($registros, $vo);
+        }
+        
+        return $registros;
     }
     
     public function loadById($connection, $codigo) {
         $query = " SELECT * 
-		   FROM   tiposprodutos
-		   WHERE  tpp_cditipoproduto = :tpp_cditipoproduto ";
+		           FROM   tiposprodutos
+		           WHERE  tpp_cditipoproduto = :tpp_cditipoproduto ";
         
         $stmt = $connection->prepare($query);
         

@@ -31,7 +31,7 @@ class PerfisPermissoesModel {
                    WHERE  prf_cdiperfil      = prp_cdiperfil
                    AND    prf_opldesativado  = 1
                    AND    tps_cditiposistema = prp_cditiposistema
-                   AND    tps_opldesativado  = 0
+                   AND    tps_opldesativado  = 1
                    AND    prp_cdiperfil      = :prp_cdiperfil ";
         
         if (!Functions::isEmpty($descricao)) {

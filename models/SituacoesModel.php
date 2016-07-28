@@ -57,8 +57,8 @@ class SituacoesModel {
     
     public function loadById($connection, $codigo) {
         $query = " SELECT * 
-		   FROM   situacoes
-		   WHERE  sit_cdisituacao = :sit_cdisituacao ";
+		           FROM   situacoes
+		           WHERE  sit_cdisituacao = :sit_cdisituacao ";
         
         $stmt = $connection->prepare($query);
         
