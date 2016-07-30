@@ -961,7 +961,7 @@
                     <td><?php echo $historico->getUsuario()->getNome()?></td>
                     <td><?php echo $historico->getData()?></td>
                     <td><?php echo $historico->getObservacao()?></td>
-                    <td><a target="_blank" href="<?php echo "uploads/CHA" . str_pad($historico->getChamado()->getId(), 11, "0", STR_PAD_LEFT) . "." . str_pad($historico->getId(), 11, "0", STR_PAD_LEFT) . "." . $historico->getAnexo()?>"><?php echo $historico->getAnexo(); ?></a></td>
+                    <td><a target="_blank" href="<?php echo "uploads/CHA" . str_pad($historico->getChamado()->getId(), 11, "0", STR_PAD_LEFT) . "." . str_pad($historico->getId(), 11, "0", STR_PAD_LEFT) . "." . urlencode($historico->getAnexo())?>"><?php echo $historico->getAnexo(); ?></a></td>
                 </tr>
             <?php } ?>
             </tbody>
