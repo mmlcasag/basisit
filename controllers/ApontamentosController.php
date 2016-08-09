@@ -378,7 +378,7 @@ class ApontamentosController extends BaseController {
         $this->exibirApontamentosParaAvaliacao($registros);
     }
     
-    private function carregarApontamentosParaAvaliacao($connection, $periodoInicial, $periodoFinal, $usuario, $empresa, $apontamentoAvaliacao, $apontamentoTipo, $atividadeCodigo, $chamadoCodigo, $mensagem = "", $submit = "", $caller = "") {
+    private function carregarApontamentosParaAvaliacao($connection, $periodoInicial, $periodoFinal, $usuario, $empresa, $apontamentoAvaliacao, $apontamentoTipo, $atividadeCodigo = "", $chamadoCodigo = "", $mensagem = "", $submit = "", $caller = "") {
         if (($submit == "Consultar") || (!Functions::isEmpty($caller))) {
             $model = new ApontamentosModel();
             $registros = $model->loadApontamentosParaAvaliacao($connection, $periodoInicial, $periodoFinal, $usuario->getId(), $empresa->getId(), $apontamentoAvaliacao, $apontamentoTipo, $atividadeCodigo, $chamadoCodigo);
@@ -395,7 +395,7 @@ class ApontamentosController extends BaseController {
         return $this->trabalharApontamentosParaAvaliacao($periodoInicial, $periodoFinal, $usuario, $empresa, $usuarios, $empresas, $apontamentoAvaliacao, $apontamentoTipo, $atividadeCodigo, $chamadoCodigo, $registros, $mensagem);
     }
     
-    private function trabalharApontamentosParaAvaliacao($periodoInicial, $periodoFinal, $usuario, $empresa, $usuarios = array(), $empresas = array(), $apontamentoAvaliacao, $apontamentoTipo, $atividadeCodigo, $chamadoCodigo, $registros = array(), $mensagem = "") {
+    private function trabalharApontamentosParaAvaliacao($periodoInicial, $periodoFinal, $usuario, $empresa, $usuarios = array(), $empresas = array(), $apontamentoAvaliacao, $apontamentoTipo, $atividadeCodigo = "", $chamadoCodigo = "", $registros = array(), $mensagem = "") {
         return array( 'mensagem'              => $mensagem
                     , 'periodoInicial'        => $periodoInicial
                     , 'periodoFinal'          => $periodoFinal
@@ -481,21 +481,34 @@ class ApontamentosController extends BaseController {
         } else {
             $apontamentoTipo = $this->getParametroTela('apontamentoTipo');
         }
-
+        
+        if (Functions::isEmpty($this->getParametroTela('atividadeCodigo'))) {
+            $atividadeCodigo = "";
+        } else {
+            $atividadeCodigo = $this->getParametroTela('atividadeCodigo');
+        }
+        
+        if (Functions::isEmpty($this->getParametroTela('chamadoCodigo'))) {
+            $chamadoCodigo = "";
+        } else {
+            $chamadoCodigo = $this->getParametroTela('chamadoCodigo');
+        }
+        
         $apontamentosCodigos    = $_REQUEST['apontamentoCodigo'];
         $apontamentosDuracoes   = $_REQUEST['apontamentoDuracao'];
         $apontamentosAvaliacoes = $_REQUEST['apontamentoAvaliacao'];
         $apontamentosFaturados  = $_REQUEST['apontamentoFaturado'];
 
         $mensagem = $this->validarApontamentoParaAvaliacao($connection, $apontamentosCodigos, $apontamentosDuracoes, $apontamentosAvaliacoes, $apontamentosFaturados);
-
+        
         if (substr($mensagem, 0, 1) == 'S') {
             $mensagem = "";
         }
-
-        $registros = $this->carregarApontamentosParaAvaliacao($connection, $periodoInicial, $periodoFinal, $usuario, $empresa, $apontamentoAvaliacao, $apontamentoTipo, $mensagem);
+        
+        $registros = $this->carregarApontamentosParaAvaliacao($connection, $periodoInicial, $periodoFinal, $usuario, $empresa, $apontamentoAvaliacao, $apontamentoTipo, $atividadeCodigo, $chamadoCodigo, $mensagem);
+        
         Databases::disconnect($connection);
-
+        
         $this->exibirApontamentosParaAvaliacao($registros);
     }
     

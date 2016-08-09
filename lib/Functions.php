@@ -90,24 +90,21 @@ class Functions {
 
     static function isTime($hora) {
         $hora = Functions::clean($hora);
-
+        
         $ok = true;
-
+        
         if (preg_match('/^[0-9]{2}:[0-9]{2}:[0-9]{2}$/', $hora)) {
-            if (substr($hora, 0, 2) > "23")
-                $ok = false;
             if (substr($hora, 3, 2) > "59")
                 $ok = false;
             if (substr($hora, 6, 2) > "59")
                 $ok = false;
         } else if (preg_match('/^[0-9]{2}:[0-9]{2}$/', $hora)) {
-            if (substr($hora, 0, 2) > "23")
-                $ok = false;
             if (substr($hora, 3, 2) > "59")
                 $ok = false;
-        } else
+        } else {
             $ok = false;
-
+        }
+        
         return $ok;
     }
 
